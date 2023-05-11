@@ -6,6 +6,7 @@ Window System - Submission
 by  Ulyana Lavnikevich (388633)
 and Serin Bazzi (437585)
 """
+#test
 
 from GraphicsEventSystem import *
 from WindowManager import *
