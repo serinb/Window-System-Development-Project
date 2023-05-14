@@ -9,7 +9,7 @@ and Serin Bazzi (437585)
 
 from GraphicsEventSystem import *
 from Window import *
-
+# test Ulyana
 
 # The window manager (WM) implements a user interface to window functions
 # — like positioning, resizing, minimizing
