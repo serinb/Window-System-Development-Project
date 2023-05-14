@@ -206,6 +206,7 @@ class Window:
         else:
             return self
 
+    # P2 4d
     def handleMouseClicked(self, x, y):
         print("click")
         # print("Window " + self.identifier + " was clicked.")
