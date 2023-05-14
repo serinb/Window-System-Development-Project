@@ -12,8 +12,6 @@ from Window import *
 from WindowManager import *
 from UITK import *
 
-# from UITK import *
-
 
 class WindowSystem(GraphicsEventSystem):
 
@@ -49,6 +47,9 @@ class WindowSystem(GraphicsEventSystem):
 
         blue_window = self.createWindowOnScreen(30, 30, 170, 120, "Blue", green_window, COLOR_BLUE)
 
+        testLabel = Label(30, 40, 120, 30, "Label", "Hi", COLOR_ORANGE, COLOR_BLACK)
+        blue_window.addChildWindow(testLabel)
+
     """
     WINDOW MANAGEMENT
     """
@@ -62,13 +63,13 @@ class WindowSystem(GraphicsEventSystem):
             newWindow = Window(x, y, width, height, identifier, parentWindow.depth + 1)
             # add new window object to parent's list of window children
             parentWindow.addChildWindow(newWindow)
-            # TODO insert comment here...
+            # add a window to the openedTopLevelList for the fixed order in the task bar
             if parentWindow == self.screen:
                 self.windowManager.openWindow(newWindow)
             # self.widgetOrder.append(newWindow)
         #assign preset background color for new window object
-        newWindow.backgroundColor = backgroundColor
-        return newWindow
+            newWindow.backgroundColor = backgroundColor
+            return newWindow
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -107,6 +108,7 @@ class WindowSystem(GraphicsEventSystem):
 
     def handleMousePressed(self, x, y):
         # print(str(x) + "  " + str(y))
+        self.dragging = False
         self.mousePressed = True
         self.recentX = x
         self.recentY = y
@@ -130,8 +132,8 @@ class WindowSystem(GraphicsEventSystem):
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
-        # do not allow the user to dragg the window if mouse is released
 
+        # do not allow the user to dragg the window if mouse is released
         self.dragging = False
 
         if self.lastClickedWindow == self.screen:
@@ -175,17 +177,18 @@ class WindowSystem(GraphicsEventSystem):
         pass
 
     def handleMouseDragged(self, x, y):
-        if self.dragging:
-            # difference between old and new (x,y) coordinates
-            differenceX = x - self.recentX
-            differenceY = y - self.recentY
-            self.lastClickedWindow.x = self.lastClickedWindow.x + differenceX
-            self.lastClickedWindow.y = self.lastClickedWindow.y + differenceY
+        if self.lastClickedWindow is not None:
+            if self.dragging:
+                # difference between old and new (x,y) coordinates
+                differenceX = x - self.recentX
+                differenceY = y - self.recentY
+                self.lastClickedWindow.x = self.lastClickedWindow.x + differenceX
+                self.lastClickedWindow.y = self.lastClickedWindow.y + differenceY
 
-            self.recentX = x
-            self.recentY = y
-            if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
-                self.requestRepaint()
+                self.recentX = x
+                self.recentY = y
+                if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
+                    self.requestRepaint()
 
     def handleKeyPressed(self, char):
         pass

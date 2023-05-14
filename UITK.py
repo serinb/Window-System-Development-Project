@@ -23,19 +23,27 @@ class Container(Widget):
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, width, height, identifier, textString="", textColor=COLOR_BLACK,
-                 backgroundColor=COLOR_CLEAR):
+    def __init__(self, originX, originY, width, height, identifier, textString="", textColor=COLOR_BLACK, backgroundColor=COLOR_CLEAR):
         super().__init__(originX, originY, width, height, identifier)
         self.textString = textString
         self.textColor = textColor
         self.backgroundColor = backgroundColor
+        # self.font = font
 
     def draw(self, ctx):
-        super().draw(ctx)
+        # provide label's coordinates as local coordinates of the parent window and convert these to global coordinates
+        convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
+        ctx.setOrigin(convertedX, convertedY)
+
         ctx.setFillColor(self.backgroundColor)
+
         ctx.fillRect(0, 0, self.width, self.height)
-        ctx.setStrokeColor(COLOR_WHITE)
-        ctx.drawString(self.textString, 10, 10)
+
+        ctx.setStrokeColor(self.textColor)
+        #ctx.setFont(self.font)
+        # ctx.setFont(Font(family="Helvetica", size=22, weight="normal"))
+
+        ctx.drawString(self.textString, 5, 5)
 
 
 class Button(Label):

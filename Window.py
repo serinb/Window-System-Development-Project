@@ -292,6 +292,7 @@ class Screen(Window):
 
         if startX <= x <= endX and startY <= y <= endY:
             # this is when start button clicked
+            # helloworld, calculator, color slider
             print("milestone 4")
 
         else:
