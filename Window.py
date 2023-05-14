@@ -11,14 +11,13 @@ from GraphicsEventSystem import *
 from WindowManager import *
 from collections import namedtuple
 
-
 AllAnchors = namedtuple('AllAnchors', "top right bottom left")
 # i.e. 1 - top, 2 - right, 4 - bottom, 8 - left corner
 LayoutAnchor = AllAnchors(1 << 0, 1 << 1, 1 << 2, 1 << 3)
 
 
 class Window:
-    def __init__(self, originX, originY, width, height, identifier, depth):
+    def __init__(self, originX, originY, width, height, identifier, depth=1):
         self.x = originX
         self.y = originY
         self.width = width
@@ -32,6 +31,8 @@ class Window:
 
         # P3 (5)
         self.isHidden = False
+
+        self.isClosed = False
 
         # P3 (7) Specify a new property layoutAnchors in Window which will contain a bitmask.
         # to fix the margin between a view and its parent view when the parent is resized.
@@ -77,8 +78,6 @@ class Window:
 
             if (recentHitTestStatus is not None) and (len(recentHitTestStatus.childWindows) == 0):
                 return recentHitTestDepth, recentHitTestStatus
-
-            # print("child: " + child.identifier)
 
             # coordinate conversion w.r.t child
             newX, newY = self.convertPositionToScreen(x, y)
@@ -224,7 +223,6 @@ class Window:
             return False
 
 
-
 class Screen(Window):
     def __init__(self, windowSystem):
         super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", 0)
@@ -250,7 +248,6 @@ class Screen(Window):
         if len(self.childWindows) > 0:
             for c in self.childWindows:
                 c.super().resize(x, y, width, height)
-
 
     def checkIfInTaskbar(self, givenX, givenY):
         # (X1, Y1) of taskbar
@@ -282,10 +279,9 @@ class Screen(Window):
             startX = 40
             endX = 80
 
-            for child in self.childWindows:
+            for child in self.windowSystem.windowManager.openedTopLevelWindows:
 
                 if startX <= x <= endX and startY <= y <= endY:
-                    # print("i am in widget " + child.identifier)
 
                     if child.isHidden:
                         child.isHidden = False

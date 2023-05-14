@@ -9,7 +9,7 @@ and Serin Bazzi (437585)
 
 from GraphicsEventSystem import *
 from Window import *
-
+# test Ulyana
 
 # The window manager (WM) implements a user interface to window functions
 # — like positioning, resizing, minimizing
@@ -19,6 +19,11 @@ class WindowManager:
         # the height of the window’s title bar decoration
         # We will use it in the future to avoid the placement of widgets under the window decorations
         self.titleBarHeight = 30
+
+        self.openedTopLevelWindows = []
+
+    def openWindow(self, window):
+        self.openedTopLevelWindows.append(window)
 
     # P3 (3) Negotiating window positions
     # to identify whether a window can exist at a given location
@@ -32,7 +37,7 @@ class WindowManager:
         # we define that a window is only allowed to exceed the boundaries of the screen
         # by half of its titlebar width and height
         topBoundary = - halfTitleBarHeight
-        bottomBoundary = self.windowSystem.screen.height + window.height - halfTitleBarHeight
+        bottomBoundary = self.windowSystem.screen.height - halfTitleBarHeight
 
         leftBoundary = - halfWindowWidth
         rightBoundary = self.windowSystem.screen.width + halfWindowWidth
@@ -74,6 +79,10 @@ class WindowManager:
         # minimizing button
         ctx.drawLine(window.width - 40, 15, window.width - 33, 15)
 
+        # resize Button
+        ctx.setFillColor(COLOR_BLACK)
+        ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
+
     # P3 (5)
     def minimizeWindow(self, window):
         if window.getTopLevelWindow() != window:
@@ -85,9 +94,11 @@ class WindowManager:
 
     # P3 (5)
     def closeWindow(self, window):
+        window.isClosed = True
         window.removeFromParentWindow()
+        if window.parentWindow == self.windowSystem.screen:
+            self.openedTopLevelWindows.remove(window)
         window.isHidden = True
-        # self.windowSystem.widgetOrder.remove(window)
         self.windowSystem.requestRepaint()
 
     # P3 (1)
@@ -116,17 +127,13 @@ class WindowManager:
 
             # define offset to start drawing the next child of the screen at the offset location
             offset = 0
-            for c in self.windowSystem.screen.childWindows:
-
+            for c in self.openedTopLevelWindows:
                 if lastChild == c:
                     ctx.setStrokeColor(COLOR_PINK)
-                    # just to make the first letter of the foreground window bold
-                    font = Font(family="Helvetica", size=14, weight="bold")
-                    ctx.setFont(font)
                 else:
                     ctx.setStrokeColor(COLOR_GRAY)
-
-                ctx.strokeRect(40 + offset, self.windowSystem.screen.height - 50, 80 + offset,
-                               self.windowSystem.screen.height)
-                ctx.drawString(c.identifier[0], 50 + offset, self.windowSystem.screen.height - 33)
-                offset += 40
+                if not c.isClosed:
+                    ctx.strokeRect(40 + offset, self.windowSystem.screen.height - 50, 80 + offset,
+                                   self.windowSystem.screen.height)
+                    ctx.drawString(c.identifier[0], 50 + offset, self.windowSystem.screen.height - 33)
+                    offset += 40
