@@ -20,6 +20,7 @@ class WindowSystem(GraphicsEventSystem):
     # 1b
     def __init__(self, width, height):
         super().__init__(width, height)
+        # P2 1b
         self.screen = None
         self.windowManager = None
 
@@ -31,8 +32,10 @@ class WindowSystem(GraphicsEventSystem):
         self.dragging = False
 
     def start(self):
+        # WINDOW MANAGER
         self.windowManager = WindowManager(self)
-        # SCREEN
+
+        # SCREEN (P2 1b)
         self.screen = Screen(self)
 
         # WHITE_WINDOW
@@ -50,27 +53,28 @@ class WindowSystem(GraphicsEventSystem):
     WINDOW MANAGEMENT
     """
 
-    # 1c
+    # P2 1c
     def createWindowOnScreen(self, x, y, width, height, identifier, parentWindow, backgroundColor):
-
+        # provided parentWindow parameter is given, create a new window
         if parentWindow is not None:
+            # creates a new window object with given parameters
+            # depth is needed for the P2 4b
             newWindow = Window(x, y, width, height, identifier, parentWindow.depth + 1)
+            # add new window object to parent's list of window children
             parentWindow.addChildWindow(newWindow)
+            # TODO insert comment here...
             if parentWindow == self.screen:
                 self.windowManager.openWindow(newWindow)
             # self.widgetOrder.append(newWindow)
-        else:
-            newWindow = Screen(self)
-
+        #assign preset background color for new window object
         newWindow.backgroundColor = backgroundColor
-
         return newWindow
 
-    # 1d
+    # P2 1d
     def bringWindowToFront(self, window):
         # if window is a direct child of screen
         if window.parentWindow.identifier == "SCREEN_1":
-            # remove from the children list of the screen to prevent the duplicates
+            # remove it from the list of window children of the screen to prevent duplicates
             window.removeFromParentWindow()
             #  append this window to the end of the child window list of the screen
             self.screen.addChildWindow(window)
@@ -78,13 +82,14 @@ class WindowSystem(GraphicsEventSystem):
             # else if window is not a direct child of screen
             # create new variable to iterate through the tree
             topLevelWindow = window
-            # traverse the window tree upwards until the parent of the window is "screen"
-            # meaning until the toplevelwindow on the path of window is found
+            # traverse the window tree upwards until the parent of TOPLEVELWINDOW is Screen
             while topLevelWindow.parentWindow.identifier != "SCREEN_1":
                 topLevelWindow = topLevelWindow.parentWindow
 
-            # add the top level window to the end of the list of children of screen
+            # remove TOPLEVELWINDOW from its parents list of window children
             topLevelWindow.removeFromParentWindow()
+            # and readd it to the end of that list, so that it can be displayed in the front of the screen
+            # in z-direction
             self.screen.addChildWindow(topLevelWindow)
 
     """
