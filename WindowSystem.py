@@ -10,6 +10,9 @@ and Serin Bazzi (437585)
 from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
+from UITK import *
+
+# from UITK import *
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -17,6 +20,7 @@ class WindowSystem(GraphicsEventSystem):
     # 1b
     def __init__(self, width, height):
         super().__init__(width, height)
+        # P2 1b
         self.screen = None
         self.windowManager = None
 
@@ -25,10 +29,13 @@ class WindowSystem(GraphicsEventSystem):
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
+        self.dragging = False
 
     def start(self):
+        # WINDOW MANAGER
         self.windowManager = WindowManager(self)
-        # SCREEN
+
+        # SCREEN (P2 1b)
         self.screen = Screen(self)
 
         # WHITE_WINDOW
@@ -38,33 +45,36 @@ class WindowSystem(GraphicsEventSystem):
         green_window = self.createWindowOnScreen(100, 100, 300, 300, "Green", self.screen, COLOR_GREEN)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(500, 400, 160, 150, "Yellow", self.screen, COLOR_YELLOW)
+        yellow_window = self.createWindowOnScreen(500, 400, 170, 100, "Yellow", self.screen, COLOR_YELLOW)
 
-        blue_window = self.createWindowOnScreen(30, 30, 160, 150, "Blue", green_window, COLOR_BLUE)
+        blue_window = self.createWindowOnScreen(30, 30, 170, 120, "Blue", green_window, COLOR_BLUE)
 
     """
     WINDOW MANAGEMENT
     """
 
-    # 1c
+    # P2 1c
     def createWindowOnScreen(self, x, y, width, height, identifier, parentWindow, backgroundColor):
-
+        # provided parentWindow parameter is given, create a new window
         if parentWindow is not None:
+            # creates a new window object with given parameters
+            # depth is needed for the P2 4b
             newWindow = Window(x, y, width, height, identifier, parentWindow.depth + 1)
+            # add new window object to parent's list of window children
             parentWindow.addChildWindow(newWindow)
+            # TODO insert comment here...
+            if parentWindow == self.screen:
+                self.windowManager.openWindow(newWindow)
             # self.widgetOrder.append(newWindow)
-        else:
-            newWindow = Screen(self)
-
+        #assign preset background color for new window object
         newWindow.backgroundColor = backgroundColor
-
         return newWindow
 
-    # 1d
+    # P2 1d
     def bringWindowToFront(self, window):
         # if window is a direct child of screen
         if window.parentWindow.identifier == "SCREEN_1":
-            # remove from the children list of the screen to prevent the duplicates
+            # remove it from the list of window children of the screen to prevent duplicates
             window.removeFromParentWindow()
             #  append this window to the end of the child window list of the screen
             self.screen.addChildWindow(window)
@@ -72,13 +82,14 @@ class WindowSystem(GraphicsEventSystem):
             # else if window is not a direct child of screen
             # create new variable to iterate through the tree
             topLevelWindow = window
-            # traverse the window tree upwards until the parent of the window is "screen"
-            # meaning until the toplevelwindow on the path of window is found
+            # traverse the window tree upwards until the parent of TOPLEVELWINDOW is Screen
             while topLevelWindow.parentWindow.identifier != "SCREEN_1":
                 topLevelWindow = topLevelWindow.parentWindow
 
-            # add the top level window to the end of the list of children of screen
+            # remove TOPLEVELWINDOW from its parents list of window children
             topLevelWindow.removeFromParentWindow()
+            # and readd it to the end of that list, so that it can be displayed in the front of the screen
+            # in z-direction
             self.screen.addChildWindow(topLevelWindow)
 
     """
@@ -86,6 +97,7 @@ class WindowSystem(GraphicsEventSystem):
     """
 
     # P2 3c
+    # makes sure that the entire window tree is drawn upon creation
     def handlePaint(self):
         self.screen.draw(self.graphicsContext)
 
@@ -105,7 +117,8 @@ class WindowSystem(GraphicsEventSystem):
             self.bringWindowToFront(clickedWindow)
             self.requestRepaint()
             if clickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
-                print("title bar area")
+                # allow the user to dragg the window
+                self.dragging = True
             else:
                 print("not title bar area")
 
@@ -117,6 +130,9 @@ class WindowSystem(GraphicsEventSystem):
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
+        # do not allow the user to dragg the window if mouse is released
+
+        self.dragging = False
 
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
@@ -159,7 +175,17 @@ class WindowSystem(GraphicsEventSystem):
         pass
 
     def handleMouseDragged(self, x, y):
-        pass
+        if self.dragging:
+            # difference between old and new (x,y) coordinates
+            differenceX = x - self.recentX
+            differenceY = y - self.recentY
+            self.lastClickedWindow.x = self.lastClickedWindow.x + differenceX
+            self.lastClickedWindow.y = self.lastClickedWindow.y + differenceY
+
+            self.recentX = x
+            self.recentY = y
+            if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
+                self.requestRepaint()
 
     def handleKeyPressed(self, char):
         pass

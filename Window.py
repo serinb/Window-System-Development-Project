@@ -11,14 +11,12 @@ from GraphicsEventSystem import *
 from WindowManager import *
 from collections import namedtuple
 
-
 AllAnchors = namedtuple('AllAnchors', "top right bottom left")
 # i.e. 1 - top, 2 - right, 4 - bottom, 8 - left corner
 LayoutAnchor = AllAnchors(1 << 0, 1 << 1, 1 << 2, 1 << 3)
 
-
 class Window:
-    def __init__(self, originX, originY, width, height, identifier, depth):
+    def __init__(self, originX, originY, width, height, identifier, depth=1):
         self.x = originX
         self.y = originY
         self.width = width
@@ -33,6 +31,8 @@ class Window:
         # P3 (5)
         self.isHidden = False
 
+        self.isClosed = False
+
         # P3 (7) Specify a new property layoutAnchors in Window which will contain a bitmask.
         # to fix the margin between a view and its parent view when the parent is resized.
         # default is to anchor a child window to the top-left corner
@@ -44,119 +44,30 @@ class Window:
 
     # P2 1a
     def addChildWindow(self, window):
-        # each window knows its parent
+        # assign calling window as the parent of new child window
         window.parentWindow = self
-        # each window knows its children
+        # add child window to local list of window children, provided it does not yet exist in list
         if window not in self.childWindows:
             self.childWindows.append(window)
 
     # P2 1a
     def removeFromParentWindow(self):
+        # provided the calling window has a parent
         if self.parentWindow:
+            # delete it from its parent's list of window children
             self.parentWindow.childWindows.remove(self)
+            # and delete the calling window's parent
             self.parentWindow = None
-
-    # P2 4b
-    def childWindowAtLocation(self, x, y):
-        # only works if calling window has children, else returns 0
-        if len(self.childWindows) > 0:
-            recentHitTestStatus = None
-            recentHitTestDepth = 0
-            depth, deepestChild = self.helperFunction(x, y, recentHitTestStatus, recentHitTestDepth)
-
-            if deepestChild is not None:
-                return deepestChild
-            else:
-                return None
-        else:
-            return None
-
-    def helperFunction(self, x, y, recentHitTestStatus, recentHitTestDepth):
-        # traverse childWindows Array right->left
-        for child in reversed(self.childWindows):
-
-            if (recentHitTestStatus is not None) and (len(recentHitTestStatus.childWindows) == 0):
-                return recentHitTestDepth, recentHitTestStatus
-
-            # print("child: " + child.identifier)
-
-            # coordinate conversion w.r.t child
-            newX, newY = self.convertPositionToScreen(x, y)
-            convertedX, convertedY = child.convertPositionFromScreen(newX, newY)
-
-            if (child.hitTest(convertedX, convertedY)) and (recentHitTestStatus is None):
-                recentHitTestStatus = child
-                recentHitTestDepth = child.depth
-                # print("hittest true for: " + recentHitTestStatus.identifier)
-
-            elif (child.hitTest(convertedX, convertedY)) and (recentHitTestStatus is not None):
-                if child.compareTopLevelWindows(recentHitTestStatus) == child:
-                    recentHitTestStatus = child
-                    recentHitTestDepth = child.depth
-                    # print("hittest true for: " + recentHitTestStatus.identifier)
-
-                elif (child.compareTopLevelWindows(recentHitTestStatus) == 0) and (
-                        child.depth >= recentHitTestDepth):
-                    recentHitTestStatus = child
-                    recentHitTestDepth = child.depth
-                    # print("hittest true for: " + recentHitTestStatus.identifier)
-
-            if len(child.childWindows) > 0:
-                recentHitTestDepth, recentHitTestStatus = child.helperFunction(convertedX, convertedY,
-                                                                               recentHitTestStatus,
-                                                                               recentHitTestDepth)
-
-        return recentHitTestDepth, recentHitTestStatus
-
-    def getTopLevelWindow(self):
-        if self.parentWindow.identifier != "SCREEN_1":
-
-            topLevelWindow = self
-            # traverse the window tree upwards until the parent of the window is "screen"
-            # meaning until the top level window on the path of window is found
-            while topLevelWindow.parentWindow.identifier != "SCREEN_1":
-                topLevelWindow = topLevelWindow.parentWindow
-
-            # add the top level window to the end of the list of children of screen
-            return topLevelWindow
-        else:
-            return self
-
-    def compareTopLevelWindows(self, window):
-        # calling Window
-        topLevelWindow1 = self.getTopLevelWindow()
-        # parameter window
-        topLevelWindow2 = window.getTopLevelWindow()
-
-        screen = topLevelWindow1.parentWindow
-
-        if screen.childWindows.index(topLevelWindow1) > screen.childWindows.index(topLevelWindow2):
-            return self
-        elif screen.childWindows.index(topLevelWindow1) < screen.childWindows.index(topLevelWindow2):
-            return window
-        elif screen.childWindows.index(topLevelWindow1) == screen.childWindows.index(topLevelWindow2):
-            return 0
-
-    # P2 4a
-    def hitTest(self, x, y):
-        # x,y is a local coordinate in currentWindow
-        # convert x,y to global coordinates in Screen
-        # check if newX lies in range of currentWindow.X and currentWindow.width,
-        # because they refer to Screen coordinates
-        # check if the given x and y values lie with in the range of the window widget
-        if 0 <= x <= self.width and 0 <= y <= self.height:
-            return True
-        else:
-            return False
 
     # P2 2a
     def convertPositionToScreen(self, x, y):
-        # check if the calling Window object is already the screen; return x, y unchanged
+        # check if the calling Window object is already the screen
+        # if so, return x, y unchanged as they are the global coordinates
         if self.parentWindow is None and self.identifier == "SCREEN_1":
             return x, y
         # else if the calling Window object is not the screen
         else:
-            # sum of x,y and origin of calling window in global coordinates
+            # sum of x,y and origin of calling window's offset in global coordinates
             convertedX = x + self.x
             convertedY = y + self.y
             return convertedX, convertedY
@@ -167,7 +78,7 @@ class Window:
         if self.parentWindow is None and self.identifier == "SCREEN_1":
             return x, y
         else:
-            # subtract global coordinates of calling window from x,y
+            # subtract calling window's offset in global coordinates from x,y
             convertedX = x - self.x
             convertedY = y - self.y
             return convertedX, convertedY
@@ -184,11 +95,118 @@ class Window:
         # (0,0, ... , ...) - the first zeros refers to the top-left corner of the current window coordinate system
         ctx.fillRect(0, 0, self.width, self.height)
 
+        #call the draw function on calling window objects children
         if self.childWindows is not None:
             # parent window draws its child views
             for c in self.childWindows:
                 c.draw(ctx)
 
+    # P2 4a
+    def hitTest(self, x, y):
+        # checks whether the given x,y lie within the calling windows local coordinate system
+        # x,y-axis maxima are represented by the windows witdh and height
+        if 0 <= x <= self.width and 0 <= y <= self.height:
+            return True
+        else:
+            return False
+
+    # P2 4b
+    def childWindowAtLocation(self, x, y):
+        # only works if calling window has children, else returns 0
+        if len(self.childWindows) > 0:
+            recentHitTestStatus = None
+            recentHitTestDepth = 0
+            # in a nutshell the tree is traversed from right to left and the deepest most visible child window is returned
+            # recentHitTestDepth refers to the most recent window object with a positive Hittest result
+            # recentHittest Depth represents its depth
+            depth, deepestChild = self.helperFunction(x, y, recentHitTestStatus, recentHitTestDepth)
+
+            if deepestChild is not None:
+                return deepestChild
+            else:
+                return None
+        else:
+            return None
+
+    # P2 4b -helper function
+    def helperFunction(self, x, y, recentHitTestStatus, recentHitTestDepth):
+        # traverse childWindows Array right->left
+        for child in reversed(self.childWindows):
+
+            # this condition holds true when the recent window with poisitive hittest has no children
+            # this way we know that there is no child deeper in the tree (more visible) than it, so we return it
+            if (recentHitTestStatus is not None) and (len(recentHitTestStatus.childWindows) == 0):
+                return recentHitTestDepth, recentHitTestStatus
+
+            # coordinate conversion w.r.t child inorder to correctly perform the hittest
+            newX, newY = self.convertPositionToScreen(x, y)
+            convertedX, convertedY = child.convertPositionFromScreen(newX, newY)
+
+            # this condition holds true when the current childs hittest is positive for the very first iteration
+            if (child.hitTest(convertedX, convertedY)) and (recentHitTestStatus is None):
+                # we assign our placeholders (see ChildWindowAtLocation) with current window
+                recentHitTestStatus = child
+                recentHitTestDepth = child.depth
+
+            # for a positive hittest here we undergo a case distinction
+            elif (child.hitTest(convertedX, convertedY)) and (recentHitTestStatus is not None):
+                # if child has the most visible top level window parent
+                if child.compareTopLevelWindows(recentHitTestStatus) == child:
+                    # we assign our placeholders (see ChildWindowAtLocation) with current window
+                    recentHitTestStatus = child
+                    recentHitTestDepth = child.depth
+
+                # if both child and reventHittestStatus have the same toplevel window parent, check that child's depth in the tree
+                # is greater or equal to the recentHittestStatus
+                elif (child.compareTopLevelWindows(recentHitTestStatus) == 0) and (
+                        child.depth >= recentHitTestDepth):
+                    # we assign our placeholders (see ChildWindowAtLocation) with current window
+                    recentHitTestStatus = child
+                    recentHitTestDepth = child.depth
+
+            # we proceed by recursively calling the helperfunction provided the current child has children
+            if len(child.childWindows) > 0:
+                recentHitTestDepth, recentHitTestStatus = child.helperFunction(convertedX, convertedY,
+                                                                               recentHitTestStatus,
+                                                                               recentHitTestDepth)
+
+        return recentHitTestDepth, recentHitTestStatus
+
+    # P2 4b -helper function: checks the order of the respective toplevel windows of two window objects
+    def compareTopLevelWindows(self, window):
+        # calling Window
+        topLevelWindow1 = self.getTopLevelWindow()
+        # parameter window
+        topLevelWindow2 = window.getTopLevelWindow()
+
+        screen = topLevelWindow1.parentWindow
+
+        # if calling window has a more visible parent toplevel window, return calling window
+        if screen.childWindows.index(topLevelWindow1) > screen.childWindows.index(topLevelWindow2):
+            return self
+        # else if parameter window has a more visible parent toplevel window, return parameter window
+        elif screen.childWindows.index(topLevelWindow1) < screen.childWindows.index(topLevelWindow2):
+            return window
+        # else if both windows have the same toplevel window, return 0
+        elif screen.childWindows.index(topLevelWindow1) == screen.childWindows.index(topLevelWindow2):
+            return 0
+
+    # P2 4b -helper function: returns the toplevel window of a calling window object
+    def getTopLevelWindow(self):
+        if self.parentWindow.identifier != "SCREEN_1":
+
+            topLevelWindow = self
+            # traverse the window tree upwards until the parent of the window is "screen"
+            # meaning until the top level window on the path of window is found
+            while topLevelWindow.parentWindow.identifier != "SCREEN_1":
+                topLevelWindow = topLevelWindow.parentWindow
+
+            # add the top level window to the end of the list of children of screen
+            return topLevelWindow
+        else:
+            return self
+
+    # P2 4d
     def handleMouseClicked(self, x, y):
         print("click")
         # print("Window " + self.identifier + " was clicked.")
@@ -224,7 +242,6 @@ class Window:
             return False
 
 
-
 class Screen(Window):
     def __init__(self, windowSystem):
         super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", 0)
@@ -250,7 +267,6 @@ class Screen(Window):
         if len(self.childWindows) > 0:
             for c in self.childWindows:
                 c.super().resize(x, y, width, height)
-
 
     def checkIfInTaskbar(self, givenX, givenY):
         # (X1, Y1) of taskbar
@@ -282,10 +298,9 @@ class Screen(Window):
             startX = 40
             endX = 80
 
-            for child in self.childWindows:
+            for child in self.windowSystem.windowManager.openedTopLevelWindows:
 
                 if startX <= x <= endX and startY <= y <= endY:
-                    # print("i am in widget " + child.identifier)
 
                     if child.isHidden:
                         child.isHidden = False
