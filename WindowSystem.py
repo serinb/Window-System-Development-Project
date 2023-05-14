@@ -10,6 +10,9 @@ and Serin Bazzi (437585)
 from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
+from UITK import *
+
+# from UITK import *
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -25,6 +28,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
+        self.dragging = False
 
     def start(self):
         self.windowManager = WindowManager(self)
@@ -38,9 +42,9 @@ class WindowSystem(GraphicsEventSystem):
         green_window = self.createWindowOnScreen(100, 100, 300, 300, "Green", self.screen, COLOR_GREEN)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(500, 400, 160, 150, "Yellow", self.screen, COLOR_YELLOW)
+        yellow_window = self.createWindowOnScreen(500, 400, 170, 100, "Yellow", self.screen, COLOR_YELLOW)
 
-        blue_window = self.createWindowOnScreen(30, 30, 160, 150, "Blue", green_window, COLOR_BLUE)
+        blue_window = self.createWindowOnScreen(30, 30, 170, 120, "Blue", green_window, COLOR_BLUE)
 
     """
     WINDOW MANAGEMENT
@@ -52,6 +56,8 @@ class WindowSystem(GraphicsEventSystem):
         if parentWindow is not None:
             newWindow = Window(x, y, width, height, identifier, parentWindow.depth + 1)
             parentWindow.addChildWindow(newWindow)
+            if parentWindow == self.screen:
+                self.windowManager.openWindow(newWindow)
             # self.widgetOrder.append(newWindow)
         else:
             newWindow = Screen(self)
@@ -105,7 +111,8 @@ class WindowSystem(GraphicsEventSystem):
             self.bringWindowToFront(clickedWindow)
             self.requestRepaint()
             if clickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
-                print("title bar area")
+                # allow the user to dragg the window
+                self.dragging = True
             else:
                 print("not title bar area")
 
@@ -117,6 +124,9 @@ class WindowSystem(GraphicsEventSystem):
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
+        # do not allow the user to dragg the window if mouse is released
+
+        self.dragging = False
 
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
@@ -159,7 +169,17 @@ class WindowSystem(GraphicsEventSystem):
         pass
 
     def handleMouseDragged(self, x, y):
-        pass
+        if self.dragging:
+            # difference between old and new (x,y) coordinates
+            differenceX = x - self.recentX
+            differenceY = y - self.recentY
+            self.lastClickedWindow.x = self.lastClickedWindow.x + differenceX
+            self.lastClickedWindow.y = self.lastClickedWindow.y + differenceY
+
+            self.recentX = x
+            self.recentY = y
+            if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
+                self.requestRepaint()
 
     def handleKeyPressed(self, char):
         pass
