@@ -97,6 +97,7 @@ class WindowSystem(GraphicsEventSystem):
     """
 
     # P2 3c
+    # makes sure that the entire window tree is drawn upon creation
     def handlePaint(self):
         self.screen.draw(self.graphicsContext)
 
