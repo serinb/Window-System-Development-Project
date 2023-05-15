@@ -43,7 +43,7 @@ class WindowSystem(GraphicsEventSystem):
         green_window = self.createWindowOnScreen(100, 100, 300, 300, "Green", COLOR_GREEN)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(500, 400, 170, 100, "Yellow", COLOR_YELLOW)
+        yellow_window = self.createWindowOnScreen(500, 400, 170, 150, "Yellow", COLOR_YELLOW)
 
         blue_window = self.createWindowOnScreen(30, 30, 200, 120, "Blue", COLOR_BLUE)
 
@@ -51,7 +51,10 @@ class WindowSystem(GraphicsEventSystem):
         # yellow_window.addChildWindow(testLabel)
 
         testLabel = self.createWidgetOnWindow(30, 40, 120, 30, yellow_window, "Label on Yellow Window", "Hi i am here",
-                                              COLOR_ORANGE, COLOR_BLACK)
+                                              COLOR_ORANGE, COLOR_BLACK, 'label')
+
+        testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",
+                                               COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
 
         # testButton = Button(200, 100, 100, 40, "Test Button")
         # blue_window.addChildWindow(testButton)
@@ -76,16 +79,22 @@ class WindowSystem(GraphicsEventSystem):
         newWindow.backgroundColor = backgroundColor
         return newWindow
 
+
+    def printSomething(self):
+        print("Button1 pressed.")
+
+
     def createWidgetOnWindow(self, x, y, width, height, parentWindow, identifier, textString, textColor,
-                             backgroundColor):
+                             backgroundColor, widgetType, action=None):
         # create new widget object anhand des coordinates
         # global coordinates
-        convertedX, convertedY = parentWindow.convertPositionToScreen(x, y)  # 530, 440
-        print("create methode" + " : " + str(convertedX) + "  " + str(convertedY))
-        newWidget = Label(convertedX, convertedY, width, height, identifier, textString, textColor, backgroundColor)
-        # parentWindow.widgets.append(newWidget)
-        parentWindow.addChildWindow(newWidget)
+        convertedX, convertedY = parentWindow.convertPositionToScreen(x, y)
+        if widgetType == "label":
+            newWidget = Label(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor)
+        elif widgetType == "button":
+            newWidget = Button(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor, action)
 
+        parentWindow.addChildWindow(newWidget)
         return newWidget
 
     # P2 1d
@@ -136,7 +145,7 @@ class WindowSystem(GraphicsEventSystem):
             self.bringWindowToFront(clickedWindow)
             self.requestRepaint()
             if clickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
-                # allow the user to dragg the window
+                # allow the user to drag the window
                 self.dragging = True
             else:
                 print("not title bar area")
@@ -158,37 +167,38 @@ class WindowSystem(GraphicsEventSystem):
                 self.screen.clickedTaskbarEvent(x, y)
 
         else:
-            # for close and minimizing
-            if self.lastClickedWindow.checkIfInTitleBar(x, y):
-                convertedX, convertedY = self.lastClickedWindow.convertPositionFromScreen(x, y)
+            if self.lastClickedWindow.parentWindow == self.screen:
+                # for close and minimizing
+                if self.lastClickedWindow.checkIfInTitleBar(x, y) :
+                    convertedX, convertedY = self.lastClickedWindow.convertPositionFromScreen(x, y)
 
-                # defining regions for close and minimizing
-                # (X1, Y1) of close button
-                closeX1 = self.lastClickedWindow.width - 29
-                closeY1 = 0
+                    # defining regions for close and minimizing
+                    # (X1, Y1) of close button
+                    closeX1 = self.lastClickedWindow.width - 29
+                    closeY1 = 0
 
-                # (X2, Y2) of close button
-                closeX2 = self.lastClickedWindow.width
-                closeY2 = 30
+                    # (X2, Y2) of close button
+                    closeX2 = self.lastClickedWindow.width
+                    closeY2 = 30
 
-                # (X1, Y1) of minimize button
-                minimizeX1 = self.lastClickedWindow.width - 43
-                minimizeY1 = 0
+                    # (X1, Y1) of minimize button
+                    minimizeX1 = self.lastClickedWindow.width - 43
+                    minimizeY1 = 0
 
-                # (X2, Y2) of minimize button
-                minimizeX2 = self.lastClickedWindow.width - 30
-                minimizeY2 = 30
+                    # (X2, Y2) of minimize button
+                    minimizeX2 = self.lastClickedWindow.width - 30
+                    minimizeY2 = 30
 
-                # closing
-                if closeX1 <= convertedX <= closeX2 and closeY1 <= convertedY <= closeY2:
-                    self.windowManager.closeWindow(self.lastClickedWindow)
+                    # closing
+                    if closeX1 <= convertedX <= closeX2 and closeY1 <= convertedY <= closeY2:
+                        self.windowManager.closeWindow(self.lastClickedWindow)
 
-                # minimizing
-                if minimizeX1 <= convertedX <= minimizeX2 and minimizeY1 <= convertedY <= minimizeY2:
-                    self.windowManager.minimizeWindow(self.lastClickedWindow)
+                    # minimizing
+                    if minimizeX1 <= convertedX <= minimizeX2 and minimizeY1 <= convertedY <= minimizeY2:
+                        self.windowManager.minimizeWindow(self.lastClickedWindow)
 
-            if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
-                self.lastClickedWindow.handleMouseClicked(x, y)
+                if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
+                    self.lastClickedWindow.handleMouseClicked(x, y)
 
     def handleMouseMoved(self, x, y):
         pass

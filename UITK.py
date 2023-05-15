@@ -26,7 +26,7 @@ class Container(Widget):
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, width, height, identifier, textString="", textColor=COLOR_BLACK,
+    def __init__(self, originX, originY, positionInParentX, positionInparentY, width, height, identifier, textString="", textColor=COLOR_BLACK,
                  backgroundColor=COLOR_CLEAR):
         super().__init__(originX, originY, width, height, identifier)
         self.textString = textString
@@ -34,19 +34,21 @@ class Label(Widget):
         self.backgroundColor = backgroundColor
         # self.font = font
 
-    def draw(self, ctx):
-        # provide label's coordinates as local coordinates of the parent window and convert these to global coordinates
-        #convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
-        print("Yellow window  " + str(self.parentWindow.x) + "  " + str(self.parentWindow.y))
-        #print("draw methode" + " : " + str(convertedX) + "  " + str(convertedY))
-        # newX, newY = self
-        # self.x = 530 self.y = 440
-        # globale koordinaten von dem Label
-        convertedX, convertedY = self.parentWindow.convertPositionFromScreen(self.x, self.y) # 30, 40
-        print("Converted " + str(convertedX) + "  " + str(convertedY))
-        newX, newY = self.parentWindow.convertPositionToScreen(convertedX, convertedY)
+        #this is the local position of the label within its parent window
+        self.positionInParentX = positionInParentX
+        self.positionInParentY = positionInparentY
 
-        ctx.setOrigin(newX, newY)
+    #TODO create a function that updates label's x,y to current position of parent Window
+    #
+
+    def draw(self, ctx):
+        # calculates the label's global coordinates w.r.t to its position within the parent window
+        # and w.r.t to the new global position of the parent window
+        convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.positionInParentX, self.positionInParentY)
+        # update the global coordinates of the label to current position
+        self.x, self.y = convertedX, convertedY
+
+        ctx.setOrigin(convertedX, convertedY)
 
         ctx.setFillColor(self.backgroundColor)
 
@@ -62,18 +64,29 @@ class Label(Widget):
 
 
 class Button(Label):
-    def __init__(self, originX, originY, width, height, identifier, action=None):
+    def __init__(self, originX, originY, positionInParentX, positionInparentY, width, height, identifier, textString, textColor, backgroundColor, action=None):
         # super().__init__(originX, originY, width, height, identifier)
         # quit the app, in the calculator zifferneingabe
-        super().__init__(originX, originY, width, height, identifier)
+        super().__init__(originX, originY, positionInParentX, positionInparentY, width, height, identifier)
         self.action = action
         self.isHovered = False
         self.isPressed = False
+        self.textColor = textColor
+        self.backgroundColor = backgroundColor
+        self.textString = textString
+
+    def handleAction(self, function):
+        #if is pressed == true and function is not none
+         #return call(function)
+        pass
+
+
+
 
     def draw(self, ctx):
-        convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
-        ctx.setOrigin(convertedX, convertedY)
-        # super().draw(ctx)
+        #convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
+        #ctx.setOrigin(convertedX, convertedY)
+        super().draw(ctx)
         if self.isHovered:
             color = COLOR_YELLOW
         elif self.isPressed:
@@ -82,7 +95,7 @@ class Button(Label):
             color = COLOR_BLUE
         ctx.setStrokeColor(color)
         ctx.strokeRect(0, 0, self.width, self.height)
-        ctx.strokeRect(15, 15, self.width - 15, self.height - 15)
+        ctx.strokeRect(15, 15, self.width - 5, self.height - 5)
 
     # handleMouse Events for Button:
     # if moved im Bereich des Buttons -> isHovered = True
