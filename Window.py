@@ -15,6 +15,7 @@ AllAnchors = namedtuple('AllAnchors', "top right bottom left")
 # i.e. 1 - top, 2 - right, 4 - bottom, 8 - left corner
 LayoutAnchor = AllAnchors(1 << 0, 1 << 1, 1 << 2, 1 << 3)
 
+
 class Window:
     def __init__(self, originX, originY, width, height, identifier, depth=1):
         self.x = originX
@@ -95,7 +96,7 @@ class Window:
         # (0,0, ... , ...) - the first zeros refers to the top-left corner of the current window coordinate system
         ctx.fillRect(0, 0, self.width, self.height)
 
-        #call the draw function on calling window objects children
+        # call the draw function on calling window objects children
         if self.childWindows is not None:
             # parent window draws its child views
             for c in self.childWindows:
@@ -258,10 +259,10 @@ class Screen(Window):
                 if c.isHidden is False:
                     c.draw(ctx)
                     self.windowSystem.windowManager.decorateWindow(c, ctx)
-                    if len(c.childWindows) > 0:
-                        for gc in c.childWindows:
-                            gc.draw(ctx)
-                            self.windowSystem.windowManager.decorateWindow(gc, ctx)
+                    # if len(c.childWindows) > 0:
+                    #     for gc in c.childWindows:
+                    #         gc.draw(ctx)
+                            # self.windowSystem.windowManager.decorateWindow(gc, ctx)
 
     def resize(self, x, y, width, height):
         if len(self.childWindows) > 0:
