@@ -51,6 +51,14 @@ class Window:
         if window not in self.childWindows:
             self.childWindows.append(window)
 
+    def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
+                             childBackgroundColor):
+        convertedX, convertedY = self.convertPositionToScreen(childX, childY)
+        childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier,
+                             self.depth + 1)
+        childWindow.backgroundColor = childBackgroundColor
+        self.addChildWindow(childWindow)
+
     # P2 1a
     def removeFromParentWindow(self):
         # provided that self has a parent
@@ -260,10 +268,9 @@ class Window:
     # P2 4d
     def handleMouseClicked(self, x, y):
         print("click")
-        # print("Window " + self.identifier + " was clicked.")
 
     # P3 (7) Resizing windows and simple layout
-    # Changes the position and size of the current window to the given parameters.
+    # Changes the position and size of the current window to the given parameters
     def resize(self, x, y, width, height):
         if width < self.minWidth:
             width = self.minWidth
@@ -292,6 +299,19 @@ class Window:
         else:
             return False
 
+    def checkIfInResizingArea(self, givenX, givenY):
+        convertedX, convertedY = self.convertPositionFromScreen(givenX, givenY)
+        resizeX1 = self.width - 15
+        resizeY1 = self.height - 15
+
+        resizeX2 = self.width
+        resizeY2 = self.height
+
+        if resizeX1 <= convertedX <= resizeX2 and resizeY1 <= convertedY <= resizeY2:
+            return True
+        else:
+            return False
+
 
 class Screen(Window):
     def __init__(self, windowSystem):
@@ -313,7 +333,7 @@ class Screen(Window):
                         # if len(c.childWindows) > 0:
                         #     for gc in c.childWindows:
                         #         gc.draw(ctx)
-                                # self.windowSystem.windowManager.decorateWindow(gc, ctx)
+                        # self.windowSystem.windowManager.decorateWindow(gc, ctx)
 
     def resize(self, x, y, width, height):
         if len(self.childWindows) > 0:

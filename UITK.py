@@ -26,7 +26,7 @@ class Container(Widget):
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, positionInParentX, positionInparentY, width, height, identifier, textString="", textColor=COLOR_BLACK,
+    def __init__(self, originX, originY, width, height, identifier, textString="", textColor=COLOR_BLACK,
                  backgroundColor=COLOR_CLEAR):
         super().__init__(originX, originY, width, height, identifier)
         self.textString = textString
@@ -34,21 +34,18 @@ class Label(Widget):
         self.backgroundColor = backgroundColor
         # self.font = font
 
-        #this is the local position of the label within its parent window
-        self.positionInParentX = positionInParentX
-        self.positionInParentY = positionInparentY
-
-    #TODO create a function that updates label's x,y to current position of parent Window
-    #
+    def createWindowInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
+                             childBackgroundColor):
+        pass
 
     def draw(self, ctx):
         # calculates the label's global coordinates w.r.t to its position within the parent window
         # and w.r.t to the new global position of the parent window
-        convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.positionInParentX, self.positionInParentY)
+        # convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.positionInParentX, self.positionInParentY)
         # update the global coordinates of the label to current position
-        self.x, self.y = convertedX, convertedY
+        #self.x, self.y = convertedX, convertedY
 
-        ctx.setOrigin(convertedX, convertedY)
+        #ctx.setOrigin(convertedX, convertedY)
 
         ctx.setFillColor(self.backgroundColor)
 
@@ -61,6 +58,9 @@ class Label(Widget):
         # ctx.setFont(Font(family="Helvetica", size=22, weight="normal"))
 
         ctx.drawString(self.textString, 5, 5)
+
+    def handleMousePressed(self, x, y):
+        print("i am in hadle mouse event in label")
 
 
 class Button(Label):

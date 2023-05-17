@@ -10,7 +10,8 @@ and Serin Bazzi (437585)
 from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
-#from UITK import *
+
+from UITK import *
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -28,6 +29,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentY = 0
         self.lastClickedWindow = None
         self.dragging = False
+        self.allowResizing = False
 
     def start(self):
         # WINDOW MANAGER
@@ -35,12 +37,20 @@ class WindowSystem(GraphicsEventSystem):
 
         # SCREEN (P2 1b)
         self.screen = Screen(self)
+        self.mousePressed = False
+        self.mouseMoved = False
+        self.recentX = 0
+        self.recentY = 0
+        self.lastClickedWindow = None
+        self.dragging = False
+        self.allowResizing = False
+
 
         # GRAY_WINDOW
         gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
 
         # Child of GRAY_WINDOW
-        self.createWindowInWindow(gray_window, 20, 20, 200, 250, "Red", COLOR_RED)
+        redWindow = gray_window.createWindowInWindow(20, 20, 200, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
         blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
@@ -48,16 +58,15 @@ class WindowSystem(GraphicsEventSystem):
         # YELLOW_WINDOW
         yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
 
-        purple_window1 = self.createWindowInWindow(yellow_window, 30, 40, 70, 50, "Purple1", COLOR_PURPLE)
+        purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
 
-        purple_window2 = self.createWindowInWindow(yellow_window, 30, 100, 70, 50, "Purple2", COLOR_PURPLE)
+        purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
 
-        purple_window3 = self.createWindowInWindow(yellow_window, 30, 160, 70, 50, "Purple3", COLOR_PURPLE)
+        purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
 
+        # testLabel = self.createWidgetOnWindow(30, 40, 120, 30, yellow_window, "Label on Yellow Window", "Hi i am here", COLOR_ORANGE, COLOR_BLACK, "label", None)
 
-        #testLabel = self.createWidgetOnWindow(30, 40, 120, 30, yellow_window, "Label on Yellow Window", "Hi i am here",COLOR_ORANGE, COLOR_BLACK, 'label')
-
-        #testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
+        # testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
 
         # testButton = Button(200, 100, 100, 40, "Test Button")
         # blue_window.addChildWindow(testButton)
@@ -82,36 +91,19 @@ class WindowSystem(GraphicsEventSystem):
 
         return newWindow
 
-    #TODO implement in WINDOW class
-    def createWindowInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier, childBackgroundcolor):
-
-        if parentWindow is not None:
-            convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-            childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier, parentWindow.depth + 1)
-            childWindow.backgroundColor = childBackgroundcolor
-            parentWindow.addChildWindow(childWindow)
-
-
-        """
-        def printSomething(self):
-        print("Button1 pressed.")
-        """
-
-
-    """
-    def createWidgetOnWindow(self, x, y, width, height, parentWindow, identifier, textString, textColor,
-                             backgroundColor, widgetType, action=None):
-        # create new widget object anhand des coordinates
-        # global coordinates
-        convertedX, convertedY = parentWindow.convertPositionToScreen(x, y)
-        if widgetType == "label":
-            newWidget = Label(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor)
-        elif widgetType == "button":
-            newWidget = Button(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor, action)
-
-        parentWindow.addChildWindow(newWidget)
-        return newWidget
-        """
+    # def createWidgetOnWindow(self, x, y, width, height, parentWindow, identifier, textString, textColor,
+    #                          backgroundColor, widgetType, action=None):
+    #     # create new widget object anhand des coordinates
+    #     # global coordinates
+    #     newWidget = None
+    #     convertedX, convertedY = parentWindow.convertPositionToScreen(x, y)
+    #     if widgetType == "label":
+    #         newWidget = Label(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor)
+    #     elif widgetType == "button":
+    #         newWidget = Button(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor, action)
+    #
+    #     parentWindow.addChildWindow(newWidget)
+    #     return newWidget
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -152,6 +144,8 @@ class WindowSystem(GraphicsEventSystem):
     def handleMousePressed(self, x, y):
         # print(str(x) + "  " + str(y))
         self.dragging = False
+        self.allowResizing = False
+        self.allowResizingForMove = False
         self.mousePressed = True
         self.recentX = x
         self.recentY = y
@@ -161,9 +155,14 @@ class WindowSystem(GraphicsEventSystem):
             self.lastClickedWindow = clickedWindow
             self.bringWindowToFront(clickedWindow)
             self.requestRepaint()
+            # dragging
             if clickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
                 # allow the user to drag the window
                 self.dragging = True
+            # resizing
+            elif self.lastClickedWindow.checkIfInResizingArea(self.recentX, self.recentY):
+                # allow the user to resize the window
+                self.allowResizing = True
             else:
                 print("not title bar area")
 
@@ -178,6 +177,7 @@ class WindowSystem(GraphicsEventSystem):
 
         # do not allow the user to dragg the window if mouse is released
         self.dragging = False
+        self.allowResizing = False
 
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
@@ -186,7 +186,7 @@ class WindowSystem(GraphicsEventSystem):
         else:
             if self.lastClickedWindow.parentWindow == self.screen:
                 # for close and minimizing
-                if self.lastClickedWindow.checkIfInTitleBar(x, y) :
+                if self.lastClickedWindow.checkIfInTitleBar(x, y):
                     convertedX, convertedY = self.lastClickedWindow.convertPositionFromScreen(x, y)
 
                     # defining regions for close and minimizing
@@ -218,6 +218,12 @@ class WindowSystem(GraphicsEventSystem):
                     self.lastClickedWindow.handleMouseClicked(x, y)
 
     def handleMouseMoved(self, x, y):
+        # only works when mouse is mouving and not pressed
+        # useful for hovering effect in buttons
+        # childAtWindowLocation can be executed
+        # and if there is a button in that location
+        # we request a repaint
+        # print("Mouse moving")
         pass
 
     def handleMouseDragged(self, x, y):
@@ -232,7 +238,26 @@ class WindowSystem(GraphicsEventSystem):
 
                 self.recentX = x
                 self.recentY = y
-                if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
+
+                # update origin x,y for children of lastClickedWindow
+                if self.lastClickedWindow.childWindows:
+                    for c in self.lastClickedWindow.childWindows:
+                        c.x = c.x + differenceX
+                        c.y = c.y + differenceY
+
+                if self.windowManager.checkWindowPosition(self.lastClickedWindow, self.lastClickedWindow.x, self.lastClickedWindow.y):
+                    self.requestRepaint()
+
+            if self.allowResizing:
+                #x,y are global coordinates
+                newWidth, newHeight = self.lastClickedWindow.convertPositionFromScreen(x,y)
+                self.lastClickedWindow.resize(self.lastClickedWindow.x, self.lastClickedWindow.y, newWidth, newHeight)
+                # erlaube repaint nur in dem fall wenn window.width < self.screen.width
+                # window.height < self.screen.height
+                # und x und y die hier übergeben werden nicht ausserhalb des screens rausgucken
+                # if self.lastClickedWindow.width < self.screen.width and self.lastClickedWindow.height < self.screen.height \
+                # and self.screen.x <= x <= self.screen.width and self.screen.y <= y <= self.screen.height - 60:
+                if  self.lastClickedWindow.x + newWidth <= self.screen.width and self.lastClickedWindow.y + newHeight <= self.screen.height - 50:
                     self.requestRepaint()
 
     def handleKeyPressed(self, char):
