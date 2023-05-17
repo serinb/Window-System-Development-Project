@@ -37,8 +37,8 @@ class WindowManager:
 
         # we define that a window is only allowed to exceed the boundaries of the screen
         # by half of its titlebar width and height
-        topBoundary = 0.5 * self.titleBarHeight
-        bottomBoundary = self.windowSystem.screen.height - 70
+        topBoundary = -0.5 * self.titleBarHeight
+        bottomBoundary = self.windowSystem.screen.height - window.height - 50
 
         leftBoundary = - halfWindowWidth
         rightBoundary = self.windowSystem.screen.width - halfWindowWidth
