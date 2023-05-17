@@ -51,6 +51,14 @@ class Window:
         if window not in self.childWindows:
             self.childWindows.append(window)
 
+    def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
+                             childBackgroundColor):
+        convertedX, convertedY = self.convertPositionToScreen(childX, childY)
+        childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier,
+                             self.depth + 1)
+        childWindow.backgroundColor = childBackgroundColor
+        self.addChildWindow(childWindow)
+
     # P2 1a
     def removeFromParentWindow(self):
         # provided that self has a parent
