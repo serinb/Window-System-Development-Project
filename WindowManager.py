@@ -105,19 +105,19 @@ class WindowManager:
     # Add an instance of the WM to the window system
     def drawDesktop(self, ctx):
         # fill the screen with a nice color
-        ctx.setFillColor("#bca9e1")
+        ctx.setFillColor("#fff")
         # your wallpaper should draw correctly even if the window system is created with a different screen size
         width, height = self.windowSystem.screen.width, self.windowSystem.screen.height
         ctx.fillRect(0, 0, width, height)
 
     # P3 (6) Task bar
     def drawTaskbar(self, ctx):
-        ctx.setFillColor("#f7f383")
+        ctx.setFillColor("#3b28a2")
         ctx.fillRect(0, self.windowSystem.screen.height - 50, self.windowSystem.screen.width,
                      self.windowSystem.screen.height)
 
         # "terminate / start menu" button
-        ctx.setFillColor("#49ab5a")
+        ctx.setFillColor("#6459cb")
         ctx.fillRect(0, self.windowSystem.screen.height - 50, 40, self.windowSystem.screen.height)
         ctx.drawString("S", 13.5, self.windowSystem.screen.height - 35)
 

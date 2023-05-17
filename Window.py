@@ -45,19 +45,19 @@ class Window:
 
     # P2 1a
     def addChildWindow(self, window):
-        # assign calling window as the parent of new child window
+        # assign self as the parent of new child window
         window.parentWindow = self
-        # add child window to local list of window children, provided it does not yet exist in list
+        # add child window to self's list of window children, provided it does not yet exist in list
         if window not in self.childWindows:
             self.childWindows.append(window)
 
     # P2 1a
     def removeFromParentWindow(self):
-        # provided the calling window has a parent
+        # provided that self has a parent
         if self.parentWindow:
-            # delete it from its parent's list of window children
+            # delete self from its parent's list of window children
             self.parentWindow.childWindows.remove(self)
-            # and delete the calling window's parent
+            # and delete self's parent
             self.parentWindow = None
 
     # P2 2a
@@ -258,11 +258,12 @@ class Screen(Window):
             for c in self.childWindows:
                 if c.isHidden is False:
                     c.draw(ctx)
-                    self.windowSystem.windowManager.decorateWindow(c, ctx)
-                    # if len(c.childWindows) > 0:
-                    #     for gc in c.childWindows:
-                    #         gc.draw(ctx)
-                            # self.windowSystem.windowManager.decorateWindow(gc, ctx)
+                    if c.depth == 1:
+                        self.windowSystem.windowManager.decorateWindow(c, ctx)
+                        # if len(c.childWindows) > 0:
+                        #     for gc in c.childWindows:
+                        #         gc.draw(ctx)
+                                # self.windowSystem.windowManager.decorateWindow(gc, ctx)
 
     def resize(self, x, y, width, height):
         if len(self.childWindows) > 0:
