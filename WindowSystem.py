@@ -10,7 +10,7 @@ and Serin Bazzi (437585)
 from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
-from UITK import *
+#from UITK import *
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -36,25 +36,28 @@ class WindowSystem(GraphicsEventSystem):
         # SCREEN (P2 1b)
         self.screen = Screen(self)
 
-        # WHITE_WINDOW
-        white_window = self.createWindowOnScreen(20, 20, 400, 400, "White", COLOR_WHITE)
+        # GRAY_WINDOW
+        gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
+
+        # Child of GRAY_WINDOW
+        self.createWindowInWindow(gray_window, 20, 20, 200, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
-        green_window = self.createWindowOnScreen(100, 100, 300, 300, "Green", COLOR_GREEN)
+        blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(500, 400, 170, 150, "Yellow", COLOR_YELLOW)
+        yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
 
-        blue_window = self.createWindowOnScreen(30, 30, 200, 120, "Blue", COLOR_BLUE)
+        purple_window1 = self.createWindowInWindow(yellow_window, 30, 40, 70, 50, "Purple1", COLOR_PURPLE)
 
-        # testLabel = Label(30, 40, 120, 30, "Label", "Hi", COLOR_ORANGE, COLOR_BLACK)
-        # yellow_window.addChildWindow(testLabel)
+        purple_window2 = self.createWindowInWindow(yellow_window, 30, 100, 70, 50, "Purple2", COLOR_PURPLE)
 
-        testLabel = self.createWidgetOnWindow(30, 40, 120, 30, yellow_window, "Label on Yellow Window", "Hi i am here",
-                                              COLOR_ORANGE, COLOR_BLACK, 'label')
+        purple_window3 = self.createWindowInWindow(yellow_window, 30, 160, 70, 50, "Purple3", COLOR_PURPLE)
 
-        testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",
-                                               COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
+
+        #testLabel = self.createWidgetOnWindow(30, 40, 120, 30, yellow_window, "Label on Yellow Window", "Hi i am here",COLOR_ORANGE, COLOR_BLACK, 'label')
+
+        #testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
 
         # testButton = Button(200, 100, 100, 40, "Test Button")
         # blue_window.addChildWindow(testButton)
@@ -65,25 +68,37 @@ class WindowSystem(GraphicsEventSystem):
 
     # P2 1c
     def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor):
-        # provided parentWindow parameter is given, create a new window
         # creates a new window object with given parameters
         # depth is needed for the P2 4b
-        newWindow = Window(x, y, width, height, identifier, 1)
-        # add new window object to parent's list of window children
-        self.screen.addChildWindow(newWindow)
-        # add a window to the openedTopLevelList for the fixed order in the task bar
-
-        self.windowManager.openWindow(newWindow)
-        # self.widgetOrder.append(newWindow)
+        newWindow = Window(x, y, width, height, identifier)
         # assign preset background color for new window object
         newWindow.backgroundColor = backgroundColor
+        # add new window object to parent's list of window children
+        self.screen.addChildWindow(newWindow)
+
+        # add a window to the openedTopLevelList for the fixed order in the task bar
+        self.windowManager.openWindow(newWindow)
+        # self.widgetOrder.append(newWindow)
+
         return newWindow
 
 
-    def printSomething(self):
+    def createWindowInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier, childBackgroundcolor):
+
+        if parentWindow is not None:
+            convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
+            childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier, parentWindow.depth + 1)
+            childWindow.backgroundColor = childBackgroundcolor
+            parentWindow.addChildWindow(childWindow)
+
+
+        """
+        def printSomething(self):
         print("Button1 pressed.")
+        """
 
 
+    """
     def createWidgetOnWindow(self, x, y, width, height, parentWindow, identifier, textString, textColor,
                              backgroundColor, widgetType, action=None):
         # create new widget object anhand des coordinates
@@ -96,14 +111,16 @@ class WindowSystem(GraphicsEventSystem):
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
+        """
 
     # P2 1d
     def bringWindowToFront(self, window):
         # if window is a direct child of screen
-        if window.parentWindow.identifier == "SCREEN_1":
+        if window.parentWindow == self.screen:
             # remove it from the list of window children of the screen to prevent duplicates
             window.removeFromParentWindow()
-            #  append this window to the end of the child window list of the screen
+            # append this window to the end of the child window list of the screen
+            # so that it is the most visible window on the screen
             self.screen.addChildWindow(window)
         else:
             # else if window is not a direct child of screen
@@ -204,7 +221,8 @@ class WindowSystem(GraphicsEventSystem):
         pass
 
     def handleMouseDragged(self, x, y):
-        if self.lastClickedWindow is not None:
+        # only toplevel windows should be moved, for that we make sure that parent is screen
+        if self.lastClickedWindow is not None and self.lastClickedWindow.parentWindow == self.screen:
             if self.dragging:
                 # difference between old and new (x,y) coordinates
                 differenceX = x - self.recentX
