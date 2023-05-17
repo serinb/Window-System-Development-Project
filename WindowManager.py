@@ -96,8 +96,7 @@ class WindowManager:
     def closeWindow(self, window):
         window.isClosed = True
         window.removeFromParentWindow()
-        if window.parentWindow == self.windowSystem.screen:
-            self.openedTopLevelWindows.remove(window)
+        self.openedTopLevelWindows.remove(window)
         window.isHidden = True
         self.windowSystem.requestRepaint()
 
