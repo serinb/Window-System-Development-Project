@@ -245,7 +245,7 @@ class WindowSystem(GraphicsEventSystem):
                         c.x = c.x + differenceX
                         c.y = c.y + differenceY
 
-                if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
+                if self.windowManager.checkWindowPosition(self.lastClickedWindow, self.lastClickedWindow.x, self.lastClickedWindow.y):
                     self.requestRepaint()
 
             if self.allowResizing:

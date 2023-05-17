@@ -31,18 +31,17 @@ class WindowManager:
     # Valid - if at least some part of the title bar is visible on screen
     # use this method in task 5 to prevent dragging a window outside the screen.
     def checkWindowPosition(self, window, x, y):
-        print(window.identifier)
 
-        halfTitleBarHeight = 0.5 * self.titleBarHeight
+
         halfWindowWidth = 0.5 * window.width
 
         # we define that a window is only allowed to exceed the boundaries of the screen
         # by half of its titlebar width and height
-        topBoundary = - self.titleBarHeight
-        bottomBoundary = self.windowSystem.screen.height - 50
+        topBoundary = 0.5 * self.titleBarHeight
+        bottomBoundary = self.windowSystem.screen.height - 70
 
         leftBoundary = - halfWindowWidth
-        rightBoundary = self.windowSystem.screen.width + halfWindowWidth
+        rightBoundary = self.windowSystem.screen.width - halfWindowWidth
 
         if leftBoundary <= x <= rightBoundary and topBoundary <= y <= bottomBoundary:
             return True
