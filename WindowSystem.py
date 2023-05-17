@@ -38,11 +38,13 @@ class WindowSystem(GraphicsEventSystem):
         # SCREEN (P2 1b)
         self.screen = Screen(self)
         self.mousePressed = False
+        self.mouseMoved = False
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
         self.dragging = False
         self.allowResizing = False
+
 
         # GRAY_WINDOW
         gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
@@ -153,9 +155,11 @@ class WindowSystem(GraphicsEventSystem):
             self.lastClickedWindow = clickedWindow
             self.bringWindowToFront(clickedWindow)
             self.requestRepaint()
+            # dragging
             if clickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
                 # allow the user to drag the window
                 self.dragging = True
+            # resizing
             elif self.lastClickedWindow.checkIfInResizingArea(self.recentX, self.recentY):
                 # allow the user to resize the window
                 self.allowResizing = True
@@ -214,12 +218,12 @@ class WindowSystem(GraphicsEventSystem):
                     self.lastClickedWindow.handleMouseClicked(x, y)
 
     def handleMouseMoved(self, x, y):
-        #self.allowResizingForMove = False
-        # self.allowResizing = True
-        # if self.allowResizingForMove:
-        #     if self.lastClickedWindow.checkIfInResizingArea(x, y):
-        #         # allow the user to resize the window
-        #         self.allowResizing = True
+        # only works when mouse is mouving and not pressed
+        # useful for hovering effect in buttons
+        # childAtWindowLocation can be executed
+        # and if there is a button in that location
+        # we request a repaint
+        # print("Mouse moving")
         pass
 
     def handleMouseDragged(self, x, y):
@@ -235,6 +239,7 @@ class WindowSystem(GraphicsEventSystem):
                 self.recentX = x
                 self.recentY = y
 
+                # update origin x,y for children of lastClickedWindow
                 if self.lastClickedWindow.childWindows:
                     for c in self.lastClickedWindow.childWindows:
                         c.x = c.x + differenceX
@@ -244,15 +249,16 @@ class WindowSystem(GraphicsEventSystem):
                     self.requestRepaint()
 
             if self.allowResizing:
-                newWidth = x
-                newHeight = y
+                #x,y are global coordinates
+                newWidth, newHeight = self.lastClickedWindow.convertPositionFromScreen(x,y)
                 self.lastClickedWindow.resize(self.lastClickedWindow.x, self.lastClickedWindow.y, newWidth, newHeight)
                 # erlaube repaint nur in dem fall wenn window.width < self.screen.width
                 # window.height < self.screen.height
                 # und x und y die hier übergeben werden nicht ausserhalb des screens rausgucken
                 # if self.lastClickedWindow.width < self.screen.width and self.lastClickedWindow.height < self.screen.height \
                 # and self.screen.x <= x <= self.screen.width and self.screen.y <= y <= self.screen.height - 60:
-                self.requestRepaint()
+                if  self.lastClickedWindow.x + newWidth <= self.screen.width and self.lastClickedWindow.y + newHeight <= self.screen.height - 50:
+                    self.requestRepaint()
 
     def handleKeyPressed(self, char):
         pass
