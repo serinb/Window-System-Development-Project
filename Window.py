@@ -111,6 +111,55 @@ class Window:
         else:
             return False
 
+
+    def childWindowAtLocation2(self, x, y):
+        currentWindow = self
+
+        #calling window has to have child window to return output that is not None
+        if len(currentWindow.childWindows) > 0:
+            #get child on the far right in window tree, as it is the visible one (highest z-index)
+            lastIndex = len(currentWindow.childWindows)-1
+            lastChild = currentWindow.childWindows[lastIndex]
+
+            #convert x,y w.r.t lastchild coordinate system
+            newX, newY = currentWindow.convertPositionToScreen(x,y)
+            resX, resY = lastChild.convertPositionFromScreen(newX, newY)
+
+            # CASE 1: calling Window has no grandchild
+            # in this case we return calling windows direct child
+            if len(lastChild.childWindows) == 0 and lastChild.hitTest(resX,resY):
+                return lastChild
+
+            # CASE 2: calling Window has grandchild
+            # We need to check if hitTest TRUE for grandchild
+            # if so we do recursive call on child
+            elif len(lastChild.childWindows) >= 1 and lastChild.hitTest(resX,resY):
+                #get grandchild on far right in Window Tree
+                lastLastIndex = len(lastChild.childWindows)-1
+                lastGrandchild = lastChild.childWindows[lastLastIndex]
+                #convert x,y coordinates w.r.t grandchild coordinate system
+                newResX, newResY = lastGrandchild.convertPositionFromScreen(newX, newY)
+                #if hitTest on grandchild is TRUE do recursive call on lastchild
+                if lastGrandchild.hitTest(newResX, newResY):
+                    return lastChild.childWindowAtLocation(resX, resY)
+                #else return lastchild as the deepest visible descendant window
+                else:
+                    return lastChild
+            # no visible child at position x,y
+            else:
+                return None
+        else:
+            None
+
+    # if calling window has no children, return none regardless of whether hittest positive or negative
+    # else if calling window HAS children, do following:
+        # traverse children from right to left
+        # for each child
+            # if hittest is positive and child has no children, return child
+            # else if hittest is positive and child has children
+                #recursive call on grandchildren
+
+
     # P2 4b
     def childWindowAtLocation(self, x, y):
         # only works if calling window has children, else returns 0
@@ -134,7 +183,7 @@ class Window:
         # traverse childWindows Array right->left
         for child in reversed(self.childWindows):
 
-            # this condition holds true when the recent window with poisitive hittest has no children
+            # this condition holds true when the recent window with positive hittest has no children
             # this way we know that there is no child deeper in the tree (more visible) than it, so we return it
             if (recentHitTestStatus is not None) and (len(recentHitTestStatus.childWindows) == 0):
                 return recentHitTestDepth, recentHitTestStatus
@@ -166,7 +215,7 @@ class Window:
                     recentHitTestDepth = child.depth
 
             # we proceed by recursively calling the helperfunction provided the current child has children
-            if len(child.childWindows) > 0:
+            if (child.hitTest(convertedX, convertedY)) and len(child.childWindows) > 0:
                 recentHitTestDepth, recentHitTestStatus = child.helperFunction(convertedX, convertedY,
                                                                                recentHitTestStatus,
                                                                                recentHitTestDepth)
@@ -206,6 +255,7 @@ class Window:
             return topLevelWindow
         else:
             return self
+
 
     # P2 4d
     def handleMouseClicked(self, x, y):
