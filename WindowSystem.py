@@ -239,6 +239,11 @@ class WindowSystem(GraphicsEventSystem):
                 self.recentX = x
                 self.recentY = y
 
+                if self.lastClickedWindow.childWindows:
+                    for c in self.lastClickedWindow.childWindows:
+                        c.x = c.x + differenceX
+                        c.y = c.y + differenceY
+
                 if self.windowManager.checkWindowPosition(self.lastClickedWindow, x, y):
                     self.requestRepaint()
 
