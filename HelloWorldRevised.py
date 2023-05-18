@@ -17,7 +17,6 @@ class HellowWorld:
 
     def __init__(self, windowSystem):
         self.windowSystem = windowSystem
-        window = None
 
     def start(self):
 
