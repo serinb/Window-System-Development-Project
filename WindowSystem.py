@@ -50,7 +50,7 @@ class WindowSystem(GraphicsEventSystem):
         gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
 
         # Child of GRAY_WINDOW
-        redWindow = gray_window.createWindowInWindow(20, 20, 200, 250, "Red", COLOR_RED)
+        redWindow = gray_window.createWindowInWindow(2, 2, 200, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
         blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)

@@ -53,6 +53,10 @@ class Window:
 
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor):
+        #child should not appear behind the taskbar
+        offsetTitleBar = 30
+        if childY <= offsetTitleBar:
+            childY += offsetTitleBar
         convertedX, convertedY = self.convertPositionToScreen(childX, childY)
         childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier,
                              self.depth + 1)
@@ -158,15 +162,6 @@ class Window:
                 return None
         else:
             None
-
-    # if calling window has no children, return none regardless of whether hittest positive or negative
-    # else if calling window HAS children, do following:
-        # traverse children from right to left
-        # for each child
-            # if hittest is positive and child has no children, return child
-            # else if hittest is positive and child has children
-                #recursive call on grandchildren
-
 
     # P2 4b
     def childWindowAtLocation(self, x, y):
