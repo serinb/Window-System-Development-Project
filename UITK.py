@@ -38,7 +38,7 @@ class Label(Widget):
                              childBackgroundColor):
         pass
 
-    def draw(self, ctx):
+    def draw(self, ctx, drawingWidth, drawingHeight):
         # calculates the label's global coordinates w.r.t to its position within the parent window
         # and w.r.t to the new global position of the parent window
         # convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.positionInParentX, self.positionInParentY)
@@ -49,7 +49,7 @@ class Label(Widget):
 
         ctx.setFillColor(self.backgroundColor)
 
-        ctx.fillRect(0, 0, self.width, self.height)
+        ctx.fillRect(0, 0, drawingWidth, drawingHeight)
 
         ctx.setStrokeColor(self.textColor)
 
@@ -83,10 +83,10 @@ class Button(Label):
 
 
 
-    def draw(self, ctx):
+    def draw(self, ctx, drawingWidth, drawingHeight):
         #convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
         #ctx.setOrigin(convertedX, convertedY)
-        super().draw(ctx)
+        super().draw(ctx, drawingWidth, drawingHeight)
         if self.isHovered:
             color = COLOR_YELLOW
         elif self.isPressed:
@@ -109,5 +109,5 @@ class Slider(Widget):
         self.value = 0.0
         self.dragging = False
 
-    def draw(self, ctx):
-        super().draw(ctx)
+    def draw(self, ctx, drawingWidth, drawingHeight):
+        super().draw(ctx, drawingWidth, drawingHeight)
