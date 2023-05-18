@@ -25,11 +25,6 @@ class WindowManager:
     def openWindow(self, window):
         self.openedTopLevelWindows.append(window)
 
-    # P3 (3) Negotiating window positions
-    # to identify whether a window can exist at a given location
-    # return a boolean value whether the passed proposed position for a window is valid.
-    # Valid - if at least some part of the title bar is visible on screen
-    # use this method in task 5 to prevent dragging a window outside the screen.
     def checkWindowPosition(self, window, x, y):
 
 
@@ -83,6 +78,39 @@ class WindowManager:
         # resize Button
         ctx.setFillColor(COLOR_BLACK)
         ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
+
+    def dragWindow(self, window, x, y):
+        # difference between old and new (x,y) coordinates
+        differenceX = x - self.windowSystem.recentX
+        differenceY = y - self.windowSystem.recentY
+        window.x = window.x + differenceX
+        window.y = window.y + differenceY
+
+        self.windowSystem.recentX = x
+        self.windowSystem.recentY = y
+
+        # update origin x,y for children of lastClickedWindow
+        if window.childWindows:
+            for c in window.childWindows:
+                c.x = c.x + differenceX
+                c.y = c.y + differenceY
+
+        if self.checkWindowPosition(window, window.x, window.y):
+            self.windowSystem.requestRepaint()
+
+    def resizeWindow(self, window, x, y):
+        #x,y are global coordinates
+        newWidth, newHeight = window.convertPositionFromScreen(x,y)
+        window.resize(window.x, window.y, newWidth, newHeight)
+        # erlaube repaint nur in dem fall wenn window.width < self.screen.width
+        # window.height < self.screen.height
+        # und x und y die hier übergeben werden nicht ausserhalb des screens rausgucken
+        # if self.lastClickedWindow.width < self.screen.width and self.lastClickedWindow.height < self.screen.height \
+        # and self.screen.x <= x <= self.screen.width and self.screen.y <= y <= self.screen.height - 60:
+        if  window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
+            self.windowSystem.requestRepaint()
+
+
 
     # P3 (5)
     def minimizeWindow(self, window):

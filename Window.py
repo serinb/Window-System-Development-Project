@@ -299,8 +299,8 @@ class Window:
         self.x = x
         self.y = y
 
-    def checkIfInTitleBar(self, givenX, givenY):
-        convertedX, convertedY = self.convertPositionFromScreen(givenX, givenY)
+    def checkIfInTitleBar(self, x, y):
+        convertedX, convertedY = self.convertPositionFromScreen(x, y)
         windowWidth = self.width
         windowHeight = self.height
 
@@ -317,8 +317,47 @@ class Window:
         else:
             return False
 
-    def checkIfInResizingArea(self, givenX, givenY):
-        convertedX, convertedY = self.convertPositionFromScreen(givenX, givenY)
+    def checkIfInCloseButton(self, x, y):
+        if self.checkIfInTitleBar(x, y):
+            convertedX, convertedY = self.convertPositionFromScreen(x, y)
+
+            # defining regions for close and minimizing
+            # (X1, Y1) of close button
+            closeX1 = self.width - 29
+            closeY1 = 0
+
+            # (X2, Y2) of close button
+            closeX2 = self.width
+            closeY2 = 30
+
+            # closing
+            if closeX1 <= convertedX <= closeX2 and closeY1 <= convertedY <= closeY2:
+                return True
+            else:
+                return False
+
+
+    def checkIfInMinimizeButton(self, x, y):
+        if self.checkIfInTitleBar(x, y):
+            convertedX, convertedY = self.convertPositionFromScreen(x, y)
+
+            # (X1, Y1) of minimize button
+            minimizeX1 = self.width - 43
+            minimizeY1 = 0
+
+            # (X2, Y2) of minimize button
+            minimizeX2 = self.width - 30
+            minimizeY2 = 30
+
+            # minimizing
+            if minimizeX1 <= convertedX <= minimizeX2 and minimizeY1 <= convertedY <= minimizeY2:
+                return True
+            else:
+                return False
+
+
+    def checkIfInResizingArea(self, x, y):
+        convertedX, convertedY = self.convertPositionFromScreen(x, y)
         resizeX1 = self.width - 15
         resizeY1 = self.height - 15
 
@@ -360,7 +399,7 @@ class Screen(Window):
             for c in self.childWindows:
                 c.super().resize(x, y, width, height)
 
-    def checkIfInTaskbar(self, givenX, givenY):
+    def checkIfInTaskbar(self, x, y):
         # (X1, Y1) of taskbar
         taskBarX1 = 0
         taskBarY1 = self.height - 50
@@ -369,7 +408,7 @@ class Screen(Window):
         taskBarX2 = self.width
         taskBarY2 = self.height
 
-        if taskBarX1 <= givenX <= taskBarX2 and taskBarY1 <= givenY <= taskBarY2:
+        if taskBarX1 <= x <= taskBarX2 and taskBarY1 <= y <= taskBarY2:
             return True
         else:
             return False

@@ -179,41 +179,31 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
+        # TODO hier müssen wir checken dass bei der gleichen position released wurde,
+        # TODO wie bei pressed
+        #
+        # execute taskbar interaction event
+        # if clicked window is screen
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
                 self.screen.clickedTaskbarEvent(x, y)
 
         else:
+            # if clicked window is a toplevel w
             if self.lastClickedWindow.parentWindow == self.screen:
                 # for close and minimizing
                 if self.lastClickedWindow.checkIfInTitleBar(x, y):
                     convertedX, convertedY = self.lastClickedWindow.convertPositionFromScreen(x, y)
 
-                    # defining regions for close and minimizing
-                    # (X1, Y1) of close button
-                    closeX1 = self.lastClickedWindow.width - 29
-                    closeY1 = 0
-
-                    # (X2, Y2) of close button
-                    closeX2 = self.lastClickedWindow.width
-                    closeY2 = 30
-
-                    # (X1, Y1) of minimize button
-                    minimizeX1 = self.lastClickedWindow.width - 43
-                    minimizeY1 = 0
-
-                    # (X2, Y2) of minimize button
-                    minimizeX2 = self.lastClickedWindow.width - 30
-                    minimizeY2 = 30
-
-                    # closing
-                    if closeX1 <= convertedX <= closeX2 and closeY1 <= convertedY <= closeY2:
+                    # handle the close window event
+                    if self.lastClickedWindow.checkIfInCloseButton(x,y):
                         self.windowManager.closeWindow(self.lastClickedWindow)
 
-                    # minimizing
-                    if minimizeX1 <= convertedX <= minimizeX2 and minimizeY1 <= convertedY <= minimizeY2:
+                    # handle the minimize window event
+                    if self.lastClickedWindow.checkIfInMinimizeButton(x,y):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
+                # register that mouseclick event just happenend
                 if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
                     self.lastClickedWindow.handleMouseClicked(x, y)
 
@@ -227,38 +217,18 @@ class WindowSystem(GraphicsEventSystem):
         pass
 
     def handleMouseDragged(self, x, y):
+        # here dragging and resizing operations are handled
+
         # only toplevel windows should be moved, for that we make sure that parent is screen
         if self.lastClickedWindow is not None and self.lastClickedWindow.parentWindow == self.screen:
+
+            # dragging operation
             if self.allowDragging:
-                # difference between old and new (x,y) coordinates
-                differenceX = x - self.recentX
-                differenceY = y - self.recentY
-                self.lastClickedWindow.x = self.lastClickedWindow.x + differenceX
-                self.lastClickedWindow.y = self.lastClickedWindow.y + differenceY
+                self.windowManager.dragWindow(self.lastClickedWindow, x, y)
 
-                self.recentX = x
-                self.recentY = y
-
-                # update origin x,y for children of lastClickedWindow
-                if self.lastClickedWindow.childWindows:
-                    for c in self.lastClickedWindow.childWindows:
-                        c.x = c.x + differenceX
-                        c.y = c.y + differenceY
-
-                if self.windowManager.checkWindowPosition(self.lastClickedWindow, self.lastClickedWindow.x, self.lastClickedWindow.y):
-                    self.requestRepaint()
-
+            # resizing operation
             if self.allowResizing:
-                #x,y are global coordinates
-                newWidth, newHeight = self.lastClickedWindow.convertPositionFromScreen(x,y)
-                self.lastClickedWindow.resize(self.lastClickedWindow.x, self.lastClickedWindow.y, newWidth, newHeight)
-                # erlaube repaint nur in dem fall wenn window.width < self.screen.width
-                # window.height < self.screen.height
-                # und x und y die hier übergeben werden nicht ausserhalb des screens rausgucken
-                # if self.lastClickedWindow.width < self.screen.width and self.lastClickedWindow.height < self.screen.height \
-                # and self.screen.x <= x <= self.screen.width and self.screen.y <= y <= self.screen.height - 60:
-                if  self.lastClickedWindow.x + newWidth <= self.screen.width and self.lastClickedWindow.y + newHeight <= self.screen.height - 50:
-                    self.requestRepaint()
+                self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
     def handleKeyPressed(self, char):
         pass
