@@ -55,15 +55,18 @@ class Button(Label):
     def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor,
                  action=None):
         super().__init__(originX, originY, width, height, identifier, textString, textColor, backgroundColor)
-        self.action = action
+
         self.isHovered = False
         self.isPressed = False
+        self.isActive = False
+        self.action = action
 
-    def handleAction(self, function):
-        # if is pressed == true and function is not none
-        # return call(function)
-        # requestRepaint
-        pass
+    def handleAction(self):
+        if self.isActive:
+            self.isActive = False
+            self.action()
+
+
 
     def draw(self, ctx, drawingWidth, drawingHeight):
         super().draw(ctx, drawingWidth, drawingHeight)

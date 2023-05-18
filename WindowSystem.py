@@ -64,18 +64,18 @@ class WindowSystem(GraphicsEventSystem):
 
         purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
 
-        # testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
-
-        # testButton = Button(200, 100, 100, 40, "Test Button")
-        # blue_window.addChildWindow(testButton)
-        testLabel = self.createLabelInWindow(gray_window, 30, 40, 120, 30, "Label on Yellow Window", "Label",
+        testLabel = self.createLabelInWindow(gray_window, 50, 40, 120, 30, "Label on Yellow Window", "Label",
                                              COLOR_GREEN, COLOR_BLACK)
-        testButton = self.createButtonInWindow(gray_window, 30, 100, 120, 30, "Button on Yellow Window", "Click me",
-                                             COLOR_BLACK, COLOR_LIGHT_GRAY)
+        testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
+                                             COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
+
 
     """
     WINDOW MANAGEMENT
     """
+
+    def printSomething(self):
+        print("yoyoyo")
 
     # P2 1c
     def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor):
@@ -113,8 +113,6 @@ class WindowSystem(GraphicsEventSystem):
         parentWindow.addChildWindow(newWidget)
         return newWidget
 
-    def printSomething(self):
-        pass
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -164,6 +162,16 @@ class WindowSystem(GraphicsEventSystem):
             self.bringWindowToFront(self.lastClickedWindow)
             self.requestRepaint()
 
+            if isinstance(self.lastClickedWindow, Button):
+                self.lastClickedButton = self.lastClickedWindow
+
+            # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and requestRepaint
+            if (self.lastClickedButton is not None) and (self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
+                    print("Button pressed")
+                    self.lastClickedButton.isPressed = True
+                    self.lastClickedButton.isHovered = False
+                    self.requestRepaint()
+
             # preparing for dragging operation
             if self.lastClickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
                 # flip dragging flag
@@ -180,6 +188,7 @@ class WindowSystem(GraphicsEventSystem):
             if self.screen.checkIfInTaskbar(x, y):
                 print('milestone 4')
                 # self.screen.clickedTaskbarEvent(x,y)
+
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -215,6 +224,13 @@ class WindowSystem(GraphicsEventSystem):
                 # register that mouseclick event just happenend
                 if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
                     self.lastClickedWindow.handleMouseClicked(x, y)
+
+            elif self.lastClickedButton is not None and self.lastClickedButton.isPressed:
+                    self.lastClickedButton.isPressed = False
+                    self.lastClickedButton.isHovered = True
+                    self.lastClickedButton.isActive = True
+                    self.lastClickedButton.handleAction()
+                    self.requestRepaint()
 
     def handleMouseMoved(self, x, y):
 
