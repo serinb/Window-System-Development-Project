@@ -57,6 +57,17 @@ class Window:
         offsetTitleBar = 30
         if childY <= offsetTitleBar:
             childY += offsetTitleBar
+        #child should stay within left-right-bottom margin
+        margin = 16
+        #check left margin
+        if childX <= margin:
+            childX += margin
+        #check bottom margin
+        if childX + childWidth > self.width:
+            childWidth = childWidth - (childWidth + childX - self.width) - margin
+        if childY + childHeight > self.height:
+            childHeight = childHeight - (childHeight - childY - self.height) - margin
+
         convertedX, convertedY = self.convertPositionToScreen(childX, childY)
         childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier,
                              self.depth + 1)
@@ -97,7 +108,7 @@ class Window:
             return convertedX, convertedY
 
     # P2 3b
-    def draw(self, ctx):
+    def draw(self, ctx, drawingWidth, drawingHeight):
         # translates the origin coordinates of the coordinate system for ctx
         # based on the global coordinates self.x and self.y
         ctx.setOrigin(self.x, self.y)
@@ -106,13 +117,25 @@ class Window:
         ctx.setFillColor(self.backgroundColor)
 
         # (0,0, ... , ...) - the first zeros refers to the top-left corner of the current window coordinate system
-        ctx.fillRect(0, 0, self.width, self.height)
+        ctx.fillRect(0, 0, drawingWidth, drawingHeight)
 
         # call the draw function on calling window objects children
         if self.childWindows is not None:
             # parent window draws its child views
             for c in self.childWindows:
-                c.draw(ctx)
+                #calculate the deepest x,y coordinate of child inside of parent coordinate system
+                inParentX, inParentY = self.convertPositionFromScreen(c.x,c.y)
+                margin = 16
+                deepestX = inParentX + c.width
+                deepestY = inParentY + c.height
+                drawingWidth = c.width
+                drawingHeight = c.height
+                if deepestX > self.width - margin:
+                    drawingWidth = c.width - (c.width + inParentX - self.width) - margin
+                if deepestY > self.height - margin:
+                    drawingHeight = c.height - (c.height + inParentY - self.height) - margin
+                print(str(drawingWidth) + " " + str(drawingHeight))
+                c.draw(ctx, drawingWidth, drawingHeight)
 
     # P2 4a
     def hitTest(self, x, y):
@@ -315,14 +338,16 @@ class Screen(Window):
 
     # Override the draw method of your Screen to call your WindowManager wallpaper implementation
     # Call your WM’s decorateWindow implementation
-    def draw(self, ctx):
+    def draw(self, ctx, drawingWidth, drawingHeight):
         # super().draw(ctx)
         self.windowSystem.windowManager.drawDesktop(ctx)
         self.windowSystem.windowManager.drawTaskbar(ctx)
         if len(self.childWindows) > 0:
             for c in self.childWindows:
                 if c.isHidden is False:
-                    c.draw(ctx)
+                    drawingWidth = c.width
+                    drawingHeight = c.height
+                    c.draw(ctx, drawingWidth, drawingHeight)
                     if c.depth == 1:
                         self.windowSystem.windowManager.decorateWindow(c, ctx)
                         # if len(c.childWindows) > 0:

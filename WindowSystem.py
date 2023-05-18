@@ -28,7 +28,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
-        self.dragging = False
+        self.allowDragging = False
         self.allowResizing = False
 
     def start(self):
@@ -42,7 +42,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
-        self.dragging = False
+        self.allowDragging = False
         self.allowResizing = False
 
 
@@ -50,7 +50,7 @@ class WindowSystem(GraphicsEventSystem):
         gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
 
         # Child of GRAY_WINDOW
-        redWindow = gray_window.createWindowInWindow(2, 2, 200, 250, "Red", COLOR_RED)
+        redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
         blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
@@ -135,48 +135,48 @@ class WindowSystem(GraphicsEventSystem):
     # P2 3c
     # makes sure that the entire window tree is drawn upon creation
     def handlePaint(self):
-        self.screen.draw(self.graphicsContext)
+        self.screen.draw(self.graphicsContext, self.screen.width, self.screen.height)
 
     """
     INPUT EVENTS
     """
 
     def handleMousePressed(self, x, y):
-        # print(str(x) + "  " + str(y))
-        self.dragging = False
-        self.allowResizing = False
-        self.allowResizingForMove = False
         self.mousePressed = True
         self.recentX = x
         self.recentY = y
-        clickedWindow = self.screen.childWindowAtLocation(x, y)
 
-        if clickedWindow is not None:
-            self.lastClickedWindow = clickedWindow
-            self.bringWindowToFront(clickedWindow)
+        if self.screen.childWindowAtLocation(x, y) is not None:
+
+            # handling bringing toplevel Window to front
+            self.lastClickedWindow = self.screen.childWindowAtLocation(x, y)
+            self.bringWindowToFront(self.lastClickedWindow)
             self.requestRepaint()
-            # dragging
-            if clickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
-                # allow the user to drag the window
-                self.dragging = True
-            # resizing
+
+            # preparing for dragging operation
+            if self.lastClickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
+                # flip dragging flag
+                self.allowDragging = True
+
+            # preparing for resizing operation
             elif self.lastClickedWindow.checkIfInResizingArea(self.recentX, self.recentY):
-                # allow the user to resize the window
+                # flip resizing flag
                 self.allowResizing = True
-            else:
-                print("not title bar area")
 
         else:
+            # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
             if self.screen.checkIfInTaskbar(x, y):
-                pass
+                print('milestone 4')
                 # self.screen.clickedTaskbarEvent(x,y)
+
+
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
 
-        # do not allow the user to dragg the window if mouse is released
-        self.dragging = False
+        # do not allow the user to drag/resize the window if mouse is released
+        self.allowDragging = False
         self.allowResizing = False
 
         if self.lastClickedWindow == self.screen:
@@ -229,7 +229,7 @@ class WindowSystem(GraphicsEventSystem):
     def handleMouseDragged(self, x, y):
         # only toplevel windows should be moved, for that we make sure that parent is screen
         if self.lastClickedWindow is not None and self.lastClickedWindow.parentWindow == self.screen:
-            if self.dragging:
+            if self.allowDragging:
                 # difference between old and new (x,y) coordinates
                 differenceX = x - self.recentX
                 differenceY = y - self.recentY
