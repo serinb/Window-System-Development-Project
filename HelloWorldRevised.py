@@ -7,11 +7,21 @@ by  Ulyana Lavnikevich (388633)
 and Serin Bazzi (437585)
 """
 
-from WindowSystem import *
+
 from WindowManager import *
 from UITK import *
 from Window import *
 
+
+class HellowWorld:
+
+    def __init__(self, windowSystem):
+        self.windowSystem = windowSystem
+        window = None
+
+    def start(self):
+
+        window = self.windowSystem.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
 
 

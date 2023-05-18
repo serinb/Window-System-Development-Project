@@ -12,7 +12,7 @@ from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
 from UITK import *
-from HelloWorldRevised import *
+
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -47,28 +47,38 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
+        import HelloWorldRevised
+
+        yo = HelloWorldRevised.HellowWorld(self)
+        yo.start()
+
+        #yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
+
+
         # GRAY_WINDOW
-        gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
+        gray_window = self.createWindowOnScreen(30, 20, 400, 350, "Gray", COLOR_GRAY)
 
         # Child of GRAY_WINDOW
-        redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
+        #redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
-        blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
+        #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
+        #yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
 
-        purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
+        #purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
 
-        purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
+        #purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
 
-        purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
+        #purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
 
-        testLabel = self.createLabelInWindow(gray_window, 50, 40, 120, 30, "Label on Yellow Window", "Label",
-                                             COLOR_GREEN, COLOR_BLACK)
-        testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
-                                             COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
+        #testLabel = self.createLabelInWindow(gray_window, 50, 40, 120, 30, "Label on Yellow Window", "Label",
+                                             #COLOR_GREEN, COLOR_BLACK)
+        #testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
+                                             #COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
+
+
 
 
     """
