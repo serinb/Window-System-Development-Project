@@ -111,6 +111,9 @@ class WindowSystem(GraphicsEventSystem):
         parentWindow.addChildWindow(newWidget)
         return newWidget
 
+    def printSomething(self):
+        pass
+
     # P2 1d
     def bringWindowToFront(self, window):
         # if window is a direct child of screen
@@ -218,7 +221,26 @@ class WindowSystem(GraphicsEventSystem):
         # and if there is a button in that location
         # we request a repaint
         # print("Mouse moving")
-        pass
+        # if gray window childWidowAtLocation is not None:
+        # self.lastClickedWidget =  gray.childWindowAtLocation(x, y)
+        # if isinstance(lastClickedWidget, Button):
+        # doSomeHovering for Button
+        widget = self.screen.childWindowAtLocation(x, y)
+        if isinstance(self.screen.childWindowAtLocation(x, y), Button):
+            # check if in button
+            if widget.x <= x <= widget.width + widget.x and widget.y <= y <= widget.height + widget.y:
+                print("widget.x and widget.y "+ str(widget.x) + "  " + str(widget.y))
+                print("x and y " + str(x) + "  " + str(y))
+                print(widget.identifier)
+
+                widget.isHovered = True
+                self.requestRepaint()
+                print("moving on Button....")
+            else:
+                widget.isHovered = False
+                self.requestRepaint()
+        # elif isinstance(widget, Button):
+            # widget.isHovered = False
 
     def handleMouseDragged(self, x, y):
         # here dragging and resizing operations are handled

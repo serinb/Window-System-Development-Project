@@ -62,6 +62,7 @@ class Button(Label):
     def handleAction(self, function):
         # if is pressed == true and function is not none
         # return call(function)
+        # requestRepaint
         pass
 
     def draw(self, ctx, drawingWidth, drawingHeight):
