@@ -12,6 +12,7 @@ from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
 from UITK import *
+from HelloWorldRevised import *
 
 
 class WindowSystem(GraphicsEventSystem):
