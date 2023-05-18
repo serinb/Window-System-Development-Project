@@ -66,8 +66,10 @@ class WindowSystem(GraphicsEventSystem):
 
         # testButton = Button(200, 100, 100, 40, "Test Button")
         # blue_window.addChildWindow(testButton)
-        testLabel = self.createLabelInWindow(gray_window, 30, 40, 120, 30, "Label on Yellow Window", "Hi i am here",
+        testLabel = self.createLabelInWindow(gray_window, 30, 40, 120, 30, "Label on Yellow Window", "Label",
                                              COLOR_GREEN, COLOR_BLACK)
+        testButton = self.createLabelInWindow(gray_window, 30, 100, 120, 30, "Button on Yellow Window", "Click me",
+                                             COLOR_ORANGE, COLOR_CLEAR)
 
     """
     WINDOW MANAGEMENT
@@ -95,6 +97,16 @@ class WindowSystem(GraphicsEventSystem):
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
         newWidget = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
                           childTextColor, childBackgroundColor)
+
+        parentWindow.addChildWindow(newWidget)
+        return newWidget
+
+    def createButtonInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
+                             childTextString, childTextColor, childBackgroundColor, action=None):
+        # global coordinates
+        convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
+        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
+                           childTextColor, childBackgroundColor, action)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget

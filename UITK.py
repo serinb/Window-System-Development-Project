@@ -52,9 +52,9 @@ class Label(Widget):
 
 
 class Button(Label):
-    def __init__(self, originX, originY, width, height, identifier, textString, font, textColor, backgroundColor,
+    def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor,
                  action=None):
-        super().__init__(originX, originY, width, height, identifier, textString, font, textColor, backgroundColor)
+        super().__init__(originX, originY, width, height, identifier, textString, textColor, backgroundColor)
         self.action = action
         self.isHovered = False
         self.isPressed = False
@@ -65,8 +65,6 @@ class Button(Label):
         pass
 
     def draw(self, ctx, drawingWidth, drawingHeight):
-        # convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
-        # ctx.setOrigin(convertedX, convertedY)
         super().draw(ctx, drawingWidth, drawingHeight)
         if self.isHovered:
             color = COLOR_YELLOW
@@ -74,9 +72,17 @@ class Button(Label):
             color = COLOR_RED
         else:
             color = COLOR_BLUE
-        ctx.setStrokeColor(color)
+
+        # ctx.setStrokeColor(color)
+        # ctx.strokeRect(0, 0, self.width, self.height)
+        # ctx.strokeRect(15, 15, self.width - 5, self.height - 5)
+        # ctx.setFillColor(color)
+        # ctx.fillRect(15, 15, self.width - 5, self.height - 5)
         ctx.strokeRect(0, 0, self.width, self.height)
-        ctx.strokeRect(15, 15, self.width - 5, self.height - 5)
+        ctx.strokeRect(3, 3, self.width - 3, self.height - 3)
+        ctx.setStrokeColor(color)
+
+
 
     # handleMouse Events for Button:
     # if moved im Bereich des Buttons -> isHovered = True
