@@ -45,10 +45,10 @@ class Label(Widget):
         font = Font(family=self.fontFamily, size=self.fontSize, weight=self.fontWeight)
         ctx.setFont(font)
         ctx.setStrokeColor(self.textColor)
-        ctx.drawString(self.text, 10, 5)
+        ctx.drawString(self.text, 10, 7)
 
     def handleMousePressed(self, x, y):
-        print("i am in hadle mouse event in label")
+        print("i am in handle mouse event in label")
 
 
 class Button(Label):
@@ -71,17 +71,11 @@ class Button(Label):
         elif self.isPressed:
             color = COLOR_RED
         else:
-            color = COLOR_BLUE
+            color = COLOR_GRAY
 
-        # ctx.setStrokeColor(color)
-        # ctx.strokeRect(0, 0, self.width, self.height)
-        # ctx.strokeRect(15, 15, self.width - 5, self.height - 5)
-        # ctx.setFillColor(color)
-        # ctx.fillRect(15, 15, self.width - 5, self.height - 5)
-        ctx.strokeRect(0, 0, self.width, self.height)
-        ctx.strokeRect(3, 3, self.width - 3, self.height - 3)
         ctx.setStrokeColor(color)
-
+        ctx.strokeRect(0, 0, self.width, self.height)
+        ctx.strokeRect(6, 6, self.width - 6, self.height - 6)
 
 
     # handleMouse Events for Button:

@@ -68,8 +68,8 @@ class WindowSystem(GraphicsEventSystem):
         # blue_window.addChildWindow(testButton)
         testLabel = self.createLabelInWindow(gray_window, 30, 40, 120, 30, "Label on Yellow Window", "Label",
                                              COLOR_GREEN, COLOR_BLACK)
-        testButton = self.createLabelInWindow(gray_window, 30, 100, 120, 30, "Button on Yellow Window", "Click me",
-                                             COLOR_ORANGE, COLOR_CLEAR)
+        testButton = self.createButtonInWindow(gray_window, 30, 100, 120, 30, "Button on Yellow Window", "Click me",
+                                             COLOR_BLACK, COLOR_LIGHT_GRAY)
 
     """
     WINDOW MANAGEMENT
