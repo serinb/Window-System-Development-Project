@@ -8,9 +8,9 @@ and Serin Bazzi (437585)
 """
 
 from GraphicsEventSystem import *
+
 from Window import *
 from WindowManager import *
-
 from UITK import *
 
 
@@ -38,13 +38,11 @@ class WindowSystem(GraphicsEventSystem):
         # SCREEN (P2 1b)
         self.screen = Screen(self)
         self.mousePressed = False
-        self.mouseMoved = False
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
         self.allowDragging = False
         self.allowResizing = False
-
 
         # GRAY_WINDOW
         gray_window = self.createWindowOnScreen(20, 20, 400, 350, "Gray", COLOR_GRAY)
@@ -64,12 +62,12 @@ class WindowSystem(GraphicsEventSystem):
 
         purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
 
-        # testLabel = self.createWidgetOnWindow(30, 40, 120, 30, yellow_window, "Label on Yellow Window", "Hi i am here", COLOR_ORANGE, COLOR_BLACK, "label", None)
-
         # testButton = self.createWidgetOnWindow(30, 70, 100, 30, yellow_window, "button in yellow window", "Button1",COLOR_GREEN, COLOR_PINK, 'button', print("hey"))
 
         # testButton = Button(200, 100, 100, 40, "Test Button")
         # blue_window.addChildWindow(testButton)
+        testLabel = self.createLabelInWindow(gray_window, 30, 40, 120, 30, "Label on Yellow Window", "Hi i am here",
+                                             COLOR_GREEN, COLOR_BLACK)
 
     """
     WINDOW MANAGEMENT
@@ -91,19 +89,15 @@ class WindowSystem(GraphicsEventSystem):
 
         return newWindow
 
-    # def createWidgetOnWindow(self, x, y, width, height, parentWindow, identifier, textString, textColor,
-    #                          backgroundColor, widgetType, action=None):
-    #     # create new widget object anhand des coordinates
-    #     # global coordinates
-    #     newWidget = None
-    #     convertedX, convertedY = parentWindow.convertPositionToScreen(x, y)
-    #     if widgetType == "label":
-    #         newWidget = Label(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor)
-    #     elif widgetType == "button":
-    #         newWidget = Button(convertedX, convertedY, x, y, width, height, identifier, textString, textColor, backgroundColor, action)
-    #
-    #     parentWindow.addChildWindow(newWidget)
-    #     return newWidget
+    def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
+                            childTextString, childTextColor, childBackgroundColor):
+        # global coordinates
+        convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
+        newWidget = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
+                          childTextColor, childBackgroundColor)
+
+        parentWindow.addChildWindow(newWidget)
+        return newWidget
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -170,8 +164,6 @@ class WindowSystem(GraphicsEventSystem):
                 print('milestone 4')
                 # self.screen.clickedTaskbarEvent(x,y)
 
-
-
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
 
@@ -196,11 +188,11 @@ class WindowSystem(GraphicsEventSystem):
                     convertedX, convertedY = self.lastClickedWindow.convertPositionFromScreen(x, y)
 
                     # handle the close window event
-                    if self.lastClickedWindow.checkIfInCloseButton(x,y):
+                    if self.lastClickedWindow.checkIfInCloseButton(x, y):
                         self.windowManager.closeWindow(self.lastClickedWindow)
 
                     # handle the minimize window event
-                    if self.lastClickedWindow.checkIfInMinimizeButton(x,y):
+                    if self.lastClickedWindow.checkIfInMinimizeButton(x, y):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
                 # register that mouseclick event just happenend
