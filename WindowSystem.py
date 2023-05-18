@@ -28,6 +28,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
+        self.lastClickedButton = None
         self.allowDragging = False
         self.allowResizing = False
 
@@ -41,6 +42,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentX = 0
         self.recentY = 0
         self.lastClickedWindow = None
+        self.lastClickedButton = None
         self.allowDragging = False
         self.allowResizing = False
 
@@ -215,20 +217,28 @@ class WindowSystem(GraphicsEventSystem):
                     self.lastClickedWindow.handleMouseClicked(x, y)
 
     def handleMouseMoved(self, x, y):
-        # only works when mouse is mouving and not pressed
-        # useful for hovering effect in buttons
-        # childAtWindowLocation can be executed
-        # and if there is a button in that location
-        # we request a repaint
-        # print("Mouse moving")
-        # if gray window childWidowAtLocation is not None:
-        # self.lastClickedWidget =  gray.childWindowAtLocation(x, y)
-        # if isinstance(lastClickedWidget, Button):
-        # doSomeHovering for Button
+
         widget = self.screen.childWindowAtLocation(x, y)
-        if isinstance(self.screen.childWindowAtLocation(x, y), Button):
-            # check if in button
-            if widget.x <= x <= widget.width + widget.x and widget.y <= y <= widget.height + widget.y:
+
+        # check if the widget is of type button
+        # if so, update lastClickedButton
+        if isinstance(widget, Button):
+            self.lastClickedButton = widget
+
+        # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and requestRepaint
+        if (self.lastClickedButton is not None) and (self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
+                self.lastClickedButton.isHovered = True
+                self.requestRepaint()
+
+        # if we are outside of lastClickedButton, we flip isHovered flag again to false and requestRepaint
+        elif (self.lastClickedButton is not None):
+                self.lastClickedButton.isHovered = False
+                self.requestRepaint()
+
+
+        """
+                # check if in button
+
                 print("widget.x and widget.y "+ str(widget.x) + "  " + str(widget.y))
                 print("x and y " + str(x) + "  " + str(y))
                 print(widget.identifier)
@@ -241,6 +251,8 @@ class WindowSystem(GraphicsEventSystem):
                 self.requestRepaint()
         # elif isinstance(widget, Button):
             # widget.isHovered = False
+
+        """
 
     def handleMouseDragged(self, x, y):
         # here dragging and resizing operations are handled
