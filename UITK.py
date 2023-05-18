@@ -26,66 +26,46 @@ class Container(Widget):
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, width, height, identifier, textString="", textColor=COLOR_BLACK,
-                 backgroundColor=COLOR_CLEAR):
+    def __init__(self, originX, originY, width, height, identifier, text, font, textColor, backgroundColor):
         super().__init__(originX, originY, width, height, identifier)
-        self.textString = textString
+        self.text = text
+        self.font = font
         self.textColor = textColor
         self.backgroundColor = backgroundColor
-        # self.font = font
-
-    def createWindowInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                             childBackgroundColor):
-        pass
 
     def draw(self, ctx, drawingWidth, drawingHeight):
         # calculates the label's global coordinates w.r.t to its position within the parent window
         # and w.r.t to the new global position of the parent window
         # convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.positionInParentX, self.positionInParentY)
         # update the global coordinates of the label to current position
-        #self.x, self.y = convertedX, convertedY
+        # self.x, self.y = convertedX, convertedY
 
-        #ctx.setOrigin(convertedX, convertedY)
-
-        ctx.setFillColor(self.backgroundColor)
-
-        ctx.fillRect(0, 0, drawingWidth, drawingHeight)
-
-        ctx.setStrokeColor(self.textColor)
-
-        # ctx.setFont(self.font)
-
-        # ctx.setFont(Font(family="Helvetica", size=22, weight="normal"))
-
-        ctx.drawString(self.textString, 5, 5)
+        # ctx.setOrigin(convertedX, convertedY)
+        super().draw(ctx, drawingWidth, drawingHeight)
+        ctx.setFont(self.font)
+        ctx.setFillColor(self.textColor)
+        ctx.drawString(self.text, 0, 0)
 
     def handleMousePressed(self, x, y):
         print("i am in hadle mouse event in label")
 
 
 class Button(Label):
-    def __init__(self, originX, originY, positionInParentX, positionInparentY, width, height, identifier, textString, textColor, backgroundColor, action=None):
-        # super().__init__(originX, originY, width, height, identifier)
-        # quit the app, in the calculator zifferneingabe
-        super().__init__(originX, originY, positionInParentX, positionInparentY, width, height, identifier)
+    def __init__(self, originX, originY, width, height, identifier, textString, font, textColor, backgroundColor,
+                 action=None):
+        super().__init__(originX, originY, width, height, identifier, textString, font, textColor, backgroundColor)
         self.action = action
         self.isHovered = False
         self.isPressed = False
-        self.textColor = textColor
-        self.backgroundColor = backgroundColor
-        self.textString = textString
 
     def handleAction(self, function):
-        #if is pressed == true and function is not none
-         #return call(function)
+        # if is pressed == true and function is not none
+        # return call(function)
         pass
 
-
-
-
     def draw(self, ctx, drawingWidth, drawingHeight):
-        #convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
-        #ctx.setOrigin(convertedX, convertedY)
+        # convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
+        # ctx.setOrigin(convertedX, convertedY)
         super().draw(ctx, drawingWidth, drawingHeight)
         if self.isHovered:
             color = COLOR_YELLOW

@@ -8,8 +8,11 @@ and Serin Bazzi (437585)
 """
 
 from GraphicsEventSystem import *
+
+from UITK import Label
 from WindowManager import *
 from collections import namedtuple
+from UITK import *
 
 AllAnchors = namedtuple('AllAnchors', "top right bottom left")
 # i.e. 1 - top, 2 - right, 4 - bottom, 8 - left corner
@@ -53,16 +56,16 @@ class Window:
 
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor):
-        #child should not appear behind the taskbar
+        # child should not appear behind the taskbar
         offsetTitleBar = 30
         if childY <= offsetTitleBar:
             childY += offsetTitleBar
-        #child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom margin
         margin = 16
-        #check left margin
+        # check left margin
         if childX <= margin:
             childX += margin
-        #check bottom margin
+        # check bottom margin
         if childX + childWidth > self.width:
             childWidth = childWidth - (childWidth + childX - self.width) - margin
         if childY + childHeight > self.height:
@@ -73,6 +76,27 @@ class Window:
                              self.depth + 1)
         childWindow.backgroundColor = childBackgroundColor
         self.addChildWindow(childWindow)
+
+    # def createLabelOnWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
+    #                          childBackgroundColor, text, font, textColor):
+    #     offsetTitleBar = 30
+    #     if childY <= offsetTitleBar:
+    #         childY += offsetTitleBar
+    #     # child should stay within left-right-bottom margin
+    #     margin = 16
+    #     # check left margin
+    #     if childX <= margin:
+    #         childX += margin
+    #     # check bottom margin
+    #     if childX + childWidth > self.width:
+    #         childWidth = childWidth - (childWidth + childX - self.width) - margin
+    #     if childY + childHeight > self.height:
+    #         childHeight = childHeight - (childHeight - childY - self.height) - margin
+    #
+    #     convertedX, convertedY = self.convertPositionToScreen(childX, childY)
+    #     label = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, text, font, textColor, childBackgroundColor)
+    #     label.backgroundColor = childBackgroundColor
+    #     self.addChildWindow(label)
 
     # P2 1a
     def removeFromParentWindow(self):
