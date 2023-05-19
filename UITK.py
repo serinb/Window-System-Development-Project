@@ -39,8 +39,6 @@ class Label(Widget):
         self.fontWeight = fontWeight
 
     def draw(self, ctx, width, height):
-        width = self.width
-        height = self.height
         super().draw(ctx, width, height)
         font = Font(family=self.fontFamily, size=self.fontSize, weight=self.fontWeight)
         ctx.setFont(font)

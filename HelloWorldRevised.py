@@ -17,21 +17,29 @@ class HellowWorld:
 
     def __init__(self, windowSystem):
         self.windowSystem = windowSystem
+        self.window = None
+        self.languageLabel = None
+        self.btn_german = None
 
     def start(self):
 
-        window = self.windowSystem.createWindowOnScreen(20, 20, 250, 300, "HelloWorld", COLOR_LIGHT_GREEN)
+        self.window = self.windowSystem.createWindowOnScreen(20, 20, 250, 300, "HelloWorld", COLOR_LIGHT_GREEN)
 
-        languageLabel = self.windowSystem.createLabelInWindow(window, 100, 40, 100, 20, "languageLabel",
-                                                              "Please select a language",  "#F6A800", COLOR_WHITE)
+        self.languageLabel = self.windowSystem.createLabelInWindow(self.window, 100, 40, 100, 20, "languageLabel",
+                                                              "Please select a language",  "#F6A800", COLOR_BLUE)
 
-        btn_german = self.windowSystem.createButtonInWindow(window, 100, 90, 70, 20, "btn_german", "Deutsch", COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.german_selected())
+        self.btn_german = self.windowSystem.createButtonInWindow(self.window, 100, 90, 70, 20, "btn_german", "Deutsch", COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.german_selected())
         # testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
         #         # COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
 
     def german_selected(self):
         # set the text attribute of languageLabel
         # languageLabel.config(text="Guten Tag", width=100)
-        print("hey")
-        # languageLabel.text = ""
+        self.languageLabel.text = "Guten Tag"
+        self.windowSystem.requestRepaint()
+
+
+    def inputHandler(self, char):
+       if char == 'g':
+           self.german_selected()
 
