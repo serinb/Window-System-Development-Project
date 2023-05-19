@@ -21,85 +21,72 @@ class Widget(Window):
 
 
 class Container(Widget):
+    def __init__(self, originX, originY, width, height, identifier, axis, spacing=20):
+        super().__init__(originX, originY, width, height, identifier)
+        self.spacing = spacing
+        # horizontal or vertical
+        self.axis = axis
+
+    # def addChildWindow(self, window):
+        # super().addChildWindow(window)
+
     def resize(self, x, y, width, height):
         super().resize(x, y, width, height)
+        # equally distribute its space across its children either on the horizontal or vertical axis
+        if self.axis == "h":
+            pass
+        elif self.axis == "v":
+            pass
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, width, height, identifier, textString="", textColor=COLOR_BLACK,
-                 backgroundColor=COLOR_CLEAR):
+    def __init__(self, originX, originY, width, height, identifier, text, textColor, backgroundColor,
+                 fontSize=14, fontFamily="Helvetica", fontWeight="normal"):
         super().__init__(originX, originY, width, height, identifier)
-        self.textString = textString
+        self.text = text
         self.textColor = textColor
         self.backgroundColor = backgroundColor
-        # self.font = font
 
-    def createWindowInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                             childBackgroundColor):
-        pass
+        # Font
+        self.fontSize = fontSize
+        self.fontFamily = fontFamily
+        self.fontWeight = fontWeight
 
-    def draw(self, ctx, drawingWidth, drawingHeight):
-        # calculates the label's global coordinates w.r.t to its position within the parent window
-        # and w.r.t to the new global position of the parent window
-        # convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.positionInParentX, self.positionInParentY)
-        # update the global coordinates of the label to current position
-        #self.x, self.y = convertedX, convertedY
-
-        #ctx.setOrigin(convertedX, convertedY)
-
-        ctx.setFillColor(self.backgroundColor)
-
-        ctx.fillRect(0, 0, drawingWidth, drawingHeight)
-
+    def draw(self, ctx, width, height):
+        super().draw(ctx, width, height)
+        font = Font(family=self.fontFamily, size=self.fontSize, weight=self.fontWeight)
+        ctx.setFont(font)
         ctx.setStrokeColor(self.textColor)
-
-        # ctx.setFont(self.font)
-
-        # ctx.setFont(Font(family="Helvetica", size=22, weight="normal"))
-
-        ctx.drawString(self.textString, 5, 5)
-
-    def handleMousePressed(self, x, y):
-        print("i am in hadle mouse event in label")
+        ctx.drawString(self.text, 10, 7)
 
 
 class Button(Label):
-    def __init__(self, originX, originY, positionInParentX, positionInparentY, width, height, identifier, textString, textColor, backgroundColor, action=None):
-        # super().__init__(originX, originY, width, height, identifier)
-        # quit the app, in the calculator zifferneingabe
-        super().__init__(originX, originY, positionInParentX, positionInparentY, width, height, identifier)
-        self.action = action
+    def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor,
+                 action=None):
+        super().__init__(originX, originY, width, height, identifier, textString, textColor, backgroundColor)
+
         self.isHovered = False
         self.isPressed = False
-        self.textColor = textColor
-        self.backgroundColor = backgroundColor
-        self.textString = textString
+        self.isActive = False
+        self.action = action
 
-    def handleAction(self, function):
-        #if is pressed == true and function is not none
-         #return call(function)
-        pass
-
-
-
+    def handleAction(self):
+        if self.isActive:
+            self.isActive = False
+            self.action()
 
     def draw(self, ctx, drawingWidth, drawingHeight):
-        #convertedX, convertedY = self.parentWindow.convertPositionToScreen(self.x, self.y)
-        #ctx.setOrigin(convertedX, convertedY)
         super().draw(ctx, drawingWidth, drawingHeight)
         if self.isHovered:
             color = COLOR_YELLOW
         elif self.isPressed:
             color = COLOR_RED
         else:
-            color = COLOR_BLUE
+            color = COLOR_GRAY
+
         ctx.setStrokeColor(color)
         ctx.strokeRect(0, 0, self.width, self.height)
-        ctx.strokeRect(15, 15, self.width - 5, self.height - 5)
-
-    # handleMouse Events for Button:
-    # if moved im Bereich des Buttons -> isHovered = True
-    # if pressed im Bereich des Buttons und if pressed und released in den gleichen x und y -> isPressed = True
+        ctx.strokeRect(6, 6, self.width - 6, self.height - 6)
 
 
 class Slider(Widget):

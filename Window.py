@@ -8,6 +8,7 @@ and Serin Bazzi (437585)
 """
 
 from GraphicsEventSystem import *
+
 from WindowManager import *
 from collections import namedtuple
 
@@ -53,16 +54,16 @@ class Window:
 
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor):
-        #child should not appear behind the taskbar
+        # child should not appear behind the taskbar
         offsetTitleBar = 30
         if childY <= offsetTitleBar:
             childY += offsetTitleBar
-        #child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom margin
         margin = 16
-        #check left margin
+        # check left margin
         if childX <= margin:
             childX += margin
-        #check bottom margin
+        # check bottom margin
         if childX + childWidth > self.width:
             childWidth = childWidth - (childWidth + childX - self.width) - margin
         if childY + childHeight > self.height:
@@ -123,8 +124,8 @@ class Window:
         if self.childWindows is not None:
             # parent window draws its child views
             for c in self.childWindows:
-                #calculate the deepest x,y coordinate of child inside of parent coordinate system
-                inParentX, inParentY = self.convertPositionFromScreen(c.x,c.y)
+                # calculate the deepest x,y coordinate of child inside of parent coordinate system
+                inParentX, inParentY = self.convertPositionFromScreen(c.x, c.y)
                 margin = 16
                 deepestX = inParentX + c.width
                 deepestY = inParentY + c.height
@@ -134,7 +135,6 @@ class Window:
                     drawingWidth = c.width - (c.width + inParentX - self.width) - margin
                 if deepestY > self.height - margin:
                     drawingHeight = c.height - (c.height + inParentY - self.height) - margin
-                print(str(drawingWidth) + " " + str(drawingHeight))
                 c.draw(ctx, drawingWidth, drawingHeight)
 
     # P2 4a
@@ -146,54 +146,14 @@ class Window:
         else:
             return False
 
-
-    def childWindowAtLocation2(self, x, y):
-        currentWindow = self
-
-        #calling window has to have child window to return output that is not None
-        if len(currentWindow.childWindows) > 0:
-            #get child on the far right in window tree, as it is the visible one (highest z-index)
-            lastIndex = len(currentWindow.childWindows)-1
-            lastChild = currentWindow.childWindows[lastIndex]
-
-            #convert x,y w.r.t lastchild coordinate system
-            newX, newY = currentWindow.convertPositionToScreen(x,y)
-            resX, resY = lastChild.convertPositionFromScreen(newX, newY)
-
-            # CASE 1: calling Window has no grandchild
-            # in this case we return calling windows direct child
-            if len(lastChild.childWindows) == 0 and lastChild.hitTest(resX,resY):
-                return lastChild
-
-            # CASE 2: calling Window has grandchild
-            # We need to check if hitTest TRUE for grandchild
-            # if so we do recursive call on child
-            elif len(lastChild.childWindows) >= 1 and lastChild.hitTest(resX,resY):
-                #get grandchild on far right in Window Tree
-                lastLastIndex = len(lastChild.childWindows)-1
-                lastGrandchild = lastChild.childWindows[lastLastIndex]
-                #convert x,y coordinates w.r.t grandchild coordinate system
-                newResX, newResY = lastGrandchild.convertPositionFromScreen(newX, newY)
-                #if hitTest on grandchild is TRUE do recursive call on lastchild
-                if lastGrandchild.hitTest(newResX, newResY):
-                    return lastChild.childWindowAtLocation(resX, resY)
-                #else return lastchild as the deepest visible descendant window
-                else:
-                    return lastChild
-            # no visible child at position x,y
-            else:
-                return None
-        else:
-            None
-
     # P2 4b
     def childWindowAtLocation(self, x, y):
         # only works if calling window has children, else returns 0
         if len(self.childWindows) > 0:
             recentHitTestStatus = None
             recentHitTestDepth = 0
-            # in a nutshell the tree is traversed from right to left and the deepest most visible child window is returned
-            # recentHitTestDepth refers to the most recent window object with a positive Hittest result
+            # in a nutshell the tree is traversed from right to left and the deepest most visible child window is
+            # returned recentHitTestDepth refers to the most recent window object with a positive Hittest result
             # recentHittest Depth represents its depth
             depth, deepestChild = self.helperFunction(x, y, recentHitTestStatus, recentHitTestDepth)
 
@@ -204,7 +164,7 @@ class Window:
         else:
             return None
 
-    # P2 4b -helper function
+    # P2 4b - helper function
     def helperFunction(self, x, y, recentHitTestStatus, recentHitTestDepth):
         # traverse childWindows Array right->left
         for child in reversed(self.childWindows):
@@ -232,8 +192,8 @@ class Window:
                     recentHitTestStatus = child
                     recentHitTestDepth = child.depth
 
-                # if both child and reventHittestStatus have the same toplevel window parent, check that child's depth in the tree
-                # is greater or equal to the recentHittestStatus
+                # if both child and reventHittestStatus have the same toplevel window parent, check that child's
+                # depth in the tree is greater or equal to the recentHittestStatus
                 elif (child.compareTopLevelWindows(recentHitTestStatus) == 0) and (
                         child.depth >= recentHitTestDepth):
                     # we assign our placeholders (see ChildWindowAtLocation) with current window
@@ -281,7 +241,6 @@ class Window:
             return topLevelWindow
         else:
             return self
-
 
     # P2 4d
     def handleMouseClicked(self, x, y):
@@ -336,7 +295,6 @@ class Window:
             else:
                 return False
 
-
     def checkIfInMinimizeButton(self, x, y):
         if self.checkIfInTitleBar(x, y):
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
@@ -354,7 +312,6 @@ class Window:
                 return True
             else:
                 return False
-
 
     def checkIfInResizingArea(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
