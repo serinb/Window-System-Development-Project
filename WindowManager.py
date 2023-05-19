@@ -47,6 +47,8 @@ class WindowManager:
         ctx.setStrokeColor(COLOR_BLACK)
         ctx.setOrigin(window.x, window.y)
         ctx.strokeRect(0, 0, window.width, window.height)
+        standardFont = Font(family="Helvetica", size=14, weight="normal")
+        ctx.setFont(standardFont)
 
         # foreground window should be visually discriminable
         lastIndex = len(self.windowSystem.screen.childWindows) - 1
