@@ -90,11 +90,25 @@ class Button(Label):
 
 
 class Slider(Widget):
-    def __init__(self, originX, originY, width, height, identifier):
+    def __init__(self, originX, originY, width, height, identifier, value=0.0):
         super().__init__(originX, originY, width, height, identifier)
-        self.backgroundColor = COLOR_LIGHT_GRAY
-        self.value = 0.0
-        self.dragging = False
+        self.backgroundColor = COLOR_BLUE
+        self.value = value
+        self.allowDraggingInSlider = False
 
     def draw(self, ctx, drawingWidth, drawingHeight):
         super().draw(ctx, drawingWidth, drawingHeight)
+        #
+        # slider spur
+        # ctx.setFillColor(COLOR_WHITE)
+        # ctx.fillRect(5, 5, self.width - 5, self.height - 5)
+        #
+        # # slider handle
+        # sliderHandleX = 6 + self.value * self.width
+        # sliderHandleY = 6
+        #
+        # ctx.setFillColor(COLOR_PINK)
+        # ctx.fillRect(sliderHandleX, sliderHandleY, sliderHandleX + 40, self.height - 6)
+        #
+        # ctx.setFillColor(COLOR_WHITE)
+        # ctx.fillRect(sliderHandleX + 2, sliderHandleY + 2, sliderHandleX + 38, self.height - 8)

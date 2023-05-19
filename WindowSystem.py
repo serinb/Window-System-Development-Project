@@ -31,6 +31,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentY = 0
         self.lastClickedWindow = None
         self.lastClickedButton = None
+        # self.lastClickedSlider = None
         self.allowDragging = False
         self.allowResizing = False
 
@@ -45,6 +46,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentY = 0
         self.lastClickedWindow = None
         self.lastClickedButton = None
+        # self.lastClickedSlider = None
         self.allowDragging = False
         self.allowResizing = False
 
@@ -60,7 +62,7 @@ class WindowSystem(GraphicsEventSystem):
         # redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
-        # blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
+        blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
 
         # YELLOW_WINDOW
         # yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
@@ -76,12 +78,11 @@ class WindowSystem(GraphicsEventSystem):
         # testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
         # COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
 
+        # testSlider = self.createSliderInWindow(gray_window, 70, 90, 260, 40, "slider", 0.0)
+
     """
     WINDOW MANAGEMENT
     """
-
-    def printSomething(self):
-        print("yoyoyo")
 
     # P2 1c
     def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor):
@@ -117,6 +118,14 @@ class WindowSystem(GraphicsEventSystem):
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
+
+    # def createSliderInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier, value):
+    #     # global coordinates
+    #     convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
+    #     newWidget = Slider(convertedX, convertedY, childWidth, childHeight, childIdentifier, value)
+    #
+    #     parentWindow.addChildWindow(newWidget)
+    #     return newWidget
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -169,6 +178,9 @@ class WindowSystem(GraphicsEventSystem):
             if isinstance(self.lastClickedWindow, Button):
                 self.lastClickedButton = self.lastClickedWindow
 
+            # if isinstance(self.lastClickedWindow, Slider):
+            #     self.lastClickedSlider = self.lastClickedWindow
+
             # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
             # requestRepaint
             if (self.lastClickedButton is not None) and (
@@ -187,6 +199,20 @@ class WindowSystem(GraphicsEventSystem):
             elif self.lastClickedWindow.checkIfInResizingArea(self.recentX, self.recentY):
                 # flip resizing flag
                 self.allowResizing = True
+
+            # Slider
+            # elif self.lastClickedSlider is not None:
+            #     # here ???
+            #     x1 = self.lastClickedSlider.x + self.lastClickedSlider.value * self.lastClickedSlider.width
+            #     y1 = self.lastClickedSlider.y
+            #
+            #     x2 = x1 + 38
+            #     y2 = self.lastClickedSlider.height - 8
+            #     print(str(self.lastClickedSlider.x))
+            #
+            #     if self.lastClickedSlider.x <= x <= self.lastClickedSlider.width + self.lastClickedSlider.x and self.lastClickedSlider.y <= y <= self.lastClickedSlider.height + self.lastClickedSlider.y:
+            #         print("slider area")
+            #         self.lastClickedSlider.allowDraggingInSlider = True
 
         else:
             # prepare for taskbar interaction
@@ -235,6 +261,9 @@ class WindowSystem(GraphicsEventSystem):
                 self.lastClickedButton.handleAction()
                 self.requestRepaint()
 
+            # elif self.lastClickedSlider is not None and self.lastClickedSlider.allowDraggingInSlider:
+            #     self.lastClickedSlider.allowDraggingInSlider = False
+
     def handleMouseMoved(self, x, y):
 
         widget = self.screen.childWindowAtLocation(x, y)
@@ -270,13 +299,17 @@ class WindowSystem(GraphicsEventSystem):
             if self.allowResizing:
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
+        # if self.lastClickedSlider is not None and self.lastClickedSlider.allowDraggingInSlider:
+        #     # here ???
+        #     newValue = x - self.lastClickedSlider.x
+        #     # print(str(newValue))
+        #     self.lastClickedSlider.value = max(0.0, min(1.0, newValue))
+        #     self.requestRepaint()
+
     def handleKeyPressed(self, char):
 
         if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "HelloWorld":
             self.helloWorld.inputHandler(char)
-
-
-
 
 
 # Let's start your window system!
