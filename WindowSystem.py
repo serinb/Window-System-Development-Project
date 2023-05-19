@@ -50,24 +50,24 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-        self.helloWorld = HelloWorldRevised.HellowWorld(self)
+        self.helloWorld = HelloWorldRevised.HelloWorld(self)
         self.helloWorld.start()
 
         self.calculator = Calculator.CalculatorApplication(self)
 
+
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
         # GRAY_WINDOW
-        gray_window = self.createWindowOnScreen(30, 20, 400, 350, "Gray", COLOR_GRAY)
+        gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
 
         # Child of GRAY_WINDOW
-        # redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
-
+        redWindow = gray_window.createWindowInWindow(400, 400, 305, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
         # GREEN_WINDOW
-        # blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
+        blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
 
         # YELLOW_WINDOW
-        # yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
+        yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 200, 200)
 
         # purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
 
@@ -84,14 +84,11 @@ class WindowSystem(GraphicsEventSystem):
     WINDOW MANAGEMENT
     """
 
-    def printSomething(self):
-        print("yoyoyo")
-
     # P2 1c
-    def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor):
+    def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor, minWidth, minHeight, anchoring=None):
         # creates a new window object with given parameters
         # depth is needed for the P2 4b
-        newWindow = Window(x, y, width, height, identifier)
+        newWindow = Window(x, y, width, height, identifier, anchoring, minWidth, minHeight)
         # assign preset background color for new window object
         newWindow.backgroundColor = backgroundColor
         # add new window object to parent's list of window children
@@ -103,21 +100,21 @@ class WindowSystem(GraphicsEventSystem):
         return newWindow
 
     def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                            childTextString, childTextColor, childBackgroundColor, fontSize=14, fontFamily="Helvetica", fontWeight="normal"):
+                            childTextString, childTextColor, childBackgroundColor, childAnchoring=None, childMinWidth=50, childMinHeight=50):
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newWidget = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
-                          childTextColor, childBackgroundColor, fontSize, fontFamily, fontWeight)
+        newWidget = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring , childTextString,
+                          childTextColor, childBackgroundColor, childMinWidth, childMinHeight)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
 
     def createButtonInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                             childTextString, childTextColor, childBackgroundColor, action=None):
+                             childTextString, childTextColor, childBackgroundColor, childAction=None, childAnchoring=None, childMinWidth=50, childMinHeight=50):
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
-                           childTextColor, childBackgroundColor, action)
+        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childTextString,
+                           childTextColor, childBackgroundColor, childAction, childMinWidth, childMinHeight)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
@@ -168,6 +165,10 @@ class WindowSystem(GraphicsEventSystem):
             # handling bringing toplevel Window to front
             self.lastClickedWindow = self.screen.childWindowAtLocation(x, y)
             self.bringWindowToFront(self.lastClickedWindow)
+
+            print(self.lastClickedWindow.identifier)
+
+
             self.requestRepaint()
 
             if isinstance(self.lastClickedWindow, Button):
@@ -275,12 +276,9 @@ class WindowSystem(GraphicsEventSystem):
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
     def handleKeyPressed(self, char):
-
         if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "HelloWorld":
             self.helloWorld.inputHandler(char)
-
-
-
+            self.requestRepaint()
 
 
 # Let's start your window system!

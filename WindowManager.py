@@ -56,11 +56,8 @@ class WindowManager:
 
         veryLastChild = lastChild
 
-        while len(veryLastChild.childWindows) > 0:
-            lastLastIndex = len(veryLastChild.childWindows) - 1
-            veryLastChild = veryLastChild.childWindows[lastLastIndex]
-
         if veryLastChild == window:
+            print("last child")
             ctx.setFillColor(COLOR_PINK)
         else:
             # colored title bar
@@ -101,10 +98,14 @@ class WindowManager:
 
     def resizeWindow(self, window, x, y):
         # x,y are global coordinates
-        newWidth, newHeight = window.convertPositionFromScreen(x, y)
-        window.resize(window.x, window.y, newWidth, newHeight)
-        if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
-            self.windowSystem.requestRepaint()
+        if window.parentWindow == self.windowSystem.screen:
+            newWidth, newHeight = window.convertPositionFromScreen(x, y)
+            window.resize(window.x, window.y, newWidth, newHeight)
+            if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
+                self.windowSystem.requestRepaint()
+
+
+
 
     # P3 (5)
     def minimizeWindow(self, window):
