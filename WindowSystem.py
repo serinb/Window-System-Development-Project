@@ -50,16 +50,12 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-<<<<<<< HEAD
-        self.helloWorld = HelloWorldRevised.HellowWorld(self)
-        self.helloWorld.start()
-=======
+
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
         self.helloWorld.start()
 
         self.calculator = Calculator.CalculatorApplication(self)
 
->>>>>>> b6cc22956c491d477acc7b0443cec3c97cd50172
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
