@@ -22,7 +22,7 @@ class CalculatorApplication:
         self.createApp()
 
     def createApp(self):
-        self.window = self.windowSystem.createWindowOnScreen(220, 20, 400, 500, "Calculator", COLOR_WHITE)
+        self.window = self.windowSystem.createWindowOnScreen(220, 20, 400, 500, "Calculator", COLOR_WHITE,200,200)
 
         # define label for display area?
         self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.window, 10, 20, 20, 20, "displayArea",
@@ -32,7 +32,7 @@ class CalculatorApplication:
         buttonSize = 70
         buttonSpacing = 2
 
-        buttonX = 10
+        buttonX = 16
         buttonY = 80
 
         rows = 5
@@ -47,19 +47,23 @@ class CalculatorApplication:
         # 1 2 3 +
         # 0 . =
         # also die Liste ist [C +/- % / 7 8 9 * 4 5 6 - 1 2 3 + 0 . =]
-        buttonLabels = ['C', '+/-', '%', '/', '7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+', '0', '=', '', '']
+        buttonLabels = ['C', '+/-', '%', '/', '7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+', '0', ',', '=']
 
         iterator = 0
         for i in range(rows):
             for j in range(cols):
                 if buttonLabels:
-                    button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize, buttonSize, buttonLabels[iterator],
-                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY,
-                                                                    None)
+                    if iterator == 16:
+
+                        button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize *2, buttonSize, buttonLabels[iterator],
+                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY)
+                    else:
+                        button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize, buttonSize, buttonLabels[iterator],
+                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY)
                     buttonX += buttonSize + buttonSpacing
                     iterator = iterator + 1
 
-            buttonX = 10
+            buttonX = 16
             buttonY += buttonSize + buttonSpacing
 
     def clearDisplay(self):

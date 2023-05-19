@@ -57,7 +57,6 @@ class WindowManager:
         veryLastChild = lastChild
 
         if veryLastChild == window:
-            print("last child")
             ctx.setFillColor(COLOR_PINK)
         else:
             # colored title bar

@@ -60,15 +60,15 @@ class WindowSystem(GraphicsEventSystem):
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
         # GRAY_WINDOW
-        gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
+        #gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
 
         # Child of GRAY_WINDOW
-        redWindow = gray_window.createWindowInWindow(400, 400, 305, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
+        #redWindow = gray_window.createWindowInWindow(400, 400, 305, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
         # GREEN_WINDOW
-        blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
+        #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 200, 200)
+        #yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 200, 200)
 
         # purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
 
@@ -114,8 +114,8 @@ class WindowSystem(GraphicsEventSystem):
                              childTextString, childTextColor, childBackgroundColor, childAction=None, childAnchoring=None, childMinWidth=50, childMinHeight=50):
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childTextString,
-                           childTextColor, childBackgroundColor, childMinWidth, childMinHeight)
+        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
+                           childTextColor, childBackgroundColor, childMinWidth, childMinHeight, childAnchoring)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
@@ -243,24 +243,27 @@ class WindowSystem(GraphicsEventSystem):
 
     def handleMouseMoved(self, x, y):
 
-        widget = self.screen.childWindowAtLocation(x, y)
+        if self.screen.childWindowAtLocation(x,y) is not None:
+            widget = self.screen.childWindowAtLocation(x, y)
 
-        # check if the widget is of type button
-        # if so, update lastClickedButton
-        if isinstance(widget, Button):
-            self.lastClickedButton = widget
 
-        # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
-        # requestRepaint
-        if (self.lastClickedButton is not None) and (
-                self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
-            self.lastClickedButton.isHovered = True
-            self.requestRepaint()
+            # check if the widget is of type button
+            # if so, update lastClickedButton
+            if isinstance(widget, Button) and self.lastClickedButton is None:
+                self.lastClickedButton = widget
 
-        # if we are outside lastClickedButton, we flip isHovered flag again to false and requestRepaint
-        elif self.lastClickedButton is not None:
-            self.lastClickedButton.isHovered = False
-            self.requestRepaint()
+            # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
+            # requestRepaint
+            if (self.lastClickedButton is not None) and (
+                    self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
+                self.lastClickedButton.isHovered = True
+                self.requestRepaint()
+
+            # if we are outside lastClickedButton, we flip isHovered flag again to false and requestRepaint
+            elif self.lastClickedButton is not None:
+                self.lastClickedButton.isHovered = False
+                self.lastClickedButton = None
+                self.requestRepaint()
 
     def handleMouseDragged(self, x, y):
         # here dragging and resizing operations are handled
