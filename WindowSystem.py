@@ -13,6 +13,7 @@ from Window import *
 from WindowManager import *
 from UITK import *
 import HelloWorldRevised
+import Calculator
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -24,6 +25,7 @@ class WindowSystem(GraphicsEventSystem):
         self.screen = None
         self.windowManager = None
         self.helloWorld = None
+        self.calculator = None
 
         # variables for mouse events
         self.mousePressed = False
@@ -50,6 +52,8 @@ class WindowSystem(GraphicsEventSystem):
 
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
         self.helloWorld.start()
+
+        self.calculator = Calculator.CalculatorApplication(self)
 
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
