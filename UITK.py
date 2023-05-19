@@ -12,8 +12,8 @@ from Window import *
 
 
 class Widget(Window):
-    def __init__(self, originX, originY, width, height, identifier):
-        super().__init__(originX, originY, width, height, identifier)
+    def __init__(self, originX, originY, width, height, identifier, anchoring):
+        super().__init__(originX, originY, width, height, identifier, anchoring)
         self.backgroundColor = COLOR_CLEAR
 
     def addParent(self):
@@ -21,8 +21,8 @@ class Widget(Window):
 
 
 class Container(Widget):
-    def __init__(self, originX, originY, width, height, identifier, axis, spacing=20):
-        super().__init__(originX, originY, width, height, identifier)
+    def __init__(self, originX, originY, width, height, identifier, anchoring, axis, spacing=20):
+        super().__init__(originX, originY, width, height, identifier, anchoring)
         self.spacing = spacing
         # horizontal or vertical
         self.axis = axis
@@ -40,9 +40,9 @@ class Container(Widget):
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, width, height, identifier, text, textColor, backgroundColor,
-                 fontSize=14, fontFamily="Helvetica", fontWeight="normal"):
-        super().__init__(originX, originY, width, height, identifier)
+    def __init__(self, originX, originY, width, height, identifier, anchoring, text, textColor,
+                 backgroundColor, minWidth, minHeight, fontSize=14, fontFamily="Helvetica", fontWeight="normal"):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight)
         self.text = text
         self.textColor = textColor
         self.backgroundColor = backgroundColor
@@ -61,9 +61,9 @@ class Label(Widget):
 
 
 class Button(Label):
-    def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor,
+    def __init__(self, originX, originY, width, height, identifier, anchoring, textString, textColor, backgroundColor, minWidth, minHeight,
                  action=None):
-        super().__init__(originX, originY, width, height, identifier, textString, textColor, backgroundColor)
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, textString, textColor, backgroundColor)
 
         self.isHovered = False
         self.isPressed = False
@@ -90,8 +90,8 @@ class Button(Label):
 
 
 class Slider(Widget):
-    def __init__(self, originX, originY, width, height, identifier):
-        super().__init__(originX, originY, width, height, identifier)
+    def __init__(self, originX, originY, width, height, identifier, anchoring):
+        super().__init__(originX, originY, width, height, identifier, anchoring)
         self.backgroundColor = COLOR_LIGHT_GRAY
         self.value = 0.0
         self.dragging = False
