@@ -21,8 +21,22 @@ class Widget(Window):
 
 
 class Container(Widget):
+    def __init__(self, originX, originY, width, height, identifier, axis, spacing=20):
+        super().__init__(originX, originY, width, height, identifier)
+        self.spacing = spacing
+        # horizontal or vertical
+        self.axis = axis
+
+    # def addChildWindow(self, window):
+        # super().addChildWindow(window)
+
     def resize(self, x, y, width, height):
         super().resize(x, y, width, height)
+        # equally distribute its space across its children either on the horizontal or vertical axis
+        if self.axis == "h":
+            pass
+        elif self.axis == "v":
+            pass
 
 
 class Label(Widget):
