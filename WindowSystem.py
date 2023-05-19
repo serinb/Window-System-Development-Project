@@ -48,7 +48,7 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-        self.helloWorld = HelloWorldRevised.HellowWorld(self)
+        self.helloWorld = HelloWorldRevised.HelloWorld(self)
         self.helloWorld.start()
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
@@ -271,12 +271,9 @@ class WindowSystem(GraphicsEventSystem):
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
     def handleKeyPressed(self, char):
-
         if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "HelloWorld":
             self.helloWorld.inputHandler(char)
-
-
-
+            self.requestRepaint()
 
 
 # Let's start your window system!
