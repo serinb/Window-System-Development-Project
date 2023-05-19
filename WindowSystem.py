@@ -13,6 +13,7 @@ from Window import *
 from WindowManager import *
 from UITK import *
 import HelloWorldRevised
+import Calculator
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -24,6 +25,7 @@ class WindowSystem(GraphicsEventSystem):
         self.screen = None
         self.windowManager = None
         self.helloWorld = None
+        self.calculator = None
 
         # variables for mouse events
         self.mousePressed = False
@@ -48,8 +50,16 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
+<<<<<<< HEAD
         self.helloWorld = HelloWorldRevised.HellowWorld(self)
         self.helloWorld.start()
+=======
+        self.helloWorld = HelloWorldRevised.HelloWorld(self)
+        self.helloWorld.start()
+
+        self.calculator = Calculator.CalculatorApplication(self)
+
+>>>>>>> b6cc22956c491d477acc7b0443cec3c97cd50172
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
@@ -271,12 +281,9 @@ class WindowSystem(GraphicsEventSystem):
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
     def handleKeyPressed(self, char):
-
         if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "HelloWorld":
             self.helloWorld.inputHandler(char)
-
-
-
+            self.requestRepaint()
 
 
 # Let's start your window system!
