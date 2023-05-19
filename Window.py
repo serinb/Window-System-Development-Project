@@ -152,8 +152,8 @@ class Window:
         if len(self.childWindows) > 0:
             recentHitTestStatus = None
             recentHitTestDepth = 0
-            # in a nutshell the tree is traversed from right to left and the deepest most visible child window is returned
-            # recentHitTestDepth refers to the most recent window object with a positive Hittest result
+            # in a nutshell the tree is traversed from right to left and the deepest most visible child window is
+            # returned recentHitTestDepth refers to the most recent window object with a positive Hittest result
             # recentHittest Depth represents its depth
             depth, deepestChild = self.helperFunction(x, y, recentHitTestStatus, recentHitTestDepth)
 
@@ -192,8 +192,8 @@ class Window:
                     recentHitTestStatus = child
                     recentHitTestDepth = child.depth
 
-                # if both child and reventHittestStatus have the same toplevel window parent, check that child's depth in the tree
-                # is greater or equal to the recentHittestStatus
+                # if both child and reventHittestStatus have the same toplevel window parent, check that child's
+                # depth in the tree is greater or equal to the recentHittestStatus
                 elif (child.compareTopLevelWindows(recentHitTestStatus) == 0) and (
                         child.depth >= recentHitTestDepth):
                     # we assign our placeholders (see ChildWindowAtLocation) with current window

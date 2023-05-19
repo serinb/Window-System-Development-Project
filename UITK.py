@@ -47,9 +47,6 @@ class Label(Widget):
         ctx.setStrokeColor(self.textColor)
         ctx.drawString(self.text, 10, 7)
 
-    def handleMousePressed(self, x, y):
-        print("i am in handle mouse event in label")
-
 
 class Button(Label):
     def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor,
@@ -66,8 +63,6 @@ class Button(Label):
             self.isActive = False
             self.action()
 
-
-
     def draw(self, ctx, drawingWidth, drawingHeight):
         super().draw(ctx, drawingWidth, drawingHeight)
         if self.isHovered:
@@ -80,11 +75,6 @@ class Button(Label):
         ctx.setStrokeColor(color)
         ctx.strokeRect(0, 0, self.width, self.height)
         ctx.strokeRect(6, 6, self.width - 6, self.height - 6)
-
-
-    # handleMouse Events for Button:
-    # if moved im Bereich des Buttons -> isHovered = True
-    # if pressed im Bereich des Buttons und if pressed und released in den gleichen x und y -> isPressed = True
 
 
 class Slider(Widget):

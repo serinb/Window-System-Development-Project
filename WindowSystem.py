@@ -12,7 +12,7 @@ from GraphicsEventSystem import *
 from Window import *
 from WindowManager import *
 from UITK import *
-
+import HelloWorldRevised
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -47,39 +47,33 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-        import HelloWorldRevised
-
         yo = HelloWorldRevised.HellowWorld(self)
         yo.start()
 
-        #yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
-
+        # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
         # GRAY_WINDOW
         gray_window = self.createWindowOnScreen(30, 20, 400, 350, "Gray", COLOR_GRAY)
 
         # Child of GRAY_WINDOW
-        #redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
+        # redWindow = gray_window.createWindowInWindow(0, 20, 450, 250, "Red", COLOR_RED)
 
         # GREEN_WINDOW
-        #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
+        # blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE)
 
         # YELLOW_WINDOW
-        #yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
+        # yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE)
 
-        #purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
+        # purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
 
-        #purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
+        # purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
 
-        #purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
+        # purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
 
-        #testLabel = self.createLabelInWindow(gray_window, 50, 40, 120, 30, "Label on Yellow Window", "Label",
-                                             #COLOR_GREEN, COLOR_BLACK)
-        #testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
-                                             #COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
-
-
-
+        # testLabel = self.createLabelInWindow(gray_window, 50, 40, 120, 30, "Label on Yellow Window", "Label",
+        # COLOR_GREEN, COLOR_BLACK)
+        # testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
+        # COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
 
     """
     WINDOW MANAGEMENT
@@ -100,7 +94,6 @@ class WindowSystem(GraphicsEventSystem):
 
         # add a window to the openedTopLevelList for the fixed order in the task bar
         self.windowManager.openWindow(newWindow)
-        # self.widgetOrder.append(newWindow)
 
         return newWindow
 
@@ -123,7 +116,6 @@ class WindowSystem(GraphicsEventSystem):
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
-
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -176,12 +168,14 @@ class WindowSystem(GraphicsEventSystem):
             if isinstance(self.lastClickedWindow, Button):
                 self.lastClickedButton = self.lastClickedWindow
 
-            # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and requestRepaint
-            if (self.lastClickedButton is not None) and (self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
-                    print("Button pressed")
-                    self.lastClickedButton.isPressed = True
-                    self.lastClickedButton.isHovered = False
-                    self.requestRepaint()
+            # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
+            # requestRepaint
+            if (self.lastClickedButton is not None) and (
+                    self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
+                print("Button pressed")
+                self.lastClickedButton.isPressed = True
+                self.lastClickedButton.isHovered = False
+                self.requestRepaint()
 
             # preparing for dragging operation
             if self.lastClickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
@@ -198,8 +192,6 @@ class WindowSystem(GraphicsEventSystem):
             self.lastClickedWindow = self.screen
             if self.screen.checkIfInTaskbar(x, y):
                 print('milestone 4')
-                # self.screen.clickedTaskbarEvent(x,y)
-
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -210,7 +202,6 @@ class WindowSystem(GraphicsEventSystem):
 
         # TODO hier müssen wir checken dass bei der gleichen position released wurde,
         # TODO wie bei pressed
-        #
         # execute taskbar interaction event
         # if clicked window is screen
         if self.lastClickedWindow == self.screen:
@@ -232,16 +223,16 @@ class WindowSystem(GraphicsEventSystem):
                     if self.lastClickedWindow.checkIfInMinimizeButton(x, y):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
-                # register that mouseclick event just happenend
+                # register that mouseclick event just happened
                 if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
                     self.lastClickedWindow.handleMouseClicked(x, y)
 
             elif self.lastClickedButton is not None and self.lastClickedButton.isPressed:
-                    self.lastClickedButton.isPressed = False
-                    self.lastClickedButton.isHovered = True
-                    self.lastClickedButton.isActive = True
-                    self.lastClickedButton.handleAction()
-                    self.requestRepaint()
+                self.lastClickedButton.isPressed = False
+                self.lastClickedButton.isHovered = True
+                self.lastClickedButton.isActive = True
+                self.lastClickedButton.handleAction()
+                self.requestRepaint()
 
     def handleMouseMoved(self, x, y):
 
@@ -252,17 +243,17 @@ class WindowSystem(GraphicsEventSystem):
         if isinstance(widget, Button):
             self.lastClickedButton = widget
 
-        # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and requestRepaint
-        if (self.lastClickedButton is not None) and (self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
-                self.lastClickedButton.isHovered = True
-                self.requestRepaint()
+        # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
+        # requestRepaint
+        if (self.lastClickedButton is not None) and (
+                self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
+            self.lastClickedButton.isHovered = True
+            self.requestRepaint()
 
-        # if we are outside of lastClickedButton, we flip isHovered flag again to false and requestRepaint
-        elif (self.lastClickedButton is not None):
-                self.lastClickedButton.isHovered = False
-                self.requestRepaint()
-
-
+        # if we are outside lastClickedButton, we flip isHovered flag again to false and requestRepaint
+        elif self.lastClickedButton is not None:
+            self.lastClickedButton.isHovered = False
+            self.requestRepaint()
 
     def handleMouseDragged(self, x, y):
         # here dragging and resizing operations are handled

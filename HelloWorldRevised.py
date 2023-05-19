@@ -20,7 +20,7 @@ class HellowWorld:
 
     def start(self):
 
-        window = self.windowSystem.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
+        window = self.windowSystem.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_LIGHT_GREEN)
 
 
 

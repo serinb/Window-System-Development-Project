@@ -27,7 +27,6 @@ class WindowManager:
 
     def checkWindowPosition(self, window, x, y):
 
-
         halfWindowWidth = 0.5 * window.width
 
         # we define that a window is only allowed to exceed the boundaries of the screen
@@ -104,7 +103,6 @@ class WindowManager:
         window.resize(window.x, window.y, newWidth, newHeight)
         if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
             self.windowSystem.requestRepaint()
-
 
     # P3 (5)
     def minimizeWindow(self, window):
