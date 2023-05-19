@@ -28,7 +28,7 @@ class HellowWorld:
 
         self.btn_german = self.windowSystem.createButtonInWindow(self.window, 100, 90, 70, 20, "btn_german", "Deutsch",
                                                                  COLOR_BLACK, COLOR_LIGHT_GRAY,
-                                                                 lambda: self.german_selected())
+                                                                 lambda: self.german_selected(), LayoutAnchor.left)
         # testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
         #         # COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
 
