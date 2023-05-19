@@ -12,8 +12,8 @@ from Window import *
 
 
 class Widget(Window):
-    def __init__(self, originX, originY, width, height, identifier, anchoring):
-        super().__init__(originX, originY, width, height, identifier, anchoring)
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight)
         self.backgroundColor = COLOR_CLEAR
 
     def addParent(self):

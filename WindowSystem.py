@@ -48,8 +48,8 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-        #self.helloWorld = HelloWorldRevised.HellowWorld(self)
-        #self.helloWorld.start()
+        self.helloWorld = HelloWorldRevised.HellowWorld(self)
+        self.helloWorld.start()
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
@@ -109,7 +109,7 @@ class WindowSystem(GraphicsEventSystem):
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
         newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childTextString,
-                           childTextColor, childBackgroundColor, childAction, childMinWidth, childMinHeight)
+                           childTextColor, childBackgroundColor, childMinWidth, childMinHeight)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
