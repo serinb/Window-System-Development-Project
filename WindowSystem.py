@@ -63,14 +63,14 @@ class WindowSystem(GraphicsEventSystem):
         gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
 
         # Child of GRAY_WINDOW
-        #redWindow = gray_window.createWindowInWindow(5, 201, 401, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
+        redWindow = gray_window.createWindowInWindow(5, 201, 401, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
         # GREEN_WINDOW
         #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
 
         # YELLOW_WINDOW
-        #yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 200, 200)
+        yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 200, 200)
 
-        # purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE)
+        purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE, 100, 100, LayoutAnchor.top | LayoutAnchor.left)
 
         # purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
 

@@ -116,17 +116,18 @@ class WindowManager:
         print(str(newX) + " " + str(newY))
 
         invalidSide = []
+        childPostion = []
+        iterator = 0
+        if len(window.childWindows) > 0:
+             for c in window.childWindows:
+                 convertedX, convertedY = window.convertPositionFromScreen(c.x, c.y)
+                 childPostion.append([convertedX, convertedY])
 
         if self.checkWindowPosition2(window, newX, newY, invalidSide):
             # update origin x,y for children of lastClickedWindow
             window.x = newX
             window.y = newY
-            self.windowSystem.recentX = x
-            self.windowSystem.recentY = y
-            if window.childWindows:
-                for c in window.childWindows:
-                    c.x = c.x + differenceX
-                    c.y = c.y + differenceY
+
 
         else:
             for side in invalidSide:
@@ -143,9 +144,14 @@ class WindowManager:
                     window.y = self.screenBottomBoundary - window.height
                     print("bottom")
 
-            self.windowSystem.recentX = x
-            self.windowSystem.recentY = y
+        if len(window.childWindows) > 0:
 
+                iterator in range(len(childPostion))
+                for c in window.childWindows:
+                    c.x, c.y = window.convertPositionToScreen(childPostion[iterator][0], childPostion[iterator][1])
+
+        self.windowSystem.recentX = x
+        self.windowSystem.recentY = y
         self.windowSystem.requestRepaint()
 
 
