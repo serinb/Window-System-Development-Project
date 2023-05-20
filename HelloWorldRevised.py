@@ -22,14 +22,28 @@ class HelloWorld:
         self.btn_english = None
         self.btn_french = None
         self.quit_button = None
+        self.createApp()
 
-    def start(self):
+    def createApp(self):
 
-        self.window = self.windowSystem.createWindowOnScreen(20, 20, 250, 300, "HelloWorld", COLOR_LIGHT_GREEN, 200, 200)
+        self.window = self.windowSystem.createWindowOnScreen(50, 20, 250, 300, "HelloWorld", COLOR_WHITE, 250, 300)
+
+        self.containerLabel = self.windowSystem.createContainerInWindow(self.window, 50, 0, self.window.width, 100, 'labelContainer', LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left, self.window.width , 100)
 
 
-        self.languageLabel = self.windowSystem.createLabelInWindow(self.window, 40, 40, 100, 20, "languageLabel",
-                                                                   "Please select a language", "#F6A800", COLOR_CLEAR)
+        self.languageLabel = self.windowSystem.createLabelInWindow(self.window, 10, 40, 185, 33, "languageLabel",
+                                                                   "Please select a language", "#F6A800", COLOR_BLUE, LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left)
+
+        buttonWidth = 60
+        buttonHeight = 60
+        buttonSpacing = 2
+        buttonX = 16
+        buttonY = 150
+
+
+        # first Row (left-right)
+        self.button00 = self.windowSystem.createButtonInWindow(self.containerLabel, buttonX, buttonY, buttonWidth , buttonHeight, 'C',
+                'C', COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
 
         """
         self.btn_german = self.windowSystem.createButtonInWindow(self.window, 80, 90, 90, 30, "btn_german", "Deutsch",

@@ -57,8 +57,6 @@ class Window:
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor, minWidth, minHeight, anchoring):
 
-
-
         # making sure that child lies within the parents margin
         # padding top
         if childY <= self.y + self.paddingTop:
@@ -73,7 +71,6 @@ class Window:
         if childX + childWidth >= self.width - self.paddingRight:
             childWidth = self.width - self.paddingRight - childX
 
-        #print(str(childX) + " " + str(childWidth))
         # check bottom margin
         if childY + childHeight >= self.width - self.paddingBottom:
             childHeight = self.height - self.paddingBottom - childY
@@ -133,20 +130,23 @@ class Window:
 
         # call the draw function on calling window objects children
         if self.childWindows is not None:
+            print(self.identifier)
             # parent window draws its child views
             for c in self.childWindows:
                 # calculate the deepest x,y coordinate of child inside of parent coordinate system
                 inParentX, inParentY = self.convertPositionFromScreen(c.x, c.y)
-                margin = 16
+                """
                 deepestX = inParentX + c.width
                 deepestY = inParentY + c.height
                 drawingWidth = c.width
                 drawingHeight = c.height
-                if deepestX > self.width - margin:
-                    drawingWidth = c.width - (c.width + inParentX - self.width) - margin
-                if deepestY > self.height - margin:
-                    drawingHeight = c.height - (c.height + inParentY - self.height) - margin
-                c.draw(ctx, drawingWidth, drawingHeight)
+                if deepestX > self.width - self.paddingRight:
+                    drawingWidth = c.width - (c.width + inParentX - self.width) - self.paddingRight
+                if deepestY > self.height - self.paddingBottom:
+                    drawingHeight = c.height - (c.height + inParentY - self.height) - self.paddingBottom
+
+                """
+                c.draw(ctx, c.width, c.height)
 
     # P2 4a
     def hitTest(self, x, y):
@@ -255,12 +255,11 @@ class Window:
 
     # P2 4d
     def handleMouseClicked(self, x, y):
-        print("click")
+        print(self.identifier)
 
     # P3 (7) Resizing windows and simple layout
     # Changes the position and size of the current window to the given parameters
     def resize(self, x, y, newWidth, newHeight):
-        print("ya hala")
         oldX, oldY = self.x, self.y
         oldWidth, oldHeight = self.width, self.height
         if newWidth <= self.minWidth:
@@ -351,7 +350,6 @@ class Window:
 
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
-                    print("all")
                     # for right side
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
@@ -369,16 +367,6 @@ class Window:
 
                     newChildHeight = newChildGreatestY - c.y
                     c.height = newChildHeight
-
-
-
-
-
-
-
-
-
-
 
     def checkIfInTitleBar(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
@@ -418,7 +406,7 @@ class Window:
                 return False
 
     def checkIfInMinimizeButton(self, x, y):
-        if self.checkIfInTitleBar(x, y):
+        if self.checkIfInTitleBar(x, y) and self.identifier != "start_menu":
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
 
             # (X1, Y1) of minimize button
@@ -436,17 +424,18 @@ class Window:
                 return False
 
     def checkIfInResizingArea(self, x, y):
-        convertedX, convertedY = self.convertPositionFromScreen(x, y)
-        resizeX1 = self.width - 15
-        resizeY1 = self.height - 15
+        if self.identifier != "start_menu":
+            convertedX, convertedY = self.convertPositionFromScreen(x, y)
+            resizeX1 = self.width - 15
+            resizeY1 = self.height - 15
 
-        resizeX2 = self.width
-        resizeY2 = self.height
+            resizeX2 = self.width
+            resizeY2 = self.height
 
-        if resizeX1 <= convertedX <= resizeX2 and resizeY1 <= convertedY <= resizeY2:
-            return True
-        else:
-            return False
+            if resizeX1 <= convertedX <= resizeX2 and resizeY1 <= convertedY <= resizeY2:
+                return True
+            else:
+                return False
 
 
 class Screen(Window):
@@ -466,7 +455,7 @@ class Screen(Window):
                     drawingWidth = c.width
                     drawingHeight = c.height
                     c.draw(ctx, drawingWidth, drawingHeight)
-                    if c.depth == 1:
+                    if c.depth == 1 and c.identifier != "start_menu":
                         self.windowSystem.windowManager.decorateWindow(c, ctx)
                         # if len(c.childWindows) > 0:
                         #     for gc in c.childWindows:
@@ -497,13 +486,16 @@ class Screen(Window):
         startX = 0
         startY = self.height - 50
 
-        endX = 40
+        endX = 35
         endY = self.height
 
         if startX <= x <= endX and startY <= y <= endY:
             # this is when start button clicked
             # helloworld, calculator, color slider
-            print("milestone 4")
+            if self.windowSystem.start_menu.isHidden:
+                        self.windowSystem.start_menu.isHidden = False
+                        self.windowSystem.bringWindowToFront(self.windowSystem.start_menu)
+                        self.windowSystem.requestRepaint()
 
         else:
             startX = 40

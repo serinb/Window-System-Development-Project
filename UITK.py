@@ -12,23 +12,28 @@ from Window import *
 
 
 class Widget(Window):
-    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight):
-        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight)
-        self.backgroundColor = COLOR_CLEAR
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth)
+        self.backgroundColor = COLOR_GRAY
+        # window padding
+        self.paddingTop = 5
+        self.paddingLeft = 5
+        self.paddingBottom = 5
+        self.paddingRight = 5
 
-    def addParent(self):
+    def handleMouseClicked(self, x, y):
         pass
+
+    def resize(self, x, y, width, height):
+        super().resize(x, y, width, height)
+
 
 
 class Container(Widget):
-    def __init__(self, originX, originY, width, height, identifier, anchoring, axis, spacing=20):
-        super().__init__(originX, originY, width, height, identifier, anchoring)
-        self.spacing = spacing
-        # horizontal or vertical
-        self.axis = axis
-
-    # def addChildWindow(self, window):
-        # super().addChildWindow(window)
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth, maxSpacing=5, minSpacing=3):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth)
+        self.maxSpacing = maxSpacing
+        self.minSpacing = minSpacing
 
     def resize(self, x, y, width, height):
         super().resize(x, y, width, height)
@@ -40,9 +45,9 @@ class Container(Widget):
 
 
 class Label(Widget):
-    def __init__(self, originX, originY, width, height, identifier, anchoring, text, textColor,
-                 backgroundColor, minWidth, minHeight, fontSize=14, fontFamily="Helvetica", fontWeight="normal"):
-        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight)
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, text, textColor,
+                 backgroundColor, depth, fontSize=11, fontFamily="Arial", fontWeight="normal"):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth)
         self.text = text
         self.textColor = textColor
         self.backgroundColor = backgroundColor
@@ -51,6 +56,9 @@ class Label(Widget):
         self.fontSize = fontSize
         self.fontFamily = fontFamily
         self.fontWeight = fontWeight
+
+    def resize(self, x, y, width, height):
+        super().resize(x, y, width, height)
 
     def draw(self, ctx, width, height):
         super().draw(ctx, width, height)
@@ -61,9 +69,10 @@ class Label(Widget):
 
 
 class Button(Label):
-    def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor, minWidth, minHeight,
-                 action=None, anchoring=None):
-        super().__init__(originX, originY, width, height, identifier, anchoring, textString, textColor, backgroundColor, minWidth, minHeight)
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth,
+                 minHeight, text, textColor, backgroundColor, depth, action=None):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight,
+                         text, textColor, backgroundColor, depth)
         self.isHovered = False
         self.isPressed = False
         self.isActive = False

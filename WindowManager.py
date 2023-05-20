@@ -16,7 +16,7 @@ from Window import *
 class WindowManager:
     def __init__(self, windowSystem):
         self.windowSystem = windowSystem
-        # the height of the window’s title bar decoration
+        # th4e height of the window’s title bar decoration
         # We will use it in the future to avoid the placement of widgets under the window decorations
         self.titleBarHeight = 30
 
@@ -30,14 +30,16 @@ class WindowManager:
         self.openedTopLevelWindows = []
 
     def openWindow(self, window):
-        self.openedTopLevelWindows.append(window)
+        if window.identifier != "start_menu":
+            self.openedTopLevelWindows.append(window)
+
 
     def decorateWindow(self, window, ctx):
         # stroked border around the window
         ctx.setStrokeColor(COLOR_BLACK)
         ctx.setOrigin(window.x, window.y)
         ctx.strokeRect(0, 0, window.width, window.height)
-        standardFont = Font(family="Helvetica", size=14, weight="normal")
+        standardFont = Font(family="Helvetica", size=11, weight="normal")
         ctx.setFont(standardFont)
 
         # foreground window should be visually discriminable
@@ -67,24 +69,7 @@ class WindowManager:
         ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
 
 
-    def checkWindowPosition(self, window, x ,y):
-
-        halfWindowWidth = 0.5 * window.width
-
-        # we define that a window is only allowed to exceed the boundaries of the screen
-        # by half of its titlebar width and height
-        topBoundary = -0.5 * self.titleBarHeight
-        bottomBoundary = self.windowSystem.screen.height - window.height - 50
-
-        leftBoundary = - halfWindowWidth
-        rightBoundary = self.windowSystem.screen.width - halfWindowWidth
-
-        if leftBoundary <= x <= rightBoundary and topBoundary <= y <= bottomBoundary:
-            return True
-        else:
-            return False
-
-    def checkWindowPosition2(self, window, x, y, invalidSide):
+    def checkWindowPosition(self, window, x, y, invalidSide):
 
         valid = True
 
@@ -97,84 +82,68 @@ class WindowManager:
         if (self.screenLeftBoundary > x):
             valid = False
             invalidSide.append("left")
-            print("X is HERE " + str(x) )
         if (x + window.width > self.screenRightBoundary):
             valid = False
             invalidSide.append("right")
-
-
         return valid
 
-
-    def dragWindow2(self, window, x, y):
-
-        # difference between old and new (x,y) coordinates
-        differenceX = x - self.windowSystem.recentX
-        differenceY = y - self.windowSystem.recentY
-        newX = window.x + differenceX
-        newY = window.y + differenceY
-        print(str(newX) + " " + str(newY))
-
-        invalidSide = []
-        childPostion = []
-        iterator = 0
-        if len(window.childWindows) > 0:
-             for c in window.childWindows:
-                 convertedX, convertedY = window.convertPositionFromScreen(c.x, c.y)
-                 childPostion.append([convertedX, convertedY])
-
-        if self.checkWindowPosition2(window, newX, newY, invalidSide):
-            # update origin x,y for children of lastClickedWindow
-            window.x = newX
-            window.y = newY
-
-
-        else:
-            for side in invalidSide:
-                if side == "left":
-                    window.x = self.screenLeftBoundary
-                    print("left")
-                elif side == "right":
-                    window.x = self.screenRightBoundary - window.width
-                    print("right")
-                elif side == "top":
-                    window.y = self.screenTopBoundary
-                    print("top")
-                elif side == "bottom":
-                    window.y = self.screenBottomBoundary - window.height
-                    print("bottom")
+    def dragChildren(self, window, x, y):
 
         if len(window.childWindows) > 0:
-
-                iterator in range(len(childPostion))
-                for c in window.childWindows:
-                    c.x, c.y = window.convertPositionToScreen(childPostion[iterator][0], childPostion[iterator][1])
-
-        self.windowSystem.recentX = x
-        self.windowSystem.recentY = y
-        self.windowSystem.requestRepaint()
-
-
+            for c in window.childWindows:
+                oldX, oldY = c.x, c.y
+                convertedX, convertedY = x - window.x, y - window.y
+                c.x, c.y = window.convertPositionToScreen(convertedX, convertedY)
+                self.dragChildren(c, oldX, oldY)
 
 
     def dragWindow(self, window, x, y):
-        # difference between old and new (x,y) coordinates
-        differenceX = x - self.windowSystem.recentX
-        differenceY = y - self.windowSystem.recentY
-        window.x = window.x + differenceX
-        window.y = window.y + differenceY
 
-        self.windowSystem.recentX = x
-        self.windowSystem.recentY = y
+        if window.identifier != "start_menu":
 
-        # update origin x,y for children of lastClickedWindow
-        if window.childWindows:
-            for c in window.childWindows:
-                c.x = c.x + differenceX
-                c.y = c.y + differenceY
+            # difference between old and new (x,y) coordinates
+            differenceX = x - self.windowSystem.recentX
+            differenceY = y - self.windowSystem.recentY
+            newX = window.x + differenceX
+            newY = window.y + differenceY
 
-        if self.checkWindowPosition(window):
+            invalidSide = []
+            childPostion = []
+            iterator = 0
+            if len(window.childWindows) > 0:
+                for c in window.childWindows:
+                    convertedX, convertedY = window.convertPositionFromScreen(c.x, c.y)
+                    childPostion.append([convertedX, convertedY])
+
+            if self.checkWindowPosition(window, newX, newY, invalidSide):
+                # update origin x,y for children of lastClickedWindow
+                window.x = newX
+                window.y = newY
+
+            else:
+                for side in invalidSide:
+                    if side == "left":
+                        window.x = self.screenLeftBoundary
+                    elif side == "right":
+                        window.x = self.screenRightBoundary - window.width
+                    elif side == "top":
+                        window.y = self.screenTopBoundary
+                    elif side == "bottom":
+                        window.y = self.screenBottomBoundary - window.height
+
+            if len(window.childWindows) > 0:
+
+                    iterator in range(len(childPostion))
+                    for c in window.childWindows:
+                        oldX, oldY = c.x, c.y
+                        c.x, c.y = window.convertPositionToScreen(childPostion[iterator][0], childPostion[iterator][1])
+                        self.dragChildren(c, oldX, oldY)
+
+            self.windowSystem.recentX = x
+            self.windowSystem.recentY = y
             self.windowSystem.requestRepaint()
+
+
 
 
 
@@ -186,12 +155,18 @@ class WindowManager:
             if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
                 self.windowSystem.requestRepaint()
 
+    def openCloseStartMenu(self):
+        if self.windowSystem.startMenuActive:
+            self.windowSystem.start_menu.isHidden = False
+        else:
+            self.windowSystem.start_menu.isHidden = True
+        self.windowSystem.reqeustRepaint()
 
     # P3 (5)
     def minimizeWindow(self, window):
         if window.getTopLevelWindow() != window:
             minimizingWindow = window.getTopLevelWindow()
-        else:
+        elif window.identifier:
             minimizingWindow = window
         minimizingWindow.isHidden = True
         self.windowSystem.requestRepaint()

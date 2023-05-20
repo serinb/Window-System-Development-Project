@@ -26,6 +26,7 @@ class WindowSystem(GraphicsEventSystem):
         self.windowManager = None
         self.helloWorld = None
         self.calculator = None
+        self.start_menu = None
 
         # variables for mouse events
         self.mousePressed = False
@@ -35,6 +36,7 @@ class WindowSystem(GraphicsEventSystem):
         self.lastClickedButton = None
         self.allowDragging = False
         self.allowResizing = False
+        self.startMenuAcive = False
 
     def start(self):
         # WINDOW MANAGER
@@ -49,37 +51,35 @@ class WindowSystem(GraphicsEventSystem):
         self.lastClickedButton = None
         self.allowDragging = False
         self.allowResizing = False
+        self.startMenuAcive = False
 
 
-        #self.helloWorld = HelloWorldRevised.HelloWorld(self)
-        #self.helloWorld.start()
+        self.helloWorld = HelloWorldRevised.HelloWorld(self)
 
         #self.calculator = Calculator.CalculatorApplication(self)
+
+        self.start_menu = self.createWindowOnScreen(0, 550 - 200, 200, 200, "start_menu", COLOR_BLUE, 200, 200)
+
 
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
         # GRAY_WINDOW
-        gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
+        #gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
 
         # Child of GRAY_WINDOW
-        redWindow = gray_window.createWindowInWindow(5, 201, 401, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
+        #redWindow = gray_window.createWindowInWindow(5, 201, 401, 300, "Red", COLOR_RED,  50, 50, LayoutAnchor.top | LayoutAnchor.left)
         # GREEN_WINDOW
         #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
 
         # YELLOW_WINDOW
-        yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 200, 200)
+        #yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 50, 50)
 
-        purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE, 100, 100, LayoutAnchor.top | LayoutAnchor.left)
+        #purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE, 100, 100, LayoutAnchor.top | LayoutAnchor.left)
 
         # purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
 
         # purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
-
-        # testLabel = self.createLabelInWindow(gray_window, 50, 40, 120, 30, "Label on Yellow Window", "Label",
-        # COLOR_GREEN, COLOR_BLACK)
-        # testButton = self.createButtonInWindow(gray_window, 50, 100, 120, 30, "Button on Yellow Window", "Click me",
-        # COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.printSomething())
 
     """
     WINDOW MANAGEMENT
@@ -101,24 +101,94 @@ class WindowSystem(GraphicsEventSystem):
         return newWindow
 
     def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                            childTextString, childTextColor, childBackgroundColor, childAnchoring=None, childMinWidth=50, childMinHeight=50):
+                            childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50, childMinHeight=50):
+
+
+        # making sure that child lies within the parents margin
+        # padding top
+        if childY <= parentWindow.y + parentWindow.paddingTop:
+            childY += parentWindow.paddingTop
+
+        # child should stay within left-right-bottom margin
+        if childX <= parentWindow.x + parentWindow.paddingLeft:
+            childX += parentWindow.paddingLeft
+
+        # TODO check right margin
+        if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
+            childWidth = parentWindow.width - parentWindow.paddingRight - childX
+
+        # check bottom margin
+        if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
+            childHeight = parentWindow.height - parentWindow.paddingBottom - childY
+        if childY + childHeight >= parentWindow.height:
+            childHeight = childHeight - (childHeight -  childY - parentWindow.height) - parentWindow.paddingBottom
+
+
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newWidget = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring , childTextString,
-                          childTextColor, childBackgroundColor, childMinWidth, childMinHeight)
+        newLabel = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight, childTextString,
+                          childTextColor, childBackgroundColor, parentWindow.depth + 1)
 
-        parentWindow.addChildWindow(newWidget)
-        return newWidget
+        parentWindow.addChildWindow(newLabel)
+        return newLabel
 
     def createButtonInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
                              childTextString, childTextColor, childBackgroundColor, childAction=None, childAnchoring=None, childMinWidth=50, childMinHeight=50):
+
+        # making sure that child lies within the parents margin
+        # padding top
+        if childY <= parentWindow.y + parentWindow.paddingTop:
+            childY += parentWindow.paddingTop
+
+        # child should stay within left-right-bottom margin
+        if childX <= parentWindow.x + parentWindow.paddingLeft:
+            childX += parentWindow.paddingLeft
+
+        # TODO check right margin
+        if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
+            childWidth = parentWindow.width - parentWindow.paddingRight - childX
+
+        # check bottom margin
+        if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
+            childHeight = parentWindow.height - parentWindow.paddingBottom - childY
+        if childY + childHeight >= parentWindow.height:
+            childHeight = childHeight - (childHeight -  childY - parentWindow.height) - parentWindow.paddingBottom
+
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childTextString,
-                           childTextColor, childBackgroundColor, childMinWidth, childMinHeight, childAnchoring)
+        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight, childTextString,
+                           childTextColor, childBackgroundColor, parentWindow.depth + 1, childAction)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
+
+    def createContainerInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight):
+        # making sure that child lies within the parents margin
+        # padding top
+        if childY <= parentWindow.y + parentWindow.paddingTop:
+            childY += parentWindow.paddingTop
+
+        # child should stay within left-right-bottom margin
+        if childX <= parentWindow.x + parentWindow.paddingLeft:
+            childX += parentWindow.paddingLeft
+
+        # TODO check right margin
+        if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
+            childWidth = parentWindow.width - parentWindow.paddingRight - childX
+
+        # check bottom margin
+        if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
+            childHeight = parentWindow.height - parentWindow.paddingBottom - childY
+        if childY + childHeight >= parentWindow.height:
+            childHeight = childHeight - (childHeight -  childY - parentWindow.height) - parentWindow.paddingBottom
+
+        # global coordinates
+        convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
+        newContainer = Container(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight, parentWindow.depth + 1)
+
+        parentWindow.addChildWindow(newContainer)
+        return newContainer
+
 
     # P2 1d
     def bringWindowToFront(self, window):
@@ -168,20 +238,6 @@ class WindowSystem(GraphicsEventSystem):
             self.bringWindowToFront(self.lastClickedWindow)
 
 
-            """
-            print("WindowIdentifier ---")
-            print(self.lastClickedWindow.identifier)
-            print("Window XY ---")
-            print(str(self.lastClickedWindow.x) + " " + str(self.lastClickedWindow.y))
-            print("old Mouse XY ---")
-            print(str(self.recentX) + " " + str(self.recentY))
-            print("Mouse XY---")
-            print(str(x) + " " + str(y))
-            print("child window XY---")
-            print(str(self.lastClickedWindow.childWindows[0].x) + " " + str(self.lastClickedWindow.childWindows[0].y))
-
-
-            """
 
             self.requestRepaint()
 
@@ -207,11 +263,14 @@ class WindowSystem(GraphicsEventSystem):
                 # flip resizing flag
                 self.allowResizing = True
 
+
         else:
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
             if self.screen.checkIfInTaskbar(x, y):
                 print('milestone 4')
+                #TODO start_menu
+                self.startMenuAcive = True
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -227,6 +286,10 @@ class WindowSystem(GraphicsEventSystem):
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
                 self.screen.clickedTaskbarEvent(x, y)
+                #TODO start_menu
+                # check if in start_menu area
+                # call function that either hides or shows window
+                # openCloseStartMenu(self) in WM
 
         else:
             # if clicked window is a toplevel w
@@ -243,9 +306,12 @@ class WindowSystem(GraphicsEventSystem):
                     if self.lastClickedWindow.checkIfInMinimizeButton(x, y):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
+
                 # register that mouseclick event just happened
                 if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
-                    self.lastClickedWindow.handleMouseClicked(x, y)
+                    if self.lastClickedWindow.identifier == "Calculator":
+                        #self.lastClickedWindow.handleMouseClicked(x, y)
+                        self.calculator.inputHandler(self.lastClickedWindow.identifier)
 
             elif self.lastClickedButton is not None and self.lastClickedButton.isPressed:
                 self.lastClickedButton.isPressed = False
@@ -286,7 +352,7 @@ class WindowSystem(GraphicsEventSystem):
 
             # dragging operation
             if self.allowDragging:
-                self.windowManager.dragWindow2(self.lastClickedWindow, x, y)
+                self.windowManager.dragWindow(self.lastClickedWindow, x, y)
 
             # resizing operation
             if self.allowResizing:
