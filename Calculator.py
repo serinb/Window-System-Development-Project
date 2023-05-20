@@ -29,7 +29,8 @@ class CalculatorApplication:
                                                                       "0", COLOR_BLACK, COLOR_CLEAR, 50, "Helvetica",
                                                                       "bold")
 
-        buttonSize = 70
+        buttonWidth = 70
+        buttonHeight = 70
         buttonSpacing = 2
 
         buttonX = 16
@@ -48,23 +49,34 @@ class CalculatorApplication:
         # 0 . =
         # also die Liste ist [C +/- % / 7 8 9 * 4 5 6 - 1 2 3 + 0 . =]
         buttonLabels = ['C', '+/-', '%', '/', '7', '8', '9', '*', '4', '5', '6', '-', '1', '2', '3', '+', '0', ',', '=']
+        allButtons = []
 
         iterator = 0
         for i in range(rows):
             for j in range(cols):
                 if buttonLabels:
                     if iterator == 16:
-
-                        button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize *2, buttonSize, buttonLabels[iterator],
-                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY)
+                        buttonWidth *= 2
+                        button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonWidth , buttonHeight, buttonLabels[iterator],
+                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
                     else:
-                        button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize, buttonSize, buttonLabels[iterator],
-                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY)
-                    buttonX += buttonSize + buttonSpacing
-                    iterator = iterator + 1
+                        button = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonWidth, buttonHeight, buttonLabels[iterator],
+                                                                    buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
+
+                    allButtons.append(button)
+
+                if iterator == 16:
+                    buttonX += buttonWidth + buttonSpacing
+                    buttonWidth = buttonWidth / 2
+                else:
+                    buttonX += buttonWidth + buttonSpacing
+                if iterator in range(0,18):
+                    iterator += 1
+                else:
+                    break
 
             buttonX = 16
-            buttonY += buttonSize + buttonSpacing
+            buttonY += buttonHeight + buttonSpacing
 
     def clearDisplay(self):
         self.displayAreaLabel.text = "0"

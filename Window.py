@@ -40,6 +40,12 @@ class Window:
         self.minWidth = minWidth
         self.minHeight = minHeight
 
+        # window padding
+        self.paddingTop = 45
+        self.paddingLeft = 16
+        self.paddingBottom = 16
+        self.paddingRight = 16
+
     # P2 1a
     def addChildWindow(self, window):
         # assign self as the parent of new child window
@@ -51,28 +57,33 @@ class Window:
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor, minWidth, minHeight, anchoring):
 
-        convertedX, convertedY = self.convertPositionToScreen(childX, childY)
-        # child should not appear behind the taskbar
-        offsetTitleBar = 30
-        if convertedY <= self.y + offsetTitleBar:
-            convertedY += offsetTitleBar
+
+
+        # making sure that child lies within the parents margin
+        # padding top
+        if childY <= self.y + self.paddingTop:
+            childY += self.paddingTop
+
         # child should stay within left-right-bottom margin
-        margin = 16
-        # check left margin
-        if convertedX <= self.x + margin:
-            convertedX += margin
+
+        if childX <= self.x + self.paddingLeft:
+            childX += self.paddingLeft
+
+        # TODO check right margin
+        if childX + childWidth >= self.width - self.paddingRight:
+            childWidth = self.width - self.paddingRight - childX
+
         #print(str(childX) + " " + str(childWidth))
         # check bottom margin
-        if convertedX + childWidth >= self.width:
-            childWidth = childWidth - (childWidth + convertedX - self.width) - margin
-        if convertedY + childHeight >= self.height:
-            childHeight = childHeight - (childHeight - convertedY - self.height) - margin
-
+        if childY + childHeight >= self.width - self.paddingBottom:
+            childHeight = self.height - self.paddingBottom - childY
+        if childY + childHeight >= self.height:
+            childHeight = childHeight - (childHeight -  childY - self.height) - self.paddingBottom
+        convertedX, convertedY = self.convertPositionToScreen(childX, childY)
         childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier, anchoring, minWidth, minHeight,
                              self.depth + 1)
         childWindow.backgroundColor = childBackgroundColor
         self.addChildWindow(childWindow)
-
         return childWindow
 
     # P2 1a
@@ -249,6 +260,7 @@ class Window:
     # P3 (7) Resizing windows and simple layout
     # Changes the position and size of the current window to the given parameters
     def resize(self, x, y, newWidth, newHeight):
+        print("ya hala")
         oldX, oldY = self.x, self.y
         oldWidth, oldHeight = self.width, self.height
         if newWidth <= self.minWidth:
@@ -339,6 +351,7 @@ class Window:
 
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
+                    print("all")
                     # for right side
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX

@@ -51,19 +51,19 @@ class WindowSystem(GraphicsEventSystem):
         self.allowResizing = False
 
 
-        self.helloWorld = HelloWorldRevised.HelloWorld(self)
-        self.helloWorld.start()
+        #self.helloWorld = HelloWorldRevised.HelloWorld(self)
+        #self.helloWorld.start()
 
-        self.calculator = Calculator.CalculatorApplication(self)
+        #self.calculator = Calculator.CalculatorApplication(self)
 
 
         # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
 
         # GRAY_WINDOW
-        #gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
+        gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
 
         # Child of GRAY_WINDOW
-        #redWindow = gray_window.createWindowInWindow(400, 400, 305, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
+        #redWindow = gray_window.createWindowInWindow(5, 201, 401, 300, "Red", COLOR_RED,  100, 100, LayoutAnchor.top | LayoutAnchor.left)
         # GREEN_WINDOW
         #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
 
@@ -167,8 +167,21 @@ class WindowSystem(GraphicsEventSystem):
             self.lastClickedWindow = self.screen.childWindowAtLocation(x, y)
             self.bringWindowToFront(self.lastClickedWindow)
 
-            print(self.lastClickedWindow.identifier)
 
+            """
+            print("WindowIdentifier ---")
+            print(self.lastClickedWindow.identifier)
+            print("Window XY ---")
+            print(str(self.lastClickedWindow.x) + " " + str(self.lastClickedWindow.y))
+            print("old Mouse XY ---")
+            print(str(self.recentX) + " " + str(self.recentY))
+            print("Mouse XY---")
+            print(str(x) + " " + str(y))
+            print("child window XY---")
+            print(str(self.lastClickedWindow.childWindows[0].x) + " " + str(self.lastClickedWindow.childWindows[0].y))
+
+
+            """
 
             self.requestRepaint()
 
@@ -273,7 +286,7 @@ class WindowSystem(GraphicsEventSystem):
 
             # dragging operation
             if self.allowDragging:
-                self.windowManager.dragWindow(self.lastClickedWindow, x, y)
+                self.windowManager.dragWindow2(self.lastClickedWindow, x, y)
 
             # resizing operation
             if self.allowResizing:

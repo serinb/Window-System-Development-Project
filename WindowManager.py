@@ -20,27 +20,17 @@ class WindowManager:
         # We will use it in the future to avoid the placement of widgets under the window decorations
         self.titleBarHeight = 30
 
+        # screen boundaries
+        self.screenTopBoundary = -15
+        self.screenBottomBoundary = 550
+        self.screenLeftBoundary = -100
+        self.screenRightBoundary = 900
+
+
         self.openedTopLevelWindows = []
 
     def openWindow(self, window):
         self.openedTopLevelWindows.append(window)
-
-    def checkWindowPosition(self, window, x, y):
-
-        halfWindowWidth = 0.5 * window.width
-
-        # we define that a window is only allowed to exceed the boundaries of the screen
-        # by half of its titlebar width and height
-        topBoundary = -0.5 * self.titleBarHeight
-        bottomBoundary = self.windowSystem.screen.height - window.height - 50
-
-        leftBoundary = - halfWindowWidth
-        rightBoundary = self.windowSystem.screen.width - halfWindowWidth
-
-        if leftBoundary <= x <= rightBoundary and topBoundary <= y <= bottomBoundary:
-            return True
-        else:
-            return False
 
     def decorateWindow(self, window, ctx):
         # stroked border around the window
@@ -76,6 +66,91 @@ class WindowManager:
         ctx.setFillColor(COLOR_BLACK)
         ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
 
+
+    def checkWindowPosition(self, window, x ,y):
+
+        halfWindowWidth = 0.5 * window.width
+
+        # we define that a window is only allowed to exceed the boundaries of the screen
+        # by half of its titlebar width and height
+        topBoundary = -0.5 * self.titleBarHeight
+        bottomBoundary = self.windowSystem.screen.height - window.height - 50
+
+        leftBoundary = - halfWindowWidth
+        rightBoundary = self.windowSystem.screen.width - halfWindowWidth
+
+        if leftBoundary <= x <= rightBoundary and topBoundary <= y <= bottomBoundary:
+            return True
+        else:
+            return False
+
+    def checkWindowPosition2(self, window, x, y, invalidSide):
+
+        valid = True
+
+        if (self.screenTopBoundary > y):
+            valid = False
+            invalidSide.append("top")
+        if (y + window.height > self.screenBottomBoundary):
+            valid = False
+            invalidSide.append("bottom")
+        if (self.screenLeftBoundary > x):
+            valid = False
+            invalidSide.append("left")
+            print("X is HERE " + str(x) )
+        if (x + window.width > self.screenRightBoundary):
+            valid = False
+            invalidSide.append("right")
+
+
+        return valid
+
+
+    def dragWindow2(self, window, x, y):
+
+        # difference between old and new (x,y) coordinates
+        differenceX = x - self.windowSystem.recentX
+        differenceY = y - self.windowSystem.recentY
+        newX = window.x + differenceX
+        newY = window.y + differenceY
+        print(str(newX) + " " + str(newY))
+
+        invalidSide = []
+
+        if self.checkWindowPosition2(window, newX, newY, invalidSide):
+            # update origin x,y for children of lastClickedWindow
+            window.x = newX
+            window.y = newY
+            self.windowSystem.recentX = x
+            self.windowSystem.recentY = y
+            if window.childWindows:
+                for c in window.childWindows:
+                    c.x = c.x + differenceX
+                    c.y = c.y + differenceY
+
+        else:
+            for side in invalidSide:
+                if side == "left":
+                    window.x = self.screenLeftBoundary
+                    print("left")
+                elif side == "right":
+                    window.x = self.screenRightBoundary - window.width
+                    print("right")
+                elif side == "top":
+                    window.y = self.screenTopBoundary
+                    print("top")
+                elif side == "bottom":
+                    window.y = self.screenBottomBoundary - window.height
+                    print("bottom")
+
+            self.windowSystem.recentX = x
+            self.windowSystem.recentY = y
+
+        self.windowSystem.requestRepaint()
+
+
+
+
     def dragWindow(self, window, x, y):
         # difference between old and new (x,y) coordinates
         differenceX = x - self.windowSystem.recentX
@@ -92,8 +167,10 @@ class WindowManager:
                 c.x = c.x + differenceX
                 c.y = c.y + differenceY
 
-        if self.checkWindowPosition(window, window.x, window.y):
+        if self.checkWindowPosition(window):
             self.windowSystem.requestRepaint()
+
+
 
     def resizeWindow(self, window, x, y):
         # x,y are global coordinates
@@ -102,8 +179,6 @@ class WindowManager:
             window.resize(window.x, window.y, newWidth, newHeight)
             if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
                 self.windowSystem.requestRepaint()
-
-
 
 
     # P3 (5)

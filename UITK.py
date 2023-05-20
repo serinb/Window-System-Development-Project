@@ -64,7 +64,6 @@ class Button(Label):
     def __init__(self, originX, originY, width, height, identifier, textString, textColor, backgroundColor, minWidth, minHeight,
                  action=None, anchoring=None):
         super().__init__(originX, originY, width, height, identifier, anchoring, textString, textColor, backgroundColor, minWidth, minHeight)
-
         self.isHovered = False
         self.isPressed = False
         self.isActive = False
