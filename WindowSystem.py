@@ -373,7 +373,7 @@ class WindowSystem(GraphicsEventSystem):
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
     def handleKeyPressed(self, char):
-        if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "HelloWorld":
+        if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Hello World":
             self.helloWorld.inputHandler(char)
             self.requestRepaint()
 

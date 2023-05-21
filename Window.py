@@ -137,17 +137,6 @@ class Window:
             for c in self.childWindows:
                 # calculate the deepest x,y coordinate of child inside of parent coordinate system
                 inParentX, inParentY = self.convertPositionFromScreen(c.x, c.y)
-                """
-                deepestX = inParentX + c.width
-                deepestY = inParentY + c.height
-                drawingWidth = c.width
-                drawingHeight = c.height
-                if deepestX > self.width - self.paddingRight:
-                    drawingWidth = c.width - (c.width + inParentX - self.width) - self.paddingRight
-                if deepestY > self.height - self.paddingBottom:
-                    drawingHeight = c.height - (c.height + inParentY - self.height) - self.paddingBottom
-
-                """
                 c.draw(ctx, c.width, c.height)
 
     # P2 4a
