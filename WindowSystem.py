@@ -284,8 +284,7 @@ class WindowSystem(GraphicsEventSystem):
         else:
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
-            if self.screen.checkIfInTaskbar(x, y):
-                print("milestone")
+
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
