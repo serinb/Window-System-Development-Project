@@ -62,7 +62,6 @@ class WindowSystem(GraphicsEventSystem):
         # Calculator App
         self.calculator = Calculator.CalculatorApplication(self)
 
-
         # button for HelloWorld
         helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
                                                 "#35393C", COLOR_ORANGE, lambda: self.helloWorldPressed())
@@ -101,7 +100,7 @@ class WindowSystem(GraphicsEventSystem):
 
     def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
                             childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50,
-                            childMinHeight=50):
+                            childMinHeight=50, fontSize=14, fontFamily="Helvetica", fontWeight="bold"):
 
         # making sure that child lies within the parents padding
         # padding top
@@ -126,7 +125,7 @@ class WindowSystem(GraphicsEventSystem):
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
         newLabel = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring,
                          childMinWidth, childMinHeight, childTextString,
-                         childTextColor, childBackgroundColor, parentWindow.depth + 1)
+                         childTextColor, childBackgroundColor, parentWindow.depth + 1, fontSize, fontFamily, fontWeight)
 
         parentWindow.addChildWindow(newLabel)
         return newLabel
@@ -323,10 +322,10 @@ class WindowSystem(GraphicsEventSystem):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
                 # register that mouseclick event just happened
-                if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
-                    if self.lastClickedWindow.identifier == "Calculator":
-                        # self.lastClickedWindow.handleMouseClicked(x, y)
-                        self.calculator.inputHandler(self.lastClickedWindow.identifier)
+                # if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
+                #     if self.lastClickedWindow.identifier == "Calculator":
+                #         # self.lastClickedWindow.handleMouseClicked(x, y)
+                #         self.calculator.inputHandler(self.lastClickedWindow.identifier)
 
             elif self.lastClickedButton is not None and self.lastClickedButton.isPressed:
                 self.lastClickedButton.isPressed = False
@@ -377,6 +376,8 @@ class WindowSystem(GraphicsEventSystem):
         if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Hello World":
             self.helloWorld.inputHandler(char)
             self.requestRepaint()
+        elif self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Calculator":
+            self.calculator.buttonClicked(char)
 
 
 # Let's start your window system!
