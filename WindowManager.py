@@ -28,10 +28,11 @@ class WindowManager:
 
 
         self.openedTopLevelWindows = []
+        self.startMenu = None
 
     def openWindow(self, window):
-        if window.identifier != "start_menu":
-            self.openedTopLevelWindows.append(window)
+        self.openedTopLevelWindows.append(window)
+
 
 
     def decorateWindow(self, window, ctx):
@@ -99,7 +100,7 @@ class WindowManager:
 
     def dragWindow(self, window, x, y):
 
-        if window.identifier != "start_menu":
+        if window.identifier != "Start_menu":
 
             # difference between old and new (x,y) coordinates
             differenceX = x - self.windowSystem.recentX
@@ -155,29 +156,26 @@ class WindowManager:
             if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
                 self.windowSystem.requestRepaint()
 
-    def openCloseStartMenu(self):
-        if self.windowSystem.startMenuActive:
-            self.windowSystem.start_menu.isHidden = False
-        else:
-            self.windowSystem.start_menu.isHidden = True
-        self.windowSystem.reqeustRepaint()
-
     # P3 (5)
     def minimizeWindow(self, window):
-        if window.getTopLevelWindow() != window:
-            minimizingWindow = window.getTopLevelWindow()
-        elif window.identifier:
-            minimizingWindow = window
-        minimizingWindow.isHidden = True
-        self.windowSystem.requestRepaint()
+        if window.identifier != "Start_menu":
+            if window.getTopLevelWindow() != window:
+                minimizingWindow = window.getTopLevelWindow()
+            elif window.identifier:
+                minimizingWindow = window
+            minimizingWindow.isHidden = True
+            self.windowSystem.requestRepaint()
+
 
     # P3 (5)
     def closeWindow(self, window):
-        window.isClosed = True
-        window.removeFromParentWindow()
-        self.openedTopLevelWindows.remove(window)
-        window.isHidden = True
-        self.windowSystem.requestRepaint()
+        if window.identifier != "Start_menu":
+            window.isClosed = True
+            window.removeFromParentWindow()
+            self.openedTopLevelWindows.remove(window)
+            window.isHidden = True
+            self.windowSystem.requestRepaint()
+
 
     # P3 (1)
     # Add an instance of the WM to the window system
@@ -194,10 +192,13 @@ class WindowManager:
         ctx.fillRect(0, self.windowSystem.screen.height - 50, self.windowSystem.screen.width,
                      self.windowSystem.screen.height)
 
+        """
         # "terminate / start menu" button
         ctx.setFillColor("#6459cb")
         ctx.fillRect(0, self.windowSystem.screen.height - 50, 40, self.windowSystem.screen.height)
         ctx.drawString("S", 13.5, self.windowSystem.screen.height - 35)
+
+        """
 
         if len(self.windowSystem.screen.childWindows) > 0:
             lastIndex = len(self.windowSystem.screen.childWindows) - 1
@@ -211,7 +212,7 @@ class WindowManager:
                 else:
                     ctx.setStrokeColor(COLOR_GRAY)
                 if not c.isClosed:
-                    ctx.strokeRect(40 + offset, self.windowSystem.screen.height - 50, 80 + offset,
+                    ctx.strokeRect(0 + offset, self.windowSystem.screen.height - 50, 40 + offset,
                                    self.windowSystem.screen.height)
-                    ctx.drawString(c.identifier[0], 50 + offset, self.windowSystem.screen.height - 33)
-                    offset += 40
+                    ctx.drawString(c.identifier[0], 10 + offset, self.windowSystem.screen.height - 33)
+                    offset += 42

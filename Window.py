@@ -54,6 +54,7 @@ class Window:
         if window not in self.childWindows:
             self.childWindows.append(window)
 
+
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor, minWidth, minHeight, anchoring):
 
@@ -82,6 +83,7 @@ class Window:
         childWindow.backgroundColor = childBackgroundColor
         self.addChildWindow(childWindow)
         return childWindow
+
 
     # P2 1a
     def removeFromParentWindow(self):
@@ -406,7 +408,7 @@ class Window:
                 return False
 
     def checkIfInMinimizeButton(self, x, y):
-        if self.checkIfInTitleBar(x, y) and self.identifier != "start_menu":
+        if self.checkIfInTitleBar(x, y) and self.identifier != "Start_menu":
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
 
             # (X1, Y1) of minimize button
@@ -424,7 +426,7 @@ class Window:
                 return False
 
     def checkIfInResizingArea(self, x, y):
-        if self.identifier != "start_menu":
+        if self.identifier != "Start_menu":
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
             resizeX1 = self.width - 15
             resizeY1 = self.height - 15
@@ -455,7 +457,7 @@ class Screen(Window):
                     drawingWidth = c.width
                     drawingHeight = c.height
                     c.draw(ctx, drawingWidth, drawingHeight)
-                    if c.depth == 1 and c.identifier != "start_menu":
+                    if c.depth == 1 and c.identifier != "Start_menu":
                         self.windowSystem.windowManager.decorateWindow(c, ctx)
                         # if len(c.childWindows) > 0:
                         #     for gc in c.childWindows:
@@ -481,40 +483,44 @@ class Screen(Window):
         else:
             return False
 
+    def checkIfInTaskBarArea(self, x, y):
+        startX = 0
+        startY = self.height - 50
+
+        endX = 40
+        endY = self.height
+
+
+        if startX <= x <= endX and startY <= y <= endY:
+            return True
+
+        else:
+            return False
+
+
     def clickedTaskbarEvent(self, x, y):
 
         startX = 0
         startY = self.height - 50
 
-        endX = 35
+        endX = 40
         endY = self.height
 
-        if startX <= x <= endX and startY <= y <= endY:
-            # this is when start button clicked
-            # helloworld, calculator, color slider
-            if self.windowSystem.start_menu.isHidden:
-                        self.windowSystem.start_menu.isHidden = False
-                        self.windowSystem.bringWindowToFront(self.windowSystem.start_menu)
-                        self.windowSystem.requestRepaint()
+        print(str(startX <= x <= endX))
 
-        else:
-            startX = 40
-            endX = 80
+        for child in self.windowSystem.windowManager.openedTopLevelWindows:
 
-            for child in self.windowSystem.windowManager.openedTopLevelWindows:
+            if startX <= x <= endX and startY <= y <= endY:
+                if child.isHidden:
+                    child.isHidden = False
+                    self.windowSystem.bringWindowToFront(child)
+                    self.windowSystem.requestRepaint()
 
-                if startX <= x <= endX and startY <= y <= endY:
-
-                    if child.isHidden:
-                        child.isHidden = False
-                        self.windowSystem.bringWindowToFront(child)
-                        self.windowSystem.requestRepaint()
-
-                    else:
-                        child.isHidden = True
-                        self.windowSystem.requestRepaint()
-
-                    break
                 else:
-                    startX += 40
-                    endX += 40
+                    child.isHidden = True
+                    self.windowSystem.requestRepaint()
+
+                break
+            else:
+                startX += 40
+                endX += 40

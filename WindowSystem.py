@@ -54,11 +54,13 @@ class WindowSystem(GraphicsEventSystem):
         self.startMenuAcive = False
 
 
+        self.start_menu = self.createWindowOnScreen(0, 550 - 200, 200, 200, "Start_menu", COLOR_BLUE, 200, 200)
+
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
 
         #self.calculator = Calculator.CalculatorApplication(self)
 
-        self.start_menu = self.createWindowOnScreen(0, 550 - 200, 200, 200, "start_menu", COLOR_BLUE, 200, 200)
+
 
 
 
@@ -268,9 +270,10 @@ class WindowSystem(GraphicsEventSystem):
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
             if self.screen.checkIfInTaskbar(x, y):
-                print('milestone 4')
-                #TODO start_menu
-                self.startMenuAcive = True
+                if self.screen.checkIfInTaskBarArea(x,y):
+                    print('in start menu pressed')
+                    #TODO start_menu
+                    #self.startMenuAcive = True
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -285,11 +288,15 @@ class WindowSystem(GraphicsEventSystem):
         # if clicked window is screen
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
+
+                """
+                if self.lastClickedWindow.checkIfInTaskBarArea(x,y) and self.startMenuAcive:
+                    print("in start menu released")
+                    self.windowManager.openCloseStartMenu(self.startMenuActive)
+                else:
+
+                 """
                 self.screen.clickedTaskbarEvent(x, y)
-                #TODO start_menu
-                # check if in start_menu area
-                # call function that either hides or shows window
-                # openCloseStartMenu(self) in WM
 
         else:
             # if clicked window is a toplevel w
