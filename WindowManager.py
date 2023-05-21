@@ -148,16 +148,14 @@ class WindowManager:
                         window.y = self.screenBottomBoundary - window.height
 
             if len(window.childWindows) > 0:
-                    iterator in range(len(childPostion))
                     for c in window.childWindows:
                         oldX, oldY = c.x, c.y
-                        c.x, c.y = window.convertPositionToScreen(childPostion[iterator][0], childPostion[iterator][1])
+                        c.x, c.y = window.convertPositionToScreen(childPostion[window.childWindows.index(c)][0], childPostion[window.childWindows.index(c)][1])
                         self.dragChildren(c, oldX, oldY)
 
             self.windowSystem.recentX = x
             self.windowSystem.recentY = y
             self.windowSystem.requestRepaint()
-
 
     def resizeWindow(self, window, x, y):
         # x,y are global coordinates
@@ -176,7 +174,6 @@ class WindowManager:
                 minimizingWindow = window
             minimizingWindow.isHidden = True
             self.windowSystem.requestRepaint()
-
 
     # P3 (5)
     def closeWindow(self, window):

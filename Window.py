@@ -263,6 +263,7 @@ class Window:
     # P3 (7) Resizing windows and simple layout
     # Changes the position and size of the current window to the given parameters
     def resize(self, x, y, newWidth, newHeight):
+        oldX, oldY = self.x, self.y
         oldWidth, oldHeight = self.width, self.height
         if newWidth <= self.minWidth:
             newWidth = self.minWidth
@@ -272,15 +273,21 @@ class Window:
         self.height = newHeight
         self.x = x
         self.y = y
+        print("Parent width: " + str(self.width))
         if self.childWindows is not None:
             # calculate the ratio of the child window's size w.r.t to its parent's old size
 
             for c in self.childWindows:
 
                 if c.layoutAnchors == LayoutAnchor.top:
-                    ratioPositionX = c.x / oldWidth
-
-                    c.x = self.width * ratioPositionX
+                    print(str(c.x) + "childx------------")
+                    localX, localY = c.x - oldX, c.y - oldY
+                    print(str(localX) + "localx------------")
+                    print(str(oldWidth) + "oldx------------")
+                    ratioPositionX = localX / oldWidth
+                    newX = int(round(self.width * ratioPositionX, 0))
+                    print(str(newX) + "newX------------")
+                    c.x, c.y = self.convertPositionToScreen(newX, localY)
 
                 if c.layoutAnchors == LayoutAnchor.bottom:
                     ratioPositionX = c.x / oldWidth
@@ -385,6 +392,8 @@ class Window:
                     # call the resize function on children of child
                     #newWidth, newHeight = c.convertPositionFromScreen(x, y)
                     #c.resize(c.width, c.height, x, y)
+
+                print("child x: " + str(c.x))
 
     def checkIfInTitleBar(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
