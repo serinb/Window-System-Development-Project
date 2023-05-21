@@ -56,7 +56,7 @@ class WindowSystem(GraphicsEventSystem):
 
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
 
-        # self.calculator = Calculator.CalculatorApplication(self)
+        self.calculator = Calculator.CalculatorApplication(self)
 
         # TODO add slider
         # self.slider = None
