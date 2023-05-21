@@ -103,14 +103,15 @@ class WindowManager:
         return valid
 
     def dragChildren(self, window, x, y):
-
+        pass
+        """
         if len(window.childWindows) > 0:
             for c in window.childWindows:
                 oldX, oldY = c.x, c.y
                 convertedX, convertedY = x - window.x, y - window.y
                 c.x, c.y = window.convertPositionToScreen(convertedX, convertedY)
                 self.dragChildren(c, oldX, oldY)
-
+            """
 
     def dragWindow(self, window, x, y):
 
@@ -147,7 +148,6 @@ class WindowManager:
                         window.y = self.screenBottomBoundary - window.height
 
             if len(window.childWindows) > 0:
-
                     iterator in range(len(childPostion))
                     for c in window.childWindows:
                         oldX, oldY = c.x, c.y

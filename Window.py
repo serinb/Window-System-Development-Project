@@ -263,7 +263,6 @@ class Window:
     # P3 (7) Resizing windows and simple layout
     # Changes the position and size of the current window to the given parameters
     def resize(self, x, y, newWidth, newHeight):
-        oldX, oldY = self.x, self.y
         oldWidth, oldHeight = self.width, self.height
         if newWidth <= self.minWidth:
             newWidth = self.minWidth
@@ -283,15 +282,12 @@ class Window:
 
                     c.x = self.width * ratioPositionX
 
-
-
                 if c.layoutAnchors == LayoutAnchor.bottom:
                     ratioPositionX = c.x / oldWidth
                     ratioPositionY = oldHeight - c.y
 
                     c.x = self.width * ratioPositionX
                     c.y = self.height - ratioPositionY
-
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.left:
                     # default state
@@ -307,7 +303,6 @@ class Window:
                     newChildGreatestX = self.width - rightDistanceChildParent
                     newChildX = newChildGreatestX - c.width
                     c.x = newChildX
-
 
                 # TOP RIGHT LEFT
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left:
@@ -346,7 +341,6 @@ class Window:
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
-
                 if c.layoutAnchors == LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
                     childGreatestX = c.width + c.x
@@ -365,7 +359,6 @@ class Window:
                     newChildGreatestY = self.height - bottomDistanceChildParent
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
-
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
