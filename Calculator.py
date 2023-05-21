@@ -161,7 +161,7 @@ class CalculatorApplication:
         self.windowSystem.requestRepaint()
 
     def concatenate(self, input):
-        return self.result + str(input)
+        return self.result + input
 
 
     def inputHandler(self, btnidentifier):

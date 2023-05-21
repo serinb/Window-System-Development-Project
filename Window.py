@@ -273,101 +273,13 @@ class Window:
         self.height = newHeight
         self.x = x
         self.y = y
-        print("Parent width: " + str(self.width))
         if self.childWindows is not None:
             # calculate the ratio of the child window's size w.r.t to its parent's old size
 
             for c in self.childWindows:
 
-                if c.layoutAnchors == LayoutAnchor.top:
-                    print(str(c.x) + "childx------------")
-                    localX, localY = c.x - oldX, c.y - oldY
-                    print(str(localX) + "localx------------")
-                    print(str(oldWidth) + "oldx------------")
-                    ratioPositionX = localX / oldWidth
-                    newX = int(round(self.width * ratioPositionX, 0))
-                    print(str(newX) + "newX------------")
-                    c.x, c.y = self.convertPositionToScreen(newX, localY)
-
-                if c.layoutAnchors == LayoutAnchor.bottom:
-                    ratioPositionX = c.x / oldWidth
-                    ratioPositionY = oldHeight - c.y
-
-                    c.x = self.width * ratioPositionX
-                    c.y = self.height - ratioPositionY
-
-                if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.left:
-                    # default state
-                    # this here is only for TOPLeft anchor
-                    # nothing should change
-                    # window stays put in its position regardless of parent resizing
-                    pass
-
-                # TOP RIGHT
-                if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.right:
-                    childGreatestX = c.width + c.x
-                    rightDistanceChildParent = oldWidth - childGreatestX
-                    newChildGreatestX = self.width - rightDistanceChildParent
-                    newChildX = newChildGreatestX - c.width
-                    c.x = newChildX
-
-                # TOP RIGHT LEFT
-                if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left:
-                    # for right side
-                    childGreatestX = c.width + c.x
-                    rightDistanceChildParent = oldWidth - childGreatestX
-                    newChildGreatestX = self.width - rightDistanceChildParent
-
-                    #for left side
-                    childSmallestX = c.x
-
-                    newChildWidth = newChildGreatestX - childSmallestX
-                    c.width = newChildWidth
-
-                # BOTTOM LEFT
-                if c.layoutAnchors == LayoutAnchor.bottom | LayoutAnchor.left:
-                    childGreatestY = c.y + c.height
-                    bottomDistanceChildParent = oldHeight - childGreatestY
-
-                    newChildGreatestY = self.height - bottomDistanceChildParent
-                    childSmallestY = newChildGreatestY - c.height
-                    c.y = childSmallestY
-
-                if c.layoutAnchors == LayoutAnchor.bottom | LayoutAnchor.right:
-                    childGreatestX = c.x + c.width
-                    rightDistanceChildParent = oldWidth - childGreatestX
-
-                    newChildGreatestX = self.width - rightDistanceChildParent
-                    childSmallestX = newChildGreatestX - c.width
-                    c.x = childSmallestX
-
-                    childGreatestY = c.y + c.height
-                    bottomDistanceChildParent = oldHeight - childGreatestY
-
-                    newChildGreatestY = self.height - bottomDistanceChildParent
-                    childSmallestY = newChildGreatestY - c.height
-                    c.y = childSmallestY
-
-                if c.layoutAnchors == LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
-                    # for right side
-                    childGreatestX = c.width + c.x
-                    rightDistanceChildParent = oldWidth - childGreatestX
-                    newChildGreatestX = self.width - rightDistanceChildParent
-
-                    #for left side
-                    childSmallestX = c.x
-
-                    newChildWidth = newChildGreatestX - childSmallestX
-                    c.width = newChildWidth
-
-                    childGreatestY = c.y + c.height
-                    bottomDistanceChildParent = oldHeight - childGreatestY
-
-                    newChildGreatestY = self.height - bottomDistanceChildParent
-                    childSmallestY = newChildGreatestY - c.height
-                    c.y = childSmallestY
-
-                if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
+                # TOP RIGHT BOTTOM LEFT
+                if c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right and c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.left:
                     # for right side
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
@@ -386,14 +298,101 @@ class Window:
                     newChildHeight = newChildGreatestY - c.y
                     c.height = newChildHeight
 
-                if len(c.childWindows) > 0:
-                    pass
-                    # TODO
-                    # call the resize function on children of child
-                    #newWidth, newHeight = c.convertPositionFromScreen(x, y)
-                    #c.resize(c.width, c.height, x, y)
+                # TOP RIGHT LEFT
+                elif c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right and c.layoutAnchors & LayoutAnchor.left:
+                    # for right side
+                    childGreatestX = c.width + c.x
+                    rightDistanceChildParent = oldWidth - childGreatestX
+                    newChildGreatestX = self.width - rightDistanceChildParent
 
-                print("child x: " + str(c.x))
+                    #for left side
+                    childSmallestX = c.x
+
+                    newChildWidth = newChildGreatestX - childSmallestX
+                    c.width = newChildWidth
+
+                # TOP RIGHT
+                elif c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right:
+                    print(bool(c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right))
+                    childGreatestX = c.width + c.x
+                    rightDistanceChildParent = oldWidth - childGreatestX
+                    newChildGreatestX = self.width - rightDistanceChildParent
+                    newChildX = newChildGreatestX - c.width
+                    c.x = newChildX
+
+                # TOP
+                elif c.layoutAnchors & LayoutAnchor.top:
+                    localY = c.y - oldY
+                    parentMiddle = self.width / 2
+                    childMiddle = c.width / 2
+                    newX = parentMiddle - childMiddle
+                    c.x, c.y = self.convertPositionToScreen(newX, localY)
+
+                # BOTTOM RIGHT LEFT
+                elif c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.left and c.layoutAnchors & LayoutAnchor.right:
+                    print("BOTTOM RIGHT LEFT")
+                    childGreatestX = c.width + c.x
+                    rightDistanceChildParent = oldWidth - childGreatestX
+                    newChildGreatestX = self.width - rightDistanceChildParent
+
+                    #for left side
+                    childSmallestX = c.x
+
+                    newChildWidth = newChildGreatestX - childSmallestX
+                    c.width = newChildWidth
+
+                    childGreatestY = c.y + c.height
+                    bottomDistanceChildParent = oldHeight - childGreatestY
+
+                    newChildGreatestY = self.height - bottomDistanceChildParent
+                    childSmallestY = newChildGreatestY - c.height
+                    c.y = childSmallestY
+
+                # BOTTOM LEFT
+                elif c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.left:
+                    print("BOTTOM LEFT")
+                    childGreatestY = c.y + c.height
+
+
+                    bottomDistanceChildParent = oldHeight - childGreatestY
+                    newChildGreatestY = self.height - bottomDistanceChildParent
+                    childSmallestY = newChildGreatestY - c.height
+                    c.y = childSmallestY
+
+                # BOTTTOM RIGHT
+                elif c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.right:
+                    print("BOTTTOM RIGHT")
+                    childGreatestX = c.x + c.width
+                    rightDistanceChildParent = oldWidth - childGreatestX
+
+                    newChildGreatestX = self.width - rightDistanceChildParent
+                    childSmallestX = newChildGreatestX - c.width
+                    c.x = childSmallestX
+
+                    childGreatestY = c.y + c.height
+                    bottomDistanceChildParent = oldHeight - childGreatestY
+
+                    newChildGreatestY = self.height - bottomDistanceChildParent
+                    childSmallestY = newChildGreatestY - c.height
+                    c.y = childSmallestY
+
+                # BOTTOM
+                elif c.layoutAnchors & LayoutAnchor.bottom:
+                    print("BOTTTOM")
+                    childGreatestY = c.y + c.height
+                    bottomDistanceChildParent = oldHeight - childGreatestY
+
+                    newChildGreatestY = self.height - bottomDistanceChildParent
+                    childSmallestY = newChildGreatestY - c.height
+                    c.y = childSmallestY
+
+                    localY = c.y - oldY
+                    parentMiddle = self.width / 2
+                    childMiddle = c.width / 2
+                    newX = parentMiddle - childMiddle
+                    convertedX, convertedY = self.convertPositionToScreen(newX, localY)
+                    c.x = convertedX
+
 
     def checkIfInTitleBar(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
