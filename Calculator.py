@@ -33,8 +33,8 @@ class CalculatorApplication:
                                 80)
 
                 # define label for display area?
-        self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.containerDisplay, 0, 0, 300, 80, "displayArea",
-                                                                      "0", COLOR_BLACK, COLOR_GREEN)
+        #self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.containerDisplay, 0, 0, 300, 80, "displayArea",
+                                                                     # "0", COLOR_BLACK, COLOR_GREEN)
 
         #containerRow1 = self.windowSystem.createWidgetInWindow(self.Window)
 
@@ -47,7 +47,7 @@ class CalculatorApplication:
 
         # first Row (left-right)
         self.button00 = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonWidth , buttonHeight, 'C',
-                'C', COLOR_WHITE, COLOR_GRAY, lambda: self.concatenate("C"), LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
+                'C', COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
 
         buttonX += buttonWidth + buttonSpacing
 
@@ -113,12 +113,12 @@ class CalculatorApplication:
 
         # forth Row (left-right)
         self.button30 = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonWidth , buttonHeight, '1',
-                '1', COLOR_WHITE, COLOR_GRAY, lambda: self.concatenate(1), LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
+                '1', COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
 
         buttonX += buttonWidth + buttonSpacing
 
         self.button31 = self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonWidth , buttonHeight, '2',
-                '2', COLOR_WHITE, COLOR_GRAY, lambda: self.concatenate(1), LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
+                '2', COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
 
         buttonX += buttonWidth + buttonSpacing
 

@@ -22,7 +22,7 @@ class WindowManager:
 
         # screen boundaries
         self.screenTopBoundary = -15
-        self.screenBottomBoundary = 550
+        self.screenBottomBoundary = 559
         self.screenLeftBoundary = -100
         self.screenRightBoundary = 900
 
@@ -36,38 +36,52 @@ class WindowManager:
 
 
     def decorateWindow(self, window, ctx):
-        # stroked border around the window
-        ctx.setStrokeColor(COLOR_BLACK)
-        ctx.setOrigin(window.x, window.y)
-        ctx.strokeRect(0, 0, window.width, window.height)
-        standardFont = Font(family="Helvetica", size=11, weight="normal")
-        ctx.setFont(standardFont)
+        if window.identifier == "Start Menu":
+            # stroked border around the window
+            ctx.setStrokeColor(COLOR_BLACK)
+            ctx.setOrigin(window.x, window.y)
+            ctx.strokeRect(0, 0, window.width, window.height)
+            standardFont = Font(family="Helvetica", size=11, weight="bold")
+            ctx.setFont(standardFont)
+            ctx.setFillColor("#D06929")
 
-        # foreground window should be visually discriminable
-        lastIndex = len(self.windowSystem.screen.childWindows) - 1
-        lastChild = self.windowSystem.screen.childWindows[lastIndex]
+            ctx.fillRect(1, 1, window.width, self.titleBarHeight)
+            # title string of a window with the identifier of the window
+            ctx.drawString(window.identifier, 10, 7)
 
-        veryLastChild = lastChild
-
-        if veryLastChild == window:
-            ctx.setFillColor(COLOR_PINK)
         else:
-            # colored title bar
-            ctx.setFillColor("#f5daf7")
+            # stroked border around the window
+            ctx.setStrokeColor(COLOR_BLACK)
+            ctx.setOrigin(window.x, window.y)
+            ctx.strokeRect(0, 0, window.width, window.height)
+            standardFont = Font(family="Helvetica", size=11, weight="normal")
+            ctx.setFont(standardFont)
 
-        ctx.fillRect(1, 1, window.width, self.titleBarHeight)
-        # title string of a window with the identifier of the window
-        ctx.drawString(window.identifier, 10, 7)
+            # foreground window should be visually discriminable
+            lastIndex = len(self.windowSystem.screen.childWindows) - 1
+            lastChild = self.windowSystem.screen.childWindows[lastIndex]
 
-        # closing Button
-        ctx.drawString("X", window.width - 15, 7)
+            veryLastChild = lastChild
 
-        # minimizing button
-        ctx.drawLine(window.width - 40, 15, window.width - 33, 15)
+            if veryLastChild == window:
+                ctx.setFillColor("#D06929")
+            else:
+                # colored title bar
+                ctx.setFillColor(COLOR_GRAY)
 
-        # resize Button
-        ctx.setFillColor(COLOR_BLACK)
-        ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
+            ctx.fillRect(1, 1, window.width, self.titleBarHeight)
+            # title string of a window with the identifier of the window
+            ctx.drawString(window.identifier, 10, 7)
+
+            # closing Button
+            ctx.drawString("X", window.width - 15, 7)
+
+            # minimizing button
+            ctx.drawLine(window.width - 40, 15, window.width - 33, 15)
+
+            # resize Button
+            ctx.setFillColor(COLOR_BLACK)
+            ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
 
 
     def checkWindowPosition(self, window, x, y, invalidSide):
@@ -145,9 +159,6 @@ class WindowManager:
             self.windowSystem.requestRepaint()
 
 
-
-
-
     def resizeWindow(self, window, x, y):
         # x,y are global coordinates
         if window.parentWindow == self.windowSystem.screen:
@@ -158,7 +169,7 @@ class WindowManager:
 
     # P3 (5)
     def minimizeWindow(self, window):
-        if window.identifier != "Start_menu":
+        if window.identifier != "Start Menu":
             if window.getTopLevelWindow() != window:
                 minimizingWindow = window.getTopLevelWindow()
             elif window.identifier:
@@ -188,17 +199,19 @@ class WindowManager:
 
     # P3 (6) Task bar
     def drawTaskbar(self, ctx):
-        ctx.setFillColor("#3b28a2")
-        ctx.fillRect(0, self.windowSystem.screen.height - 50, self.windowSystem.screen.width,
+
+        #for entire taskbar
+        ctx.setFillColor("#35393C")
+        ctx.fillRect(0, self.windowSystem.screen.height - 40, self.windowSystem.screen.width,
                      self.windowSystem.screen.height)
-
-        """
-        # "terminate / start menu" button
-        ctx.setFillColor("#6459cb")
-        ctx.fillRect(0, self.windowSystem.screen.height - 50, 40, self.windowSystem.screen.height)
-        ctx.drawString("S", 13.5, self.windowSystem.screen.height - 35)
-
-        """
+        ctx.setFillColor("#D06929")
+        ctx.fillRect(0, self.windowSystem.screen.height - 38, 100,
+                     self.windowSystem.screen.height)
+        ctx.setStrokeColor(COLOR_BLACK)
+        font = Font(family="Helvetica", size=11, weight="bold")
+        ctx.setFont(font)
+        ctx.strokeRect(0, self.windowSystem.screen.height - 40, self.windowSystem.screen.width,
+                                   self.windowSystem.screen.height)
 
         if len(self.windowSystem.screen.childWindows) > 0:
             lastIndex = len(self.windowSystem.screen.childWindows) - 1
@@ -207,12 +220,15 @@ class WindowManager:
             # define offset to start drawing the next child of the screen at the offset location
             offset = 0
             for c in self.openedTopLevelWindows:
-                if lastChild == c:
-                    ctx.setStrokeColor(COLOR_PINK)
+                if lastChild == c and lastChild.isHidden == False:
+                    if c.identifier == "Start Menu":
+                        ctx.setStrokeColor("#35393C")
+                    else:
+                        ctx.setStrokeColor("#D06929")
                 else:
-                    ctx.setStrokeColor(COLOR_GRAY)
+                    ctx.setStrokeColor(COLOR_WHITE)
                 if not c.isClosed:
-                    ctx.strokeRect(0 + offset, self.windowSystem.screen.height - 50, 40 + offset,
+                    ctx.strokeRect(0 + offset, self.windowSystem.screen.height - 38, 100 + offset,
                                    self.windowSystem.screen.height)
-                    ctx.drawString(c.identifier[0], 10 + offset, self.windowSystem.screen.height - 33)
-                    offset += 42
+                    ctx.drawString(c.identifier, 10 + offset, self.windowSystem.screen.height -28)
+                    offset += 104

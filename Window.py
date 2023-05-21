@@ -31,7 +31,7 @@ class Window:
         self.parentWindow = None
 
         # P3 (5)
-        self.isHidden = False
+        self.isHidden = True
         self.isClosed = False
 
         # P3 (7)
@@ -132,7 +132,7 @@ class Window:
 
         # call the draw function on calling window objects children
         if self.childWindows is not None:
-            print(self.identifier)
+            #print(self.identifier)
             # parent window draws its child views
             for c in self.childWindows:
                 # calculate the deepest x,y coordinate of child inside of parent coordinate system
@@ -257,7 +257,8 @@ class Window:
 
     # P2 4d
     def handleMouseClicked(self, x, y):
-        print(self.identifier)
+        #print(self.identifier)
+        pass
 
     # P3 (7) Resizing windows and simple layout
     # Changes the position and size of the current window to the given parameters
@@ -408,7 +409,7 @@ class Window:
                 return False
 
     def checkIfInMinimizeButton(self, x, y):
-        if self.checkIfInTitleBar(x, y) and self.identifier != "Start_menu":
+        if self.checkIfInTitleBar(x, y) and self.identifier != "Start Menu":
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
 
             # (X1, Y1) of minimize button
@@ -457,7 +458,7 @@ class Screen(Window):
                     drawingWidth = c.width
                     drawingHeight = c.height
                     c.draw(ctx, drawingWidth, drawingHeight)
-                    if c.depth == 1 and c.identifier != "Start_menu":
+                    if c.depth == 1:
                         self.windowSystem.windowManager.decorateWindow(c, ctx)
                         # if len(c.childWindows) > 0:
                         #     for gc in c.childWindows:
@@ -503,7 +504,7 @@ class Screen(Window):
         startX = 0
         startY = self.height - 50
 
-        endX = 40
+        endX = 100
         endY = self.height
 
         print(str(startX <= x <= endX))
@@ -522,5 +523,5 @@ class Screen(Window):
 
                 break
             else:
-                startX += 40
-                endX += 40
+                startX += 104
+                endX += 100

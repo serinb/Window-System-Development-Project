@@ -26,7 +26,7 @@ class HelloWorld:
 
     def createApp(self):
 
-        self.window = self.windowSystem.createWindowOnScreen(50, 20, 250, 300, "HelloWorld", COLOR_WHITE, 250, 300)
+        self.window = self.windowSystem.createWindowOnScreen(50, 20, 250, 300, "Hello World", COLOR_WHITE, 250, 300)
 
         self.containerLabel = self.windowSystem.createContainerInWindow(self.window, 50, 0, self.window.width, 100, 'labelContainer', LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left, self.window.width , 100)
 

@@ -90,7 +90,7 @@ class Button(Label):
         elif self.isPressed:
             color = COLOR_RED
         else:
-            color = COLOR_GRAY
+            color = COLOR_WHITE
 
         ctx.setStrokeColor(color)
         ctx.strokeRect(0, 0, self.width, self.height)

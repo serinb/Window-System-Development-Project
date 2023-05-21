@@ -26,6 +26,7 @@ class WindowSystem(GraphicsEventSystem):
         self.windowManager = None
         self.helloWorld = None
         self.calculator = None
+        self.slider = None
         self.start_menu = None
 
         # variables for mouse events
@@ -54,34 +55,27 @@ class WindowSystem(GraphicsEventSystem):
         self.startMenuAcive = False
 
 
-        self.start_menu = self.createWindowOnScreen(0, 550 - 200, 200, 200, "Start_menu", COLOR_BLUE, 200, 200)
+        self.start_menu = self.createWindowOnScreen(0, 550 - 161, 200, 170, "Start Menu", "#D17D49", 200, 200)
 
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
 
-        #self.calculator = Calculator.CalculatorApplication(self)
+        self.calculator = Calculator.CalculatorApplication(self)
+
+        # TODO add slider
+        #self.slider = None
 
 
+        # Buttons for Start Menu
+        # TODO prob best if put in a container
 
+        # button for HelloWorld
+        helloButton = self.createButtonInWindow(self.start_menu,0, 0, 200, 30, "hello_button", "Hello World", "#35393C", COLOR_ORANGE, lambda: self.helloWorldPressed())
 
+        # button for Calculator
+        calcButton = self.createButtonInWindow(self.start_menu, 0, 40, 200, 30, "calc_button", "Calculator", "#35393C", COLOR_ORANGE, lambda: self.calcPressed())
 
-        # yo.window = self.createWindowOnScreen(20, 20, 200, 200, "HelloWorld", COLOR_PINK)
-
-        # GRAY_WINDOW
-        #gray_window = self.createWindowOnScreen(30, 20, 400, 500, "Gray", COLOR_GRAY, 200, 200)
-
-        # Child of GRAY_WINDOW
-        #redWindow = gray_window.createWindowInWindow(5, 201, 401, 300, "Red", COLOR_RED,  50, 50, LayoutAnchor.top | LayoutAnchor.left)
-        # GREEN_WINDOW
-        #blue_window = self.createWindowOnScreen(100, 100, 400, 350, "Blue", COLOR_LIGHT_BLUE, 200, 200)
-
-        # YELLOW_WINDOW
-        #yellow_window = self.createWindowOnScreen(300, 200, 400, 350, "Yellow", COLOR_ORANGE, 50, 50)
-
-        #purple_window1 = yellow_window.createWindowInWindow(30, 40, 70, 50, "Purple1", COLOR_PURPLE, 100, 100, LayoutAnchor.top | LayoutAnchor.left)
-
-        # purple_window2 = yellow_window.createWindowInWindow(30, 100, 70, 50, "Purple2", COLOR_PURPLE)
-
-        # purple_window3 = yellow_window.createWindowInWindow(30, 160, 70, 50, "Purple3", COLOR_PURPLE)
+        # button for RGB Slider
+        sliderButton = self.createButtonInWindow(self.start_menu, 0, 80, 200, 30, "slider_button", "Slider", "#35393C", COLOR_ORANGE)
 
     """
     WINDOW MANAGEMENT
@@ -191,7 +185,6 @@ class WindowSystem(GraphicsEventSystem):
         parentWindow.addChildWindow(newContainer)
         return newContainer
 
-
     # P2 1d
     def bringWindowToFront(self, window):
         # if window is a direct child of screen
@@ -214,6 +207,23 @@ class WindowSystem(GraphicsEventSystem):
             # and readd it to the end of that list, so that it can be displayed in the front of the screen
             # in z-direction
             self.screen.addChildWindow(topLevelWindow)
+
+    # FUNCTIONS FOR START MENU BUTTONS
+    def helloWorldPressed(self):
+        if self.helloWorld.window not in self.screen.childWindows:
+            self.helloWorld = HelloWorldRevised.HelloWorld(self)
+        self.helloWorld.window.isHidden = False
+        self.requestRepaint()
+
+    def calcPressed(self):
+        if self.calculator.window not in self.screen.childWindows:
+            self.calculator = Calculator.CalculatorApplication(self)
+        self.calculator.window.isHidden = False
+        self.requestRepaint()
+
+    def sliderPressed(self):
+        pass
+
 
     """
     DRAWING
@@ -270,10 +280,7 @@ class WindowSystem(GraphicsEventSystem):
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
             if self.screen.checkIfInTaskbar(x, y):
-                if self.screen.checkIfInTaskBarArea(x,y):
-                    print('in start menu pressed')
-                    #TODO start_menu
-                    #self.startMenuAcive = True
+                print("milestone")
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -288,14 +295,6 @@ class WindowSystem(GraphicsEventSystem):
         # if clicked window is screen
         if self.lastClickedWindow == self.screen:
             if self.lastClickedWindow.checkIfInTaskbar(x, y):
-
-                """
-                if self.lastClickedWindow.checkIfInTaskBarArea(x,y) and self.startMenuAcive:
-                    print("in start menu released")
-                    self.windowManager.openCloseStartMenu(self.startMenuActive)
-                else:
-
-                 """
                 self.screen.clickedTaskbarEvent(x, y)
 
         else:
