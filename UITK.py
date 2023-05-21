@@ -28,9 +28,9 @@ class Widget(Window):
         super().resize(x, y, width, height)
 
 
-
 class Container(Widget):
-    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth, maxSpacing=5, minSpacing=3):
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth, maxSpacing=5,
+                 minSpacing=3):
         super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth)
         self.maxSpacing = maxSpacing
         self.minSpacing = minSpacing

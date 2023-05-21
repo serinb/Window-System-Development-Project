@@ -18,6 +18,7 @@ class HelloWorld:
         self.windowSystem = windowSystem
         self.window = None
         self.languageLabel = None
+        self.containerLabel = None
         self.btn_german = None
         self.btn_english = None
         self.btn_french = None
@@ -28,17 +29,19 @@ class HelloWorld:
 
         self.window = self.windowSystem.createWindowOnScreen(50, 20, 250, 300, "Hello World", COLOR_WHITE, 250, 300)
 
-        self.containerLabel = self.windowSystem.createContainerInWindow(self.window, 50, 0, self.window.width, 100, 'labelContainer', LayoutAnchor.bottom, self.window.width , 100)
+        # self.containerLabel = self.windowSystem.createContainerInWindow(self.window, 50, 0, self.window.width, 100,
+        # 'labelContainer', LayoutAnchor.bottom,
+        # self.window.width, 100)
 
+        self.languageLabel = self.windowSystem.createLabelInWindow(self.window, 10, 40, 185, 33,
+                                                                   "languageLabel",
+                                                                   "Please select a language", "#F6A800", COLOR_BLUE,
+                                                                   LayoutAnchor.top | LayoutAnchor.right)
 
-        self.languageLabel = self.windowSystem.createLabelInWindow(self.containerLabel, 10, 40, 185, 33, "languageLabel",
-                                                                   "Please select a language", "#F6A800", COLOR_BLUE, LayoutAnchor.top | LayoutAnchor.right)
-
-
-        """
         self.btn_german = self.windowSystem.createButtonInWindow(self.window, 80, 90, 90, 30, "btn_german", "Deutsch",
                                                                  COLOR_BLACK, COLOR_LIGHT_GRAY,
-                                                                 lambda: self.german_selected())
+                                                                 lambda: self.german_selected(),
+                                                                 LayoutAnchor.left | LayoutAnchor.right)
         self.btn_english = self.windowSystem.createButtonInWindow(self.window, 80, 130, 90, 30, "btn_english",
                                                                   "English",
                                                                   COLOR_BLACK, COLOR_LIGHT_GRAY,
@@ -49,7 +52,7 @@ class HelloWorld:
         self.quit_button = self.windowSystem.createButtonInWindow(self.window, 180, 240, 50, 30, "quit_button", "Quit",
                                                                   COLOR_BLACK, COLOR_LIGHT_GRAY,
                                                                   lambda: self.quit_selected())
-        """
+
     def german_selected(self):
         # set the text attribute of languageLabel
         self.languageLabel.text = "Guten Tag"

@@ -26,14 +26,11 @@ class WindowManager:
         self.screenLeftBoundary = -100
         self.screenRightBoundary = 900
 
-
         self.openedTopLevelWindows = []
         self.startMenu = None
 
     def openWindow(self, window):
         self.openedTopLevelWindows.append(window)
-
-
 
     def decorateWindow(self, window, ctx):
         if window.identifier == "Start Menu":
@@ -83,21 +80,20 @@ class WindowManager:
             ctx.setFillColor(COLOR_BLACK)
             ctx.strokeRect(window.width - 15, window.height - 15, window.width, window.height)
 
-
     def checkWindowPosition(self, window, x, y, invalidSide):
 
         valid = True
 
-        if (self.screenTopBoundary > y):
+        if self.screenTopBoundary > y:
             valid = False
             invalidSide.append("top")
-        if (y + window.height > self.screenBottomBoundary):
+        if y + window.height > self.screenBottomBoundary:
             valid = False
             invalidSide.append("bottom")
-        if (self.screenLeftBoundary > x):
+        if self.screenLeftBoundary > x:
             valid = False
             invalidSide.append("left")
-        if (x + window.width > self.screenRightBoundary):
+        if x + window.width > self.screenRightBoundary:
             valid = False
             invalidSide.append("right")
         return valid
@@ -111,7 +107,6 @@ class WindowManager:
                 c.x, c.y = window.convertPositionToScreen(convertedX, convertedY)
                 self.dragChildren(c, oldX, oldY)
 
-
     def dragWindow(self, window, x, y):
 
         if window.identifier != "Start_menu":
@@ -122,6 +117,7 @@ class WindowManager:
             newX = window.x + differenceX
             newY = window.y + differenceY
 
+            # über welche boundary das fenster gegangen ist
             invalidSide = []
             childPostion = []
             iterator = 0
@@ -130,7 +126,7 @@ class WindowManager:
                     convertedX, convertedY = window.convertPositionFromScreen(c.x, c.y)
                     childPostion.append([convertedX, convertedY])
 
-            if self.checkWindowPosition(window, newX, newY, invalidSide):
+            if self.checkWindowPosition(window, newX, newY, invalidSide):  # lastClicked Window = top level window
                 # update origin x,y for children of lastClickedWindow
                 window.x = newX
                 window.y = newY
@@ -147,17 +143,15 @@ class WindowManager:
                         window.y = self.screenBottomBoundary - window.height
 
             if len(window.childWindows) > 0:
-
-                    iterator in range(len(childPostion))
-                    for c in window.childWindows:
-                        oldX, oldY = c.x, c.y
-                        c.x, c.y = window.convertPositionToScreen(childPostion[iterator][0], childPostion[iterator][1])
-                        self.dragChildren(c, oldX, oldY)
+                for c in window.childWindows:
+                    oldX, oldY = c.x, c.y
+                    c.x, c.y = window.convertPositionToScreen(childPostion[window.childWindows.index(c)][0],
+                                                              childPostion[window.childWindows.index(c)][1])
+                    self.dragChildren(c, oldX, oldY)
 
             self.windowSystem.recentX = x
             self.windowSystem.recentY = y
             self.windowSystem.requestRepaint()
-
 
     def resizeWindow(self, window, x, y):
         # x,y are global coordinates
@@ -177,7 +171,6 @@ class WindowManager:
             minimizingWindow.isHidden = True
             self.windowSystem.requestRepaint()
 
-
     # P3 (5)
     def closeWindow(self, window):
         if window.identifier != "Start_menu":
@@ -186,7 +179,6 @@ class WindowManager:
             self.openedTopLevelWindows.remove(window)
             window.isHidden = True
             self.windowSystem.requestRepaint()
-
 
     # P3 (1)
     # Add an instance of the WM to the window system
@@ -200,7 +192,7 @@ class WindowManager:
     # P3 (6) Task bar
     def drawTaskbar(self, ctx):
 
-        #for entire taskbar
+        # for entire taskbar
         ctx.setFillColor("#35393C")
         ctx.fillRect(0, self.windowSystem.screen.height - 40, self.windowSystem.screen.width,
                      self.windowSystem.screen.height)
@@ -211,7 +203,7 @@ class WindowManager:
         font = Font(family="Helvetica", size=11, weight="bold")
         ctx.setFont(font)
         ctx.strokeRect(0, self.windowSystem.screen.height - 40, self.windowSystem.screen.width,
-                                   self.windowSystem.screen.height)
+                       self.windowSystem.screen.height)
 
         if len(self.windowSystem.screen.childWindows) > 0:
             lastIndex = len(self.windowSystem.screen.childWindows) - 1
@@ -229,6 +221,6 @@ class WindowManager:
                     ctx.setStrokeColor(COLOR_WHITE)
                 if not c.isClosed:
                     ctx.strokeRect(0 + offset, self.windowSystem.screen.height - 38, 110 + offset,
-                                   self.windowSystem.screen.height-4)
-                    ctx.drawString(c.identifier, 10 + offset, self.windowSystem.screen.height -28)
+                                   self.windowSystem.screen.height - 4)
+                    ctx.drawString(c.identifier, 10 + offset, self.windowSystem.screen.height - 28)
                     offset += 114

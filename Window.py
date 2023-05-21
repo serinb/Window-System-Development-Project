@@ -54,7 +54,6 @@ class Window:
         if window not in self.childWindows:
             self.childWindows.append(window)
 
-
     def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
                              childBackgroundColor, minWidth, minHeight, anchoring):
 
@@ -76,14 +75,14 @@ class Window:
         if childY + childHeight >= self.width - self.paddingBottom:
             childHeight = self.height - self.paddingBottom - childY
         if childY + childHeight >= self.height:
-            childHeight = childHeight - (childHeight -  childY - self.height) - self.paddingBottom
+            childHeight = childHeight - (childHeight - childY - self.height) - self.paddingBottom
         convertedX, convertedY = self.convertPositionToScreen(childX, childY)
-        childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier, anchoring, minWidth, minHeight,
+        childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier, anchoring, minWidth,
+                             minHeight,
                              self.depth + 1)
         childWindow.backgroundColor = childBackgroundColor
         self.addChildWindow(childWindow)
         return childWindow
-
 
     # P2 1a
     def removeFromParentWindow(self):
@@ -132,7 +131,6 @@ class Window:
 
         # call the draw function on calling window objects children
         if self.childWindows is not None:
-            #print(self.identifier)
             # parent window draws its child views
             for c in self.childWindows:
                 # calculate the deepest x,y coordinate of child inside of parent coordinate system
@@ -257,7 +255,7 @@ class Window:
 
     # P2 4d
     def handleMouseClicked(self, x, y):
-        #print(self.identifier)
+        # print(self.identifier)
         pass
 
     # P3 (7) Resizing windows and simple layout
@@ -283,15 +281,12 @@ class Window:
 
                     c.x = self.width * ratioPositionX
 
-
-
                 if c.layoutAnchors == LayoutAnchor.bottom:
                     ratioPositionX = c.x / oldWidth
                     ratioPositionY = oldHeight - c.y
 
                     c.x = self.width * ratioPositionX
                     c.y = self.height - ratioPositionY
-
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.left:
                     # default state
@@ -308,7 +303,6 @@ class Window:
                     newChildX = newChildGreatestX - c.width
                     c.x = newChildX
 
-
                 # TOP RIGHT LEFT
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
@@ -316,7 +310,7 @@ class Window:
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
 
-                    #for left side
+                    # for left side
                     childSmallestX = c.x
 
                     newChildWidth = newChildGreatestX - childSmallestX
@@ -346,14 +340,13 @@ class Window:
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
-
                 if c.layoutAnchors == LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
 
-                    #for left side
+                    # for left side
                     childSmallestX = c.x
 
                     newChildWidth = newChildGreatestX - childSmallestX
@@ -366,14 +359,13 @@ class Window:
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
-
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
 
-                    #for left side
+                    # for left side
                     childSmallestX = c.x
 
                     newChildWidth = newChildGreatestX - childSmallestX
@@ -390,8 +382,8 @@ class Window:
                     pass
                     # TODO
                     # call the resize function on children of child
-                    #newWidth, newHeight = c.convertPositionFromScreen(x, y)
-                    #c.resize(c.width, c.height, x, y)
+                    # newWidth, newHeight = c.convertPositionFromScreen(x, y)
+                    # c.resize(c.width, c.height, x, y)
 
     def checkIfInTitleBar(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
@@ -465,7 +457,8 @@ class Window:
 
 class Screen(Window):
     def __init__(self, windowSystem):
-        super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", windowSystem.width, windowSystem.height, 0)
+        super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", windowSystem.width,
+                         windowSystem.height, 0)
         self.windowSystem = windowSystem
 
     # Override the draw method of your Screen to call your WindowManager wallpaper implementation
@@ -513,13 +506,11 @@ class Screen(Window):
         endX = 40
         endY = self.height
 
-
         if startX <= x <= endX and startY <= y <= endY:
             return True
 
         else:
             return False
-
 
     def clickedTaskbarEvent(self, x, y):
 
