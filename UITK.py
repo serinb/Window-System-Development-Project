@@ -81,7 +81,7 @@ class Button(Label):
     def draw(self, ctx, drawingWidth, drawingHeight):
         super().draw(ctx, drawingWidth, drawingHeight)
         if self.isHovered:
-            color = COLOR_YELLOW
+            color = COLOR_BLACK
         elif self.isPressed:
             color = COLOR_RED
         else:
