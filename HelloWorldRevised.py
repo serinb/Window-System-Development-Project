@@ -28,6 +28,8 @@ class HelloWorld:
 
         self.window = self.windowSystem.createWindowOnScreen(50, 20, 250, 300, "Hello World", COLOR_WHITE, 250, 300)
 
+        self.testWindow = self.window.createWindowInWindow(0,0, 250, 100, "test", COLOR_RED, 250, 100, LayoutAnchor.top)
+
         self.containerLabel = self.windowSystem.createContainerInWindow(self.window, 50, 0, self.window.width, 100, 'labelContainer', LayoutAnchor.bottom, self.window.width , 100)
 
 

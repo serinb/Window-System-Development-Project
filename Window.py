@@ -273,17 +273,21 @@ class Window:
         self.height = newHeight
         self.x = x
         self.y = y
+        print("Parent width: " + str(self.width))
         if self.childWindows is not None:
             # calculate the ratio of the child window's size w.r.t to its parent's old size
 
             for c in self.childWindows:
 
                 if c.layoutAnchors == LayoutAnchor.top:
-                    ratioPositionX = c.x / oldWidth
-
-                    c.x = self.width * ratioPositionX
-
-
+                    print(str(c.x) + "childx------------")
+                    localX, localY = c.x - oldX, c.y - oldY
+                    print(str(localX) + "localx------------")
+                    print(str(oldWidth) + "oldx------------")
+                    ratioPositionX = localX / oldWidth
+                    newX = int(round(self.width * ratioPositionX, 0))
+                    print(str(newX) + "newX------------")
+                    c.x, c.y = self.convertPositionToScreen(newX, localY)
 
                 if c.layoutAnchors == LayoutAnchor.bottom:
                     ratioPositionX = c.x / oldWidth
@@ -291,7 +295,6 @@ class Window:
 
                     c.x = self.width * ratioPositionX
                     c.y = self.height - ratioPositionY
-
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.left:
                     # default state
@@ -307,7 +310,6 @@ class Window:
                     newChildGreatestX = self.width - rightDistanceChildParent
                     newChildX = newChildGreatestX - c.width
                     c.x = newChildX
-
 
                 # TOP RIGHT LEFT
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left:
@@ -346,7 +348,6 @@ class Window:
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
-
                 if c.layoutAnchors == LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
                     childGreatestX = c.width + c.x
@@ -365,7 +366,6 @@ class Window:
                     newChildGreatestY = self.height - bottomDistanceChildParent
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
-
 
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left:
                     # for right side
@@ -392,6 +392,8 @@ class Window:
                     # call the resize function on children of child
                     #newWidth, newHeight = c.convertPositionFromScreen(x, y)
                     #c.resize(c.width, c.height, x, y)
+
+                print("child x: " + str(c.x))
 
     def checkIfInTitleBar(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
