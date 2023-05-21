@@ -44,6 +44,7 @@ class WindowSystem(GraphicsEventSystem):
 
         # SCREEN (P2 1b)
         self.screen = Screen(self)
+        # variables for mouse events
         self.mousePressed = False
         self.recentX = 0
         self.recentY = 0
@@ -52,14 +53,22 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
+        # Start Menu Window
         self.start_menu = self.createWindowOnScreen(0, 350, 200, 210, "Start Menu", "#D17D49", 200, 200)
 
+        # APPLICATIONS
+        # Hello World App
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
+        # Calculator App
+        self.calculator = Calculator.CalculatorApplication(self)
 
+<<<<<<< HEAD
         self.calculator = Calculator.CalculatorApplication(self)
 
         # TODO add slider
         # self.slider = None
+=======
+>>>>>>> main
 
         # button for HelloWorld
         helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
@@ -101,20 +110,20 @@ class WindowSystem(GraphicsEventSystem):
                             childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50,
                             childMinHeight=50, fontSize=14, fontFamily="Helvetica", fontWeight="bold"):
 
-        # making sure that child lies within the parents margin
+        # making sure that child lies within the parents padding
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
             childY += parentWindow.paddingTop
 
-        # child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom padding
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
+        # check right padding
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
-        # check bottom margin
+        # check bottom padding
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
@@ -133,20 +142,20 @@ class WindowSystem(GraphicsEventSystem):
                              childTextString, childTextColor, childBackgroundColor, childAction=None,
                              childAnchoring=None, childMinWidth=50, childMinHeight=50):
 
-        # making sure that child lies within the parents margin
+        # making sure that child lies within the parents padding
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
             childY += parentWindow.paddingTop
 
-        # child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom padding
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
+        # check right padding
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
-        # check bottom margin
+        # check bottom padding
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
@@ -163,20 +172,20 @@ class WindowSystem(GraphicsEventSystem):
 
     def createContainerInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
                                 childAnchoring, childMinWidth, childMinHeight):
-        # making sure that child lies within the parents margin
+        # making sure that child lies within the parents padding
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
             childY += parentWindow.paddingTop
 
-        # child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom padding
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
+        # check right padding
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
-        # check bottom margin
+        # check bottom padding
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
@@ -213,7 +222,12 @@ class WindowSystem(GraphicsEventSystem):
             # in z-direction
             self.screen.addChildWindow(topLevelWindow)
 
+
     # FUNCTIONS FOR START MENU BUTTONS
+    # each one makes sure that if a button in start menu is pressed
+    # the respective application will open if closed
+    # or will appear if minimized
+
     def helloWorldPressed(self):
         if self.helloWorld.window not in self.screen.childWindows:
             self.helloWorld = HelloWorldRevised.HelloWorld(self)
@@ -229,6 +243,7 @@ class WindowSystem(GraphicsEventSystem):
     def sliderPressed(self):
         pass
 
+    # this shuts down the windows system when shut down button pressed
     def shutDownButtonPressed(self):
         exit()
 
@@ -284,8 +299,7 @@ class WindowSystem(GraphicsEventSystem):
         else:
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
-            if self.screen.checkIfInTaskbar(x, y):
-                print("milestone")
+
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -294,8 +308,6 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-        # TODO hier müssen wir checken dass bei der gleichen position released wurde,
-        # TODO wie bei pressed
         # execute taskbar interaction event
         # if clicked window is screen
         if self.lastClickedWindow == self.screen:
@@ -368,7 +380,8 @@ class WindowSystem(GraphicsEventSystem):
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
 
     def handleKeyPressed(self, char):
-        if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "HelloWorld":
+        # if lastClickedWindow is the Hello World App, its input handler is called to handle key input
+        if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Hello World":
             self.helloWorld.inputHandler(char)
             self.requestRepaint()
         elif self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Calculator":
