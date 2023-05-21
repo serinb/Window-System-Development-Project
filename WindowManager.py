@@ -205,8 +205,8 @@ class WindowManager:
         ctx.fillRect(0, self.windowSystem.screen.height - 40, self.windowSystem.screen.width,
                      self.windowSystem.screen.height)
         ctx.setFillColor("#D06929")
-        ctx.fillRect(0, self.windowSystem.screen.height - 38, 100,
-                     self.windowSystem.screen.height)
+        ctx.fillRect(4, self.windowSystem.screen.height - 38, 114,
+                     self.windowSystem.screen.height - 4)
         ctx.setStrokeColor(COLOR_BLACK)
         font = Font(family="Helvetica", size=11, weight="bold")
         ctx.setFont(font)
@@ -218,7 +218,7 @@ class WindowManager:
             lastChild = self.windowSystem.screen.childWindows[lastIndex]
 
             # define offset to start drawing the next child of the screen at the offset location
-            offset = 0
+            offset = 4
             for c in self.openedTopLevelWindows:
                 if lastChild == c and lastChild.isHidden == False:
                     if c.identifier == "Start Menu":
@@ -228,7 +228,7 @@ class WindowManager:
                 else:
                     ctx.setStrokeColor(COLOR_WHITE)
                 if not c.isClosed:
-                    ctx.strokeRect(0 + offset, self.windowSystem.screen.height - 38, 100 + offset,
-                                   self.windowSystem.screen.height)
+                    ctx.strokeRect(0 + offset, self.windowSystem.screen.height - 38, 110 + offset,
+                                   self.windowSystem.screen.height-4)
                     ctx.drawString(c.identifier, 10 + offset, self.windowSystem.screen.height -28)
-                    offset += 104
+                    offset += 114

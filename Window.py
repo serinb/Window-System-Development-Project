@@ -501,10 +501,10 @@ class Screen(Window):
 
     def clickedTaskbarEvent(self, x, y):
 
-        startX = 0
-        startY = self.height - 50
+        startX = 4
+        startY = self.height - 40
 
-        endX = 100
+        endX = 114
         endY = self.height
 
         print(str(startX <= x <= endX))
@@ -523,5 +523,5 @@ class Screen(Window):
 
                 break
             else:
-                startX += 104
-                endX += 100
+                startX += 114
+                endX += 114
