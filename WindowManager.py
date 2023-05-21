@@ -164,7 +164,7 @@ class WindowManager:
         if window.parentWindow == self.windowSystem.screen:
             newWidth, newHeight = window.convertPositionFromScreen(x, y)
             window.resize(window.x, window.y, newWidth, newHeight)
-            if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 50:
+            if window.x + newWidth <= self.windowSystem.screen.width and window.y + newHeight <= self.windowSystem.screen.height - 40:
                 self.windowSystem.requestRepaint()
 
     # P3 (5)

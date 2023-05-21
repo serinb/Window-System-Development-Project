@@ -37,11 +37,6 @@ class Container(Widget):
 
     def resize(self, x, y, width, height):
         super().resize(x, y, width, height)
-        # equally distribute its space across its children either on the horizontal or vertical axis
-        if self.axis == "h":
-            pass
-        elif self.axis == "v":
-            pass
 
 
 class Label(Widget):

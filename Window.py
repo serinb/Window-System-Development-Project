@@ -278,6 +278,21 @@ class Window:
 
             for c in self.childWindows:
 
+                if c.layoutAnchors == LayoutAnchor.top:
+                    ratioPositionX = c.x / oldWidth
+
+                    c.x = self.width * ratioPositionX
+
+
+
+                if c.layoutAnchors == LayoutAnchor.bottom:
+                    ratioPositionX = c.x / oldWidth
+                    ratioPositionY = oldHeight - c.y
+
+                    c.x = self.width * ratioPositionX
+                    c.y = self.height - ratioPositionY
+
+
                 if c.layoutAnchors == LayoutAnchor.top | LayoutAnchor.left:
                     # default state
                     # this here is only for TOPLeft anchor
@@ -370,6 +385,13 @@ class Window:
 
                     newChildHeight = newChildGreatestY - c.y
                     c.height = newChildHeight
+
+                if len(c.childWindows) > 0:
+                    pass
+                    # TODO
+                    # call the resize function on children of child
+                    #newWidth, newHeight = c.convertPositionFromScreen(x, y)
+                    #c.resize(c.width, c.height, x, y)
 
     def checkIfInTitleBar(self, x, y):
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
