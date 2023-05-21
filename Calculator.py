@@ -85,6 +85,9 @@ class CalculatorApplication:
         self.windowSystem.requestRepaint()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b96c936a43f455eca1b93d12a7e966fa60d0a702
     def buttonClicked(self, label):
         # clear operation
         if label == 'C':
@@ -102,6 +105,7 @@ class CalculatorApplication:
         # % operation
         elif self.operand1 and not self.operator and label == '%':
             self.result = str(float(float(self.operand1) / 100))
+<<<<<<< HEAD
 =======
     def concatenate(self, input):
         return self.result + input
@@ -113,6 +117,8 @@ class CalculatorApplication:
         if self.operand1 == '' and numbers.index(btnidentifier):
             self.operand1 = self.concatenate(btnidentifier)
 >>>>>>> main
+=======
+>>>>>>> b96c936a43f455eca1b93d12a7e966fa60d0a702
             self.displayAreaLabel.text = self.result
             self.windowSystem.requestRepaint()
         # '+/- operation

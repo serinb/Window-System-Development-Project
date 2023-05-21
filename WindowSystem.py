@@ -63,6 +63,7 @@ class WindowSystem(GraphicsEventSystem):
         self.calculator = Calculator.CalculatorApplication(self)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.calculator = Calculator.CalculatorApplication(self)
 
         # TODO add slider
@@ -70,6 +71,8 @@ class WindowSystem(GraphicsEventSystem):
 =======
 >>>>>>> main
 
+=======
+>>>>>>> b96c936a43f455eca1b93d12a7e966fa60d0a702
         # button for HelloWorld
         helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
                                                 "#35393C", COLOR_ORANGE, lambda: self.helloWorldPressed())
