@@ -54,35 +54,41 @@ class WindowSystem(GraphicsEventSystem):
         self.allowResizing = False
         self.startMenuAcive = False
 
-
-        self.start_menu = self.createWindowOnScreen(0, 550 - 161, 200, 170, "Start Menu", "#D17D49", 200, 200)
+        self.start_menu = self.createWindowOnScreen(0, 350, 200, 210, "Start Menu", "#D17D49", 200, 200)
 
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
 
-        #self.calculator = Calculator.CalculatorApplication(self)
+        # self.calculator = Calculator.CalculatorApplication(self)
 
         # TODO add slider
-        #self.slider = None
-
+        # self.slider = None
 
         # Buttons for Start Menu
         # TODO prob best if put in a container
 
         # button for HelloWorld
-        helloButton = self.createButtonInWindow(self.start_menu,0, 0, 200, 30, "hello_button", "Hello World", "#35393C", COLOR_ORANGE, lambda: self.helloWorldPressed())
+        helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
+                                                "#35393C", COLOR_ORANGE, lambda: self.helloWorldPressed())
 
         # button for Calculator
-        calcButton = self.createButtonInWindow(self.start_menu, 0, 40, 200, 30, "calc_button", "Calculator", "#35393C", COLOR_ORANGE, lambda: self.calcPressed())
+        calcButton = self.createButtonInWindow(self.start_menu, 0, 40, 200, 30, "calc_button", "Calculator", "#35393C",
+                                               COLOR_ORANGE, lambda: self.calcPressed())
 
         # button for RGB Slider
-        sliderButton = self.createButtonInWindow(self.start_menu, 0, 80, 200, 30, "slider_button", "Slider", "#35393C", COLOR_ORANGE)
+        sliderButton = self.createButtonInWindow(self.start_menu, 0, 80, 200, 30, "slider_button", "Slider", "#35393C",
+                                                 COLOR_ORANGE)
+
+        # shut down button
+        shutDown = self.createButtonInWindow(self.start_menu, 0, 120, 200, 30, "shut_down_button", "Shut Down Button",
+                                             "#35393C", COLOR_ORANGE, lambda: self.shutDownButtonPressed())
 
     """
     WINDOW MANAGEMENT
     """
 
     # P2 1c
-    def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor, minWidth, minHeight, anchoring=None):
+    def createWindowOnScreen(self, x, y, width, height, identifier, backgroundColor, minWidth, minHeight,
+                             anchoring=None):
         # creates a new window object with given parameters
         # depth is needed for the P2 4b
         newWindow = Window(x, y, width, height, identifier, anchoring, minWidth, minHeight)
@@ -97,8 +103,8 @@ class WindowSystem(GraphicsEventSystem):
         return newWindow
 
     def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                            childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50, childMinHeight=50):
-
+                            childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50,
+                            childMinHeight=50):
 
         # making sure that child lies within the parents margin
         # padding top
@@ -117,19 +123,20 @@ class WindowSystem(GraphicsEventSystem):
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
-            childHeight = childHeight - (childHeight -  childY - parentWindow.height) - parentWindow.paddingBottom
-
+            childHeight = childHeight - (childHeight - childY - parentWindow.height) - parentWindow.paddingBottom
 
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newLabel = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight, childTextString,
-                          childTextColor, childBackgroundColor, parentWindow.depth + 1)
+        newLabel = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring,
+                         childMinWidth, childMinHeight, childTextString,
+                         childTextColor, childBackgroundColor, parentWindow.depth + 1)
 
         parentWindow.addChildWindow(newLabel)
         return newLabel
 
     def createButtonInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
-                             childTextString, childTextColor, childBackgroundColor, childAction=None, childAnchoring=None, childMinWidth=50, childMinHeight=50):
+                             childTextString, childTextColor, childBackgroundColor, childAction=None,
+                             childAnchoring=None, childMinWidth=50, childMinHeight=50):
 
         # making sure that child lies within the parents margin
         # padding top
@@ -148,17 +155,19 @@ class WindowSystem(GraphicsEventSystem):
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
-            childHeight = childHeight - (childHeight -  childY - parentWindow.height) - parentWindow.paddingBottom
+            childHeight = childHeight - (childHeight - childY - parentWindow.height) - parentWindow.paddingBottom
 
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight, childTextString,
+        newWidget = Button(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring,
+                           childMinWidth, childMinHeight, childTextString,
                            childTextColor, childBackgroundColor, parentWindow.depth + 1, childAction)
 
         parentWindow.addChildWindow(newWidget)
         return newWidget
 
-    def createContainerInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight):
+    def createContainerInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
+                                childAnchoring, childMinWidth, childMinHeight):
         # making sure that child lies within the parents margin
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
@@ -176,11 +185,12 @@ class WindowSystem(GraphicsEventSystem):
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
-            childHeight = childHeight - (childHeight -  childY - parentWindow.height) - parentWindow.paddingBottom
+            childHeight = childHeight - (childHeight - childY - parentWindow.height) - parentWindow.paddingBottom
 
         # global coordinates
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
-        newContainer = Container(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring, childMinWidth, childMinHeight, parentWindow.depth + 1)
+        newContainer = Container(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring,
+                                 childMinWidth, childMinHeight, parentWindow.depth + 1)
 
         parentWindow.addChildWindow(newContainer)
         return newContainer
@@ -224,6 +234,8 @@ class WindowSystem(GraphicsEventSystem):
     def sliderPressed(self):
         pass
 
+    def shutDownButtonPressed(self):
+        exit()
 
     """
     DRAWING
@@ -248,8 +260,6 @@ class WindowSystem(GraphicsEventSystem):
             # handling bringing toplevel Window to front
             self.lastClickedWindow = self.screen.childWindowAtLocation(x, y)
             self.bringWindowToFront(self.lastClickedWindow)
-
-
 
             self.requestRepaint()
 
@@ -312,11 +322,10 @@ class WindowSystem(GraphicsEventSystem):
                     if self.lastClickedWindow.checkIfInMinimizeButton(x, y):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
-
                 # register that mouseclick event just happened
                 if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
                     if self.lastClickedWindow.identifier == "Calculator":
-                        #self.lastClickedWindow.handleMouseClicked(x, y)
+                        # self.lastClickedWindow.handleMouseClicked(x, y)
                         self.calculator.inputHandler(self.lastClickedWindow.identifier)
 
             elif self.lastClickedButton is not None and self.lastClickedButton.isPressed:
@@ -328,9 +337,8 @@ class WindowSystem(GraphicsEventSystem):
 
     def handleMouseMoved(self, x, y):
 
-        if self.screen.childWindowAtLocation(x,y) is not None:
+        if self.screen.childWindowAtLocation(x, y) is not None:
             widget = self.screen.childWindowAtLocation(x, y)
-
 
             # check if the widget is of type button
             # if so, update lastClickedButton
