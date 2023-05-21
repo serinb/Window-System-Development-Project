@@ -34,16 +34,6 @@ class HelloWorld:
         self.languageLabel = self.windowSystem.createLabelInWindow(self.window, 10, 40, 185, 33, "languageLabel",
                                                                    "Please select a language", "#F6A800", COLOR_BLUE, LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left)
 
-        buttonWidth = 60
-        buttonHeight = 60
-        buttonSpacing = 2
-        buttonX = 16
-        buttonY = 150
-
-
-        # first Row (left-right)
-        self.button00 = self.windowSystem.createButtonInWindow(self.containerLabel, buttonX, buttonY, buttonWidth , buttonHeight, 'C',
-                'C', COLOR_WHITE, COLOR_GRAY, None, LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
 
         """
         self.btn_german = self.windowSystem.createButtonInWindow(self.window, 80, 90, 90, 30, "btn_german", "Deutsch",
