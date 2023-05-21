@@ -519,8 +519,6 @@ class Screen(Window):
         endX = 114
         endY = self.height
 
-        print(str(startX <= x <= endX))
-
         for child in self.windowSystem.windowManager.openedTopLevelWindows:
 
             if startX <= x <= endX and startY <= y <= endY:
