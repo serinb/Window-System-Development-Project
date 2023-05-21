@@ -37,7 +37,6 @@ class WindowSystem(GraphicsEventSystem):
         self.lastClickedButton = None
         self.allowDragging = False
         self.allowResizing = False
-        self.startMenuAcive = False
 
     def start(self):
         # WINDOW MANAGER
@@ -52,7 +51,6 @@ class WindowSystem(GraphicsEventSystem):
         self.lastClickedButton = None
         self.allowDragging = False
         self.allowResizing = False
-        self.startMenuAcive = False
 
         self.start_menu = self.createWindowOnScreen(0, 350, 200, 210, "Start Menu", "#D17D49", 200, 200)
 
@@ -62,9 +60,6 @@ class WindowSystem(GraphicsEventSystem):
 
         # TODO add slider
         # self.slider = None
-
-        # Buttons for Start Menu
-        # TODO prob best if put in a container
 
         # button for HelloWorld
         helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
