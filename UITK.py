@@ -28,9 +28,9 @@ class Widget(Window):
         super().resize(x, y, width, height)
 
 
-
 class Container(Widget):
-    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth, maxSpacing=5, minSpacing=3):
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth, maxSpacing=5,
+                 minSpacing=3):
         super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth)
         self.maxSpacing = maxSpacing
         self.minSpacing = minSpacing
@@ -93,11 +93,33 @@ class Button(Label):
 
 
 class Slider(Widget):
-    def __init__(self, originX, originY, width, height, identifier, anchoring):
-        super().__init__(originX, originY, width, height, identifier, anchoring)
-        self.backgroundColor = COLOR_LIGHT_GRAY
-        self.value = 0.0
-        self.dragging = False
+    def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth, value, handleColor=COLOR_PINK):
+        super().__init__(originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth)
+        self.handleColor = handleColor
+        self.value = value
 
-    def draw(self, ctx, drawingWidth, drawingHeight):
-        super().draw(ctx, drawingWidth, drawingHeight)
+    def draw(self, ctx, width, height):
+        super().draw(ctx, width, height)
+        # slider row
+        ctx.setFillColor(COLOR_WHITE)
+        ctx.fillRect(5, 5, self.width - 5, self.height - 5)
+
+        # slider boundaries
+        sliderX = 5
+        sliderEndX = self.width - 45
+
+        # slider handle
+        # calculate position of the handle according to the value
+        sliderHandleX = sliderX + (sliderEndX - sliderX) * self.value
+        sliderHandleY = 6
+
+        # does the slider handle stay within the boundaries?
+        sliderHandleX = max(sliderX, min(sliderHandleX, sliderEndX))
+
+        # slider handle frame
+        ctx.setFillColor(COLOR_WHITE)
+        ctx.fillRect(sliderHandleX, sliderHandleY, sliderHandleX + 40, self.height - 6)
+
+        # actual slider handle
+        ctx.setFillColor(self.handleColor)
+        ctx.fillRect(sliderHandleX + 2, sliderHandleY + 2, sliderHandleX + 38, self.height - 8)

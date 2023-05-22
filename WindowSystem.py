@@ -14,6 +14,7 @@ from WindowManager import *
 from UITK import *
 import HelloWorldRevised
 import Calculator
+import ColorSliders
 
 
 class WindowSystem(GraphicsEventSystem):
@@ -26,6 +27,7 @@ class WindowSystem(GraphicsEventSystem):
         self.windowManager = None
         self.helloWorld = None
         self.calculator = None
+        self.colorSliders = None
         self.slider = None
         self.start_menu = None
 
@@ -35,6 +37,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentY = 0
         self.lastClickedWindow = None
         self.lastClickedButton = None
+        self.lastClickedSlider = None
         self.allowDragging = False
         self.allowResizing = False
 
@@ -50,6 +53,7 @@ class WindowSystem(GraphicsEventSystem):
         self.recentY = 0
         self.lastClickedWindow = None
         self.lastClickedButton = None
+        self.lastClickedSlider = None
         self.allowDragging = False
         self.allowResizing = False
 
@@ -59,8 +63,11 @@ class WindowSystem(GraphicsEventSystem):
         # APPLICATIONS
         # Hello World App
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
+
         # Calculator App
         self.calculator = Calculator.CalculatorApplication(self)
+
+        self.colorSliders = ColorSliders.ColorSlidersApplication(self)
 
         # button for HelloWorld
         helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
@@ -72,7 +79,7 @@ class WindowSystem(GraphicsEventSystem):
 
         # button for RGB Slider
         sliderButton = self.createButtonInWindow(self.start_menu, 0, 80, 200, 30, "slider_button", "Slider", "#35393C",
-                                                 COLOR_ORANGE)
+                                                 COLOR_ORANGE, lambda: self.colorSlidersPressed())
 
         # shut down button
         shutDown = self.createButtonInWindow(self.start_menu, 0, 120, 200, 30, "shut_down_button", "Shut Down Button",
@@ -191,6 +198,36 @@ class WindowSystem(GraphicsEventSystem):
         parentWindow.addChildWindow(newContainer)
         return newContainer
 
+    def createSliderInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
+                             childAnchoring, value, handleColor=COLOR_PINK, childMinWidth=50, childMinHeight=50):
+
+        # making sure that child lies within the parents margin
+        # padding top
+        if childY <= parentWindow.y + parentWindow.paddingTop:
+            childY += parentWindow.paddingTop
+
+        # child should stay within left-right-bottom margin
+        if childX <= parentWindow.x + parentWindow.paddingLeft:
+            childX += parentWindow.paddingLeft
+
+        # TODO check right margin
+        if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
+            childWidth = parentWindow.width - parentWindow.paddingRight - childX
+
+        # check bottom margin
+        if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
+            childHeight = parentWindow.height - parentWindow.paddingBottom - childY
+        if childY + childHeight >= parentWindow.height:
+            childHeight = childHeight - (childHeight - childY - parentWindow.height) - parentWindow.paddingBottom
+
+        # global coordinates
+        convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
+        newSlider = Slider(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring,
+                           childMinWidth, childMinHeight, parentWindow.depth + 1, value, handleColor)
+
+        parentWindow.addChildWindow(newSlider)
+        return newSlider
+
     # P2 1d
     def bringWindowToFront(self, window):
         # if window is a direct child of screen
@@ -232,8 +269,11 @@ class WindowSystem(GraphicsEventSystem):
         self.calculator.window.isHidden = False
         self.requestRepaint()
 
-    def sliderPressed(self):
-        pass
+    def colorSlidersPressed(self):
+        if self.colorSliders.window not in self.screen.childWindows:
+            self.colorSliders = ColorSliders.ColorSlidersApplication(self)
+        self.colorSliders.window.isHidden = False
+        self.requestRepaint()
 
     # this shuts down the windows system when shut down button pressed
     def shutDownButtonPressed(self):
@@ -268,14 +308,22 @@ class WindowSystem(GraphicsEventSystem):
             if isinstance(self.lastClickedWindow, Button):
                 self.lastClickedButton = self.lastClickedWindow
 
+            if isinstance(self.lastClickedWindow, Slider):
+                self.lastClickedSlider = self.lastClickedWindow
+
             # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
             # requestRepaint
             if (self.lastClickedButton is not None) and (
                     self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
-                print("Button pressed")
+                # print("Button pressed")
                 self.lastClickedButton.isPressed = True
                 self.lastClickedButton.isHovered = False
                 self.requestRepaint()
+
+            if (self.lastClickedSlider is not None) and (
+                    self.lastClickedSlider.x <= x <= self.lastClickedSlider.width + self.lastClickedSlider.x
+                    and self.lastClickedSlider.y <= y <= self.lastClickedSlider.height + self.lastClickedSlider.y):
+                self.allowDragging = True
 
             # preparing for dragging operation
             if self.lastClickedWindow.checkIfInTitleBar(self.recentX, self.recentY):
@@ -287,11 +335,9 @@ class WindowSystem(GraphicsEventSystem):
                 # flip resizing flag
                 self.allowResizing = True
 
-
         else:
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
-
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -370,6 +416,21 @@ class WindowSystem(GraphicsEventSystem):
             # resizing operation
             if self.allowResizing:
                 self.windowManager.resizeWindow(self.lastClickedWindow, x, y)
+
+        if self.lastClickedWindow is not None and isinstance(self.lastClickedWindow, Slider) and self.allowDragging:
+            sliderStartX = self.lastClickedSlider.x
+            sliderEndX = self.lastClickedSlider.x + self.lastClickedSlider.width
+            # the "x" distance between the x-mouse cursor and the origin of the slider,
+            # dividing the difference by the width of the slider
+            # represents the position of the x mouse courser within the slider.
+            newValue = (x - sliderStartX) / self.lastClickedSlider.width
+            # set a value between 0.0 and 1.0 by dragging its handle, therefore min 0.0 and max 1.0
+            self.lastClickedSlider.value = max(0.0, min(1.0, newValue))
+            # update the color and the text of the color window in the ColorSliders app
+            newColor = self.colorSliders.updateColorSlider()
+            self.colorSliders.colorWindow.backgroundColor = newColor
+            self.colorSliders.colorWindow.text = newColor
+            self.requestRepaint()
 
     def handleKeyPressed(self, char):
         # if lastClickedWindow is the Hello World App, its input handler is called to handle key input
