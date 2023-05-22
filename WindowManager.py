@@ -10,6 +10,7 @@ and Serin Bazzi (437585)
 from GraphicsEventSystem import *
 from Window import *
 
+
 class WindowManager:
     def __init__(self, windowSystem):
         self.windowSystem = windowSystem
@@ -76,14 +77,13 @@ class WindowManager:
 
             veryLastChild = lastChild
 
-
             if veryLastChild == window:
                 # visually discriminable orange titlebar for foreground window
                 ctx.setFillColor("#D06929")
 
             else:
                 # else gray colored titlebar
-                ctx.setFillColor(COLOR_GRAY)
+                ctx.setFillColor(COLOR_LIGHT_GRAY)
 
             # fills in the title bar color and adds identifier
             ctx.fillRect(1, 1, window.width, self.titleBarHeight)
@@ -134,7 +134,7 @@ class WindowManager:
             # difference between old and new (x,y) coordinates of mouse cursor
             differenceX = x - self.windowSystem.recentX
             differenceY = y - self.windowSystem.recentY
-            # new x,y coordinates w.r.t. calc. differnce
+            # new x,y coordinates w.r.t. calc. difference
             newX = window.x + differenceX
             newY = window.y + differenceY
 
@@ -144,11 +144,11 @@ class WindowManager:
             # we save the local coordinates of windows children
             # for proper coordinate conversion
             # after repositioning
-            childPostion = []
+            childPosition = []
             if len(window.childWindows) > 0:
                 for c in window.childWindows:
                     convertedX, convertedY = window.convertPositionFromScreen(c.x, c.y)
-                    childPostion.append([convertedX, convertedY])
+                    childPosition.append([convertedX, convertedY])
 
             # if no boundaries have been exceeded we update x,y coordinates of window
             if self.checkWindowPosition(window, newX, newY, invalidSide):
@@ -172,15 +172,14 @@ class WindowManager:
             # we convert the local coordinates of window's children to global coordinates
             if len(window.childWindows) > 0:
                 for c in window.childWindows:
-                    c.x, c.y = window.convertPositionToScreen(childPostion[window.childWindows.index(c)][0],
-                                                              childPostion[window.childWindows.index(c)][1])
+                    c.x, c.y = window.convertPositionToScreen(childPosition[window.childWindows.index(c)][0],
+                                                              childPosition[window.childWindows.index(c)][1])
 
             # we update the recent cursor position
             self.windowSystem.recentX = x
             self.windowSystem.recentY = y
             # and repaint the screen after change
             self.windowSystem.requestRepaint()
-
 
     # P3 (5)
     # for window minimizing purposes
@@ -207,7 +206,6 @@ class WindowManager:
             window.isHidden = True
             # request repaint
             self.windowSystem.requestRepaint()
-
 
     # P3 (6) Task bar
     # decorates the screens taskbar and the buttons inside of it
@@ -255,7 +253,6 @@ class WindowManager:
                                    self.windowSystem.screen.height - 4)
                     ctx.drawString(c.identifier, 10 + offset, self.windowSystem.screen.height - 28)
                     offset += 114
-
 
     # P3 (7)
     # for resizing window purposes

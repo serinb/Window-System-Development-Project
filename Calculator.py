@@ -18,6 +18,7 @@ class CalculatorApplication:
         self.windowSystem = windowSystem
         self.window = None
         self.labelApp = None
+        self.keyLabel = None
         self.displayAreaLabel = None
         self.result = ''
         self.operand1 = ''
@@ -26,26 +27,21 @@ class CalculatorApplication:
         self.createApp()
 
     def createApp(self):
-        self.window = self.windowSystem.createWindowOnScreen(220, 20, 320, 480, "Calculator", COLOR_WHITE, 320, 480)
-
-        # self.containerDisplay = self.windowSystem.createContainerInWindow(self.window, 0, 0, 300,
-        #                                                                   150, "container_display",
-        #                                                                   LayoutAnchor.top | LayoutAnchor.right | LayoutAnchor.left,
-        #                                                                   500,
-        #                                                                   80)
+        self.window = self.windowSystem.createWindowOnScreen(220, 30, 320, 480, "Calculator", COLOR_WHITE, 320, 480)
 
         self.keyLabel = self.windowSystem.createLabelInWindow(self.window, 0, 0, 230, 25, "keyLabel",
-                                                                   "Double-click window for key input.", COLOR_GRAY, COLOR_CLEAR, LayoutAnchor.top, 50, 50, 9, "Helvetica",
-                                                                      "bold")
+                                                              "Double-click window for key input.", COLOR_GRAY,
+                                                              COLOR_CLEAR, LayoutAnchor.top, 50, 50, 9, "Helvetica",
+                                                              "bold")
 
         # define label for display area
-        self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.window, 0, 30, 320, 25, "displayArea",
+        self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.window, 0, 30, 40, 25, "displayArea",
                                                                       "0", COLOR_BLACK, COLOR_CLEAR, LayoutAnchor.top,
                                                                       50, 50, 20, "Helvetica",
                                                                       "bold")
 
         buttonSize = 70
-        buttonSpacing = 2
+        buttonSpacing = 4
         buttonX = 0
         buttonY = 110
 
@@ -62,16 +58,15 @@ class CalculatorApplication:
                         self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY,
                                                                buttonSize * 2 + buttonSpacing,
                                                                buttonSize, buttonLabels[iterator],
-                                                               buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY,
+                                                               buttonLabels[iterator], COLOR_BLACK, COLOR_LIGHT_GRAY,
                                                                lambda label=buttonLabels[iterator]: self.buttonClicked(
                                                                    label),
                                                                LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
-                        print(str(buttonSize))
                         buttonX += (buttonSize * 2) + (buttonSpacing * 2)
                     else:
                         self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize,
                                                                buttonSize, buttonLabels[iterator],
-                                                               buttonLabels[iterator], COLOR_WHITE, COLOR_GRAY,
+                                                               buttonLabels[iterator], COLOR_BLACK, COLOR_LIGHT_GRAY,
                                                                lambda label=buttonLabels[iterator]: self.buttonClicked(
                                                                    label),
                                                                LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
@@ -125,25 +120,24 @@ class CalculatorApplication:
                 self.displayAreaLabel.text += self.operator
                 self.windowSystem.requestRepaint()
 
-        # Calculate and display displayAreaLabel.text value only after one presses an equals sign or
-        # 'enter' on the keyboard
+        # Calculate and display displayAreaLabel.text value only after one presses an equals sign
+        # or 'enter' on the keyboard
         elif label == '=' or label == "":
             if self.operand1 and self.operand2 and self.operator:
                 try:
-                    if self.operator == '+':
-                        self.result = str(float(self.operand1) + float(self.operand2))
-                    elif self.operator == '-':
-                        self.result = str(float(self.operand1) - float(self.operand2))
+                    if self.operator == '/':
+                        self.result = str(float(self.operand1) / float(self.operand2))
                     elif self.operator == '*':
                         self.result = str(float(self.operand1) * float(self.operand2))
-                    elif self.operator == '/':
-                        self.result = str(float(self.operand1) / float(self.operand2))
+                    elif self.operator == '-':
+                        self.result = str(float(self.operand1) - float(self.operand2))
+                    elif self.operator == '+':
+                        self.result = str(float(self.operand1) + float(self.operand2))
                     self.displayAreaLabel.text = self.result
                 # the app does not crash when dividing with zero:
                 except ZeroDivisionError:
                     self.displayAreaLabel.text = "invalid"
-                # reset everything
-                # self.result = ""
+                # reset
                 self.operand1 = ""
                 self.operand2 = ""
                 self.operator = ""

@@ -71,19 +71,19 @@ class WindowSystem(GraphicsEventSystem):
 
         # button for HelloWorld
         helloButton = self.createButtonInWindow(self.start_menu, 0, 0, 200, 30, "hello_button", "Hello World",
-                                                "#35393C", COLOR_ORANGE, lambda: self.helloWorldPressed())
+                                                "#35393C", "#FFA169", lambda: self.helloWorldPressed())
 
         # button for Calculator
         calcButton = self.createButtonInWindow(self.start_menu, 0, 40, 200, 30, "calc_button", "Calculator", "#35393C",
-                                               COLOR_ORANGE, lambda: self.calcPressed())
+                                               "#FFA169", lambda: self.calcPressed())
 
         # button for RGB Slider
         sliderButton = self.createButtonInWindow(self.start_menu, 0, 80, 200, 30, "slider_button", "Slider", "#35393C",
-                                                 COLOR_ORANGE, lambda: self.colorSlidersPressed())
+                                                 "#FFA169", lambda: self.colorSlidersPressed())
 
         # shut down button
         shutDown = self.createButtonInWindow(self.start_menu, 0, 120, 200, 30, "shut_down_button", "Shut Down Button",
-                                             "#35393C", COLOR_ORANGE, lambda: self.shutDownButtonPressed())
+                                             "#35393C", "#FF6771", lambda: self.shutDownButtonPressed())
 
     """
     WINDOW MANAGEMENT
@@ -210,7 +210,6 @@ class WindowSystem(GraphicsEventSystem):
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
@@ -250,7 +249,6 @@ class WindowSystem(GraphicsEventSystem):
             # and readd it to the end of that list, so that it can be displayed in the front of the screen
             # in z-direction
             self.screen.addChildWindow(topLevelWindow)
-
 
     # FUNCTIONS FOR START MENU BUTTONS
     # each one makes sure that if a button in start menu is pressed
@@ -320,6 +318,7 @@ class WindowSystem(GraphicsEventSystem):
                 self.lastClickedButton.isHovered = False
                 self.requestRepaint()
 
+            # if in the slider area -> allo dragging the slider
             if (self.lastClickedSlider is not None) and (
                     self.lastClickedSlider.x <= x <= self.lastClickedSlider.width + self.lastClickedSlider.x
                     and self.lastClickedSlider.y <= y <= self.lastClickedSlider.height + self.lastClickedSlider.y):
@@ -393,7 +392,8 @@ class WindowSystem(GraphicsEventSystem):
             # as long as we are inside of lastClickedButton, provided it is not none, we flip isHovered flag and
             # requestRepaint
             if (self.lastClickedButton is not None) and (
-                    self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
+                    self.lastClickedButton.x <= x <= self.lastClickedButton.width + self.lastClickedButton.x
+                    and self.lastClickedButton.y <= y <= self.lastClickedButton.height + self.lastClickedButton.y):
                 self.lastClickedButton.isHovered = True
                 self.requestRepaint()
 

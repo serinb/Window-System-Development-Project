@@ -18,6 +18,7 @@ class HelloWorld:
         self.windowSystem = windowSystem
         self.window = None
         self.languageLabel = None
+        self.keyLabel = None
         self.btn_german = None
         self.btn_english = None
         self.btn_french = None
@@ -28,32 +29,39 @@ class HelloWorld:
 
         self.window = self.windowSystem.createWindowOnScreen(50, 20, 250, 300, "Hello World", COLOR_WHITE, 240, 280)
 
-        #self.containerLabel = self.windowSystem.createContainerInWindow(self.window, 50, 0, self.window.width, 100, 'labelContainer', LayoutAnchor.bottom, self.window.width , 100)
-
         self.languageLabel = self.windowSystem.createLabelInWindow(self.window, 19, 0, 180, 33, "languageLabel",
-                                                                   "Please select a language", "#F6A800", COLOR_CLEAR, LayoutAnchor.top)
+                                                                   "Please select a language", "#F6A800", COLOR_CLEAR,
+                                                                   LayoutAnchor.top)
 
         self.keyLabel = self.windowSystem.createLabelInWindow(self.window, 12, 30, 230, 33, "keyLabel",
-                                                                   "Double-click window for key input.", COLOR_GRAY, COLOR_CLEAR, LayoutAnchor.top, 50, 50, 9, "Helvetica",
-                                                                      "bold")
+                                                              "Double-click window for key input.", COLOR_GRAY,
+                                                              COLOR_CLEAR, LayoutAnchor.top, 50, 50, 9, "Helvetica",
+                                                              "bold")
 
-        self.btn_german = self.windowSystem.createButtonInWindow(self.window, 64, 110, 90, 30, "btn_german", "  Deutsch",
-                                                                 COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.german_selected(), LayoutAnchor.top)
+        self.btn_german = self.windowSystem.createButtonInWindow(self.window, 64, 110, 90, 30, "btn_german",
+                                                                 "  Deutsch",
+                                                                 COLOR_BLACK, COLOR_LIGHT_GRAY,
+                                                                 lambda: self.german_selected(), LayoutAnchor.top)
 
-        self.btn_english = self.windowSystem.createButtonInWindow(self.window, 64, 150, 90, 30, "btn_english", "   English",
-                                                                  COLOR_BLACK, COLOR_LIGHT_GRAY,lambda: self.english_selected(), LayoutAnchor.top)
+        self.btn_english = self.windowSystem.createButtonInWindow(self.window, 64, 150, 90, 30, "btn_english",
+                                                                  "   English",
+                                                                  COLOR_BLACK, COLOR_LIGHT_GRAY,
+                                                                  lambda: self.english_selected(), LayoutAnchor.top)
 
+        self.btn_french = self.windowSystem.createButtonInWindow(self.window, 64, 190, 90, 30, "btn_french",
+                                                                 "  Français",
+                                                                 COLOR_BLACK, COLOR_LIGHT_GRAY,
+                                                                 lambda: self.french_selected(), LayoutAnchor.top)
 
-        self.btn_french = self.windowSystem.createButtonInWindow(self.window, 64, 190, 90, 30, "btn_french", "  Français",
-                                                                COLOR_BLACK, COLOR_LIGHT_GRAY, lambda: self.french_selected(), LayoutAnchor.top)
+        self.quit_button = self.windowSystem.createButtonInWindow(self.window, 184, 254, 50, 0, "quit_button", "Quit",
+                                                                  COLOR_BLACK, COLOR_LIGHT_GRAY,
+                                                                  lambda: self.quit_selected(),
+                                                                  LayoutAnchor.bottom | LayoutAnchor.right)
 
-        self.quit_button = self.windowSystem.createButtonInWindow(self.window, 184, 254, 50,0, "quit_button", "Quit", COLOR_BLACK, COLOR_LIGHT_GRAY,
-                                                                 lambda: self.quit_selected(), LayoutAnchor.bottom | LayoutAnchor.right)
-
-
-
-        self.quit_button = self.windowSystem.createButtonInWindow(self.window, 184, 250, 50,30, "quit_button", "Quit", COLOR_BLACK, COLOR_LIGHT_GRAY,
-                                                                 lambda: self.quit_selected(), LayoutAnchor.bottom | LayoutAnchor.right)
+        self.quit_button = self.windowSystem.createButtonInWindow(self.window, 184, 250, 50, 30, "quit_button", "Quit",
+                                                                  COLOR_BLACK, COLOR_LIGHT_GRAY,
+                                                                  lambda: self.quit_selected(),
+                                                                  LayoutAnchor.bottom | LayoutAnchor.right)
 
     def german_selected(self):
         # set the text attribute of languageLabel

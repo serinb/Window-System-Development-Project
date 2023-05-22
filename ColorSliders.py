@@ -21,10 +21,11 @@ class ColorSlidersApplication:
         self.rSlider = None
         self.gSlider = None
         self.bSlider = None
+        self.colorWindow = None
         self.createApp()
 
     def createApp(self):
-        self.window = self.windowSystem.createWindowOnScreen(400, 40, 300, 300, "Color Sliders", COLOR_WHITE, 200, 250)
+        self.window = self.windowSystem.createWindowOnScreen(450, 70, 275, 300, "Color Sliders", COLOR_WHITE, 200, 250)
 
         self.rSlider = self.windowSystem.createSliderInWindow(self.window, 20, 0, 200, 33, "rSlider", LayoutAnchor.top,
                                                               0.2, COLOR_RED)

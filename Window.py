@@ -1,5 +1,4 @@
-
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -15,6 +14,7 @@ from collections import namedtuple
 
 AllAnchors = namedtuple('AllAnchors', "top right bottom left")
 LayoutAnchor = AllAnchors(1 << 0, 1 << 1, 1 << 2, 1 << 3)
+
 
 class Window:
     def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth=1):
@@ -435,7 +435,8 @@ class Window:
 
 class Screen(Window):
     def __init__(self, windowSystem):
-        super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", windowSystem.width, windowSystem.height, 0)
+        super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", windowSystem.width,
+                         windowSystem.height, 0)
         self.windowSystem = windowSystem
 
     # calls functions necessary to draw the desktop, taskbar
@@ -502,5 +503,3 @@ class Screen(Window):
                 # increments
                 startX += 114
                 endX += 114
-
-
