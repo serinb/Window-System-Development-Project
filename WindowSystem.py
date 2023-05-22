@@ -100,7 +100,7 @@ class WindowSystem(GraphicsEventSystem):
 
     def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
                             childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50,
-                            childMinHeight=50, fontSize=14, fontFamily="Helvetica", fontWeight="bold"):
+                            childMinHeight=50, fontSize=11, fontFamily="Helvetica", fontWeight="bold"):
 
         # making sure that child lies within the parents padding
         # padding top

@@ -26,7 +26,7 @@ class CalculatorApplication:
         self.createApp()
 
     def createApp(self):
-        self.window = self.windowSystem.createWindowOnScreen(220, 20, 380, 480, "Calculator", COLOR_WHITE, 200, 200)
+        self.window = self.windowSystem.createWindowOnScreen(220, 20, 320, 480, "Calculator", COLOR_WHITE, 320, 480)
 
         # self.containerDisplay = self.windowSystem.createContainerInWindow(self.window, 0, 0, 300,
         #                                                                   150, "container_display",
@@ -34,15 +34,19 @@ class CalculatorApplication:
         #                                                                   500,
         #                                                                   80)
 
+        self.keyLabel = self.windowSystem.createLabelInWindow(self.window, 0, 0, 230, 25, "keyLabel",
+                                                                   "Double-click window for key input.", COLOR_GRAY, COLOR_CLEAR, LayoutAnchor.top, 50, 50, 9, "Helvetica",
+                                                                      "bold")
+
         # define label for display area
-        self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.window, 0, 10, 100, 20, "displayArea",
+        self.displayAreaLabel = self.windowSystem.createLabelInWindow(self.window, 0, 30, 320, 25, "displayArea",
                                                                       "0", COLOR_BLACK, COLOR_CLEAR, LayoutAnchor.top,
-                                                                      50, 50, 44, "Helvetica",
+                                                                      50, 50, 20, "Helvetica",
                                                                       "bold")
 
         buttonSize = 70
         buttonSpacing = 2
-        buttonX = 10
+        buttonX = 0
         buttonY = 110
 
         rows = 5
@@ -62,6 +66,7 @@ class CalculatorApplication:
                                                                lambda label=buttonLabels[iterator]: self.buttonClicked(
                                                                    label),
                                                                LayoutAnchor.top | LayoutAnchor.bottom | LayoutAnchor.right | LayoutAnchor.left)
+                        print(str(buttonSize))
                         buttonX += (buttonSize * 2) + (buttonSpacing * 2)
                     else:
                         self.windowSystem.createButtonInWindow(self.window, buttonX, buttonY, buttonSize,
@@ -73,7 +78,7 @@ class CalculatorApplication:
                         buttonX += buttonSize + buttonSpacing
                     iterator = iterator + 1
 
-            buttonX = 10
+            buttonX = 0
             buttonY += buttonSize + buttonSpacing
 
     def clearDisplay(self):
