@@ -47,6 +47,7 @@ class WindowSystem(GraphicsEventSystem):
 
         # SCREEN (P2 1b)
         self.screen = Screen(self)
+        # variables for mouse events
         self.mousePressed = False
         self.recentX = 0
         self.recentY = 0
@@ -56,10 +57,14 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
+        # Start Menu Window
         self.start_menu = self.createWindowOnScreen(0, 350, 200, 210, "Start Menu", "#D17D49", 200, 200)
 
+        # APPLICATIONS
+        # Hello World App
         self.helloWorld = HelloWorldRevised.HelloWorld(self)
 
+        # Calculator App
         self.calculator = Calculator.CalculatorApplication(self)
 
         self.colorSliders = ColorSliders.ColorSlidersApplication(self)
@@ -102,22 +107,22 @@ class WindowSystem(GraphicsEventSystem):
 
     def createLabelInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
                             childTextString, childTextColor, childBackgroundColor, childAnchoring, childMinWidth=50,
-                            childMinHeight=50):
+                            childMinHeight=50, fontSize=11, fontFamily="Helvetica", fontWeight="bold"):
 
-        # making sure that child lies within the parents margin
+        # making sure that child lies within the parents padding
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
             childY += parentWindow.paddingTop
 
-        # child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom padding
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
+        # check right padding
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
-        # check bottom margin
+        # check bottom padding
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
@@ -127,7 +132,7 @@ class WindowSystem(GraphicsEventSystem):
         convertedX, convertedY = parentWindow.convertPositionToScreen(childX, childY)
         newLabel = Label(convertedX, convertedY, childWidth, childHeight, childIdentifier, childAnchoring,
                          childMinWidth, childMinHeight, childTextString,
-                         childTextColor, childBackgroundColor, parentWindow.depth + 1)
+                         childTextColor, childBackgroundColor, parentWindow.depth + 1, fontSize, fontFamily, fontWeight)
 
         parentWindow.addChildWindow(newLabel)
         return newLabel
@@ -136,20 +141,20 @@ class WindowSystem(GraphicsEventSystem):
                              childTextString, childTextColor, childBackgroundColor, childAction=None,
                              childAnchoring=None, childMinWidth=50, childMinHeight=50):
 
-        # making sure that child lies within the parents margin
+        # making sure that child lies within the parents padding
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
             childY += parentWindow.paddingTop
 
-        # child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom padding
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
+        # check right padding
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
-        # check bottom margin
+        # check bottom padding
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
@@ -166,20 +171,20 @@ class WindowSystem(GraphicsEventSystem):
 
     def createContainerInWindow(self, parentWindow, childX, childY, childWidth, childHeight, childIdentifier,
                                 childAnchoring, childMinWidth, childMinHeight):
-        # making sure that child lies within the parents margin
+        # making sure that child lies within the parents padding
         # padding top
         if childY <= parentWindow.y + parentWindow.paddingTop:
             childY += parentWindow.paddingTop
 
-        # child should stay within left-right-bottom margin
+        # child should stay within left-right-bottom padding
         if childX <= parentWindow.x + parentWindow.paddingLeft:
             childX += parentWindow.paddingLeft
 
-        # TODO check right margin
+        # check right padding
         if childX + childWidth >= parentWindow.width - parentWindow.paddingRight:
             childWidth = parentWindow.width - parentWindow.paddingRight - childX
 
-        # check bottom margin
+        # check bottom padding
         if childY + childHeight >= parentWindow.width - parentWindow.paddingBottom:
             childHeight = parentWindow.height - parentWindow.paddingBottom - childY
         if childY + childHeight >= parentWindow.height:
@@ -246,7 +251,12 @@ class WindowSystem(GraphicsEventSystem):
             # in z-direction
             self.screen.addChildWindow(topLevelWindow)
 
+
     # FUNCTIONS FOR START MENU BUTTONS
+    # each one makes sure that if a button in start menu is pressed
+    # the respective application will open if closed
+    # or will appear if minimized
+
     def helloWorldPressed(self):
         if self.helloWorld.window not in self.screen.childWindows:
             self.helloWorld = HelloWorldRevised.HelloWorld(self)
@@ -265,6 +275,7 @@ class WindowSystem(GraphicsEventSystem):
         self.colorSliders.window.isHidden = False
         self.requestRepaint()
 
+    # this shuts down the windows system when shut down button pressed
     def shutDownButtonPressed(self):
         exit()
 
@@ -327,8 +338,6 @@ class WindowSystem(GraphicsEventSystem):
         else:
             # prepare for taskbar interaction
             self.lastClickedWindow = self.screen
-            if self.screen.checkIfInTaskbar(x, y):
-                pass
 
     def handleMouseReleased(self, x, y):
         self.mousePressed = False
@@ -337,8 +346,6 @@ class WindowSystem(GraphicsEventSystem):
         self.allowDragging = False
         self.allowResizing = False
 
-        # TODO hier müssen wir checken dass bei der gleichen position released wurde,
-        # TODO wie bei pressed
         # execute taskbar interaction event
         # if clicked window is screen
         if self.lastClickedWindow == self.screen:
@@ -361,10 +368,10 @@ class WindowSystem(GraphicsEventSystem):
                         self.windowManager.minimizeWindow(self.lastClickedWindow)
 
                 # register that mouseclick event just happened
-                if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
-                    if self.lastClickedWindow.identifier == "Calculator":
-                        # self.lastClickedWindow.handleMouseClicked(x, y)
-                        self.calculator.inputHandler(self.lastClickedWindow.identifier)
+                # if self.lastClickedWindow == self.screen.childWindowAtLocation(x, y):
+                #     if self.lastClickedWindow.identifier == "Calculator":
+                #         # self.lastClickedWindow.handleMouseClicked(x, y)
+                #         self.calculator.inputHandler(self.lastClickedWindow.identifier)
 
             elif self.lastClickedButton is not None and self.lastClickedButton.isPressed:
                 self.lastClickedButton.isPressed = False
@@ -426,9 +433,12 @@ class WindowSystem(GraphicsEventSystem):
             self.requestRepaint()
 
     def handleKeyPressed(self, char):
+        # if lastClickedWindow is the Hello World App, its input handler is called to handle key input
         if self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Hello World":
             self.helloWorld.inputHandler(char)
             self.requestRepaint()
+        elif self.lastClickedWindow is not None and self.lastClickedWindow.identifier == "Calculator":
+            self.calculator.buttonClicked(char)
 
 
 # Let's start your window system!

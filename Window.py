@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -13,9 +14,7 @@ from WindowManager import *
 from collections import namedtuple
 
 AllAnchors = namedtuple('AllAnchors', "top right bottom left")
-# i.e. 1 - top, 2 - right, 4 - bottom, 8 - left corner
 LayoutAnchor = AllAnchors(1 << 0, 1 << 1, 1 << 2, 1 << 3)
-
 
 class Window:
     def __init__(self, originX, originY, width, height, identifier, anchoring, minWidth, minHeight, depth=1):
@@ -26,66 +25,35 @@ class Window:
         self.identifier = identifier
         self.depth = depth
         self.backgroundColor = COLOR_LIGHT_GRAY
-
         self.childWindows = []
         self.parentWindow = None
 
-        # P3 (5)
+        # P3 (5) flags for minimizing and closing window
         self.isHidden = True
         self.isClosed = False
 
-        # P3 (7)
+        # P3 (7) for resizing window
         self.layoutAnchors = anchoring
-        # a window cannot have a negative width or height, therefore define minHeight and minWidth
         self.minWidth = minWidth
         self.minHeight = minHeight
 
-        # window padding
+        # window padding to make sure that
+        # children stay within window boundaries
         self.paddingTop = 45
         self.paddingLeft = 16
         self.paddingBottom = 16
         self.paddingRight = 16
 
-    # P2 1a
+    # P2 1a adds window to self's list of children
     def addChildWindow(self, window):
         # assign self as the parent of new child window
         window.parentWindow = self
-        # add child window to self's list of window children, provided it does not yet exist in list
+        # add child window to self's list of window children,
+        # provided it does not yet exist in list
         if window not in self.childWindows:
             self.childWindows.append(window)
 
-
-    def createWindowInWindow(self, childX, childY, childWidth, childHeight, childIdentifier,
-                             childBackgroundColor, minWidth, minHeight, anchoring):
-
-        # making sure that child lies within the parents margin
-        # padding top
-        if childY <= self.y + self.paddingTop:
-            childY += self.paddingTop
-
-        # child should stay within left-right-bottom margin
-
-        if childX <= self.x + self.paddingLeft:
-            childX += self.paddingLeft
-
-        # TODO check right margin
-        if childX + childWidth >= self.width - self.paddingRight:
-            childWidth = self.width - self.paddingRight - childX
-
-        # check bottom margin
-        if childY + childHeight >= self.width - self.paddingBottom:
-            childHeight = self.height - self.paddingBottom - childY
-        if childY + childHeight >= self.height:
-            childHeight = childHeight - (childHeight -  childY - self.height) - self.paddingBottom
-        convertedX, convertedY = self.convertPositionToScreen(childX, childY)
-        childWindow = Window(convertedX, convertedY, childWidth, childHeight, childIdentifier, anchoring, minWidth, minHeight,
-                             self.depth + 1)
-        childWindow.backgroundColor = childBackgroundColor
-        self.addChildWindow(childWindow)
-        return childWindow
-
-
-    # P2 1a
+    # P2 1a removes self's parent window
     def removeFromParentWindow(self):
         # provided that self has a parent
         if self.parentWindow:
@@ -94,20 +62,20 @@ class Window:
             # and delete self's parent
             self.parentWindow = None
 
-    # P2 2a
+    # P2 2a converts x,y from local coordinates (w.r.t to self) to global coordinates
     def convertPositionToScreen(self, x, y):
-        # check if the calling Window object is already the screen
+        # check if the self is already the screen
         # if so, return x, y unchanged as they are the global coordinates
         if self.parentWindow is None and self.identifier == "SCREEN_1":
             return x, y
-        # else if the calling Window object is not the screen
+        # else if self is not the screen
         else:
-            # sum of x,y and origin of calling window's offset in global coordinates
+            # sum of x,y and origin of self's offset in global coordinates
             convertedX = x + self.x
             convertedY = y + self.y
             return convertedX, convertedY
 
-    # P2 2b
+    # P2 2b converts x.y from global coordinates to local coordinates (w.r.t self)
     def convertPositionFromScreen(self, x, y):
         # analog to the convertPositionToScreen
         if self.parentWindow is None and self.identifier == "SCREEN_1":
@@ -118,7 +86,7 @@ class Window:
             convertedY = y - self.y
             return convertedX, convertedY
 
-    # P2 3b
+    # P2 3b draws a window onto the screen
     def draw(self, ctx, drawingWidth, drawingHeight):
         # translates the origin coordinates of the coordinate system for ctx
         # based on the global coordinates self.x and self.y
@@ -132,14 +100,13 @@ class Window:
 
         # call the draw function on calling window objects children
         if self.childWindows is not None:
-            #print(self.identifier)
             # parent window draws its child views
             for c in self.childWindows:
                 # calculate the deepest x,y coordinate of child inside of parent coordinate system
                 inParentX, inParentY = self.convertPositionFromScreen(c.x, c.y)
                 c.draw(ctx, c.width, c.height)
 
-    # P2 4a
+    # P2 4a checks whether there exists a window at a given x,y position
     def hitTest(self, x, y):
         # checks whether the given x,y lie within the calling windows local coordinate system
         # x,y-axis maxima are represented by the windows witdh and height
@@ -148,7 +115,7 @@ class Window:
         else:
             return False
 
-    # P2 4b
+    # P2 4b returns deepest most visible child window at a given x,y position
     def childWindowAtLocation(self, x, y):
         # only works if calling window has children, else returns 0
         if len(self.childWindows) > 0:
@@ -207,10 +174,9 @@ class Window:
                 recentHitTestDepth, recentHitTestStatus = child.helperFunction(convertedX, convertedY,
                                                                                recentHitTestStatus,
                                                                                recentHitTestDepth)
-
         return recentHitTestDepth, recentHitTestStatus
 
-    # P2 4b -helper function: checks the order of the respective toplevel windows of two window objects
+    # P2 4b - helper function: checks the order of the respective toplevel windows of two window objects
     def compareTopLevelWindows(self, window):
         # calling Window
         topLevelWindow1 = self.getTopLevelWindow()
@@ -229,7 +195,7 @@ class Window:
         elif screen.childWindows.index(topLevelWindow1) == screen.childWindows.index(topLevelWindow2):
             return 0
 
-    # P2 4b -helper function: returns the toplevel window of a calling window object
+    # P2 4b - helper function: returns the toplevel window of a calling window object
     def getTopLevelWindow(self):
         if self.parentWindow.identifier != "SCREEN_1":
 
@@ -246,14 +212,16 @@ class Window:
 
     # P2 4d
     def handleMouseClicked(self, x, y):
-        #print(self.identifier)
-        pass
+        print("click")
 
     # P3 (7) Resizing windows and simple layout
-    # Changes the position and size of the current window to the given parameters
     def resize(self, x, y, newWidth, newHeight):
-        oldX, oldY = self.x, self.y
+
+        # needed for layout calculation
+        oldY = self.y
         oldWidth, oldHeight = self.width, self.height
+        # make sure that the window is not resized
+        # to size smaller than minimum width and height
         if newWidth <= self.minWidth:
             newWidth = self.minWidth
         if newHeight <= self.minHeight:
@@ -262,47 +230,50 @@ class Window:
         self.height = newHeight
         self.x = x
         self.y = y
+
         if self.childWindows is not None:
-            # calculate the ratio of the child window's size w.r.t to its parent's old size
 
             for c in self.childWindows:
 
                 # TOP RIGHT BOTTOM LEFT
+                # window changes width and height size, so that distance to all 4 sides of parent stay the same
                 if c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right and c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.left:
-                    # for right side
+                    # to keep distance to left and right edge of parent the same
+                    # we adjust the width of the window
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
-
-                    #for left side
                     childSmallestX = c.x
-
                     newChildWidth = newChildGreatestX - childSmallestX
                     c.width = newChildWidth
 
+                    # analog to above we also adjust the height of the window
+                    # w.r.t to its distance to the bottom edge of parent window
                     childGreatestY = c.y + c.height
                     bottomDistanceChildParent = oldHeight - childGreatestY
                     newChildGreatestY = self.height - bottomDistanceChildParent
-
                     newChildHeight = newChildGreatestY - c.y
                     c.height = newChildHeight
 
+                    # no need to calculate the distance to the top edge, as window stays put by default
+
                 # TOP RIGHT LEFT
+                # window changes width size, so that its distance to top, left, right of parent stay the same
                 elif c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right and c.layoutAnchors & LayoutAnchor.left:
-                    # for right side
+                    # anolog to the above case we adjust the width of the window
+                    # height is not changed, as there is no anchor in bottom
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
-
-                    #for left side
                     childSmallestX = c.x
-
                     newChildWidth = newChildGreatestX - childSmallestX
                     c.width = newChildWidth
 
                 # TOP RIGHT
+                # size of window stays the same
+                # distance to top and right of parent stays the same
+                # approach analog to cases above
                 elif c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right:
-                    print(bool(c.layoutAnchors & LayoutAnchor.top and c.layoutAnchors & LayoutAnchor.right))
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
@@ -310,47 +281,47 @@ class Window:
                     c.x = newChildX
 
                 # TOP
+                # allows a window to slide horizontally with respect to the width of the parent window
+                # while being anchorred to top
                 elif c.layoutAnchors & LayoutAnchor.top:
+                    # calculate the y coordinate of child in local coordinates of parent
                     localY = c.y - oldY
+                    # middle of parent window width
                     parentMiddle = self.width / 2
+                    # middle of child window width
                     childMiddle = c.width / 2
+                    # new x allows for child window to be centered within its parent
                     newX = parentMiddle - childMiddle
                     c.x, c.y = self.convertPositionToScreen(newX, localY)
 
                 # BOTTOM RIGHT LEFT
+                # analog top,left,right only that window is anchored to bottom instead of top
                 elif c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.left and c.layoutAnchors & LayoutAnchor.right:
-                    print("BOTTOM RIGHT LEFT")
                     childGreatestX = c.width + c.x
                     rightDistanceChildParent = oldWidth - childGreatestX
                     newChildGreatestX = self.width - rightDistanceChildParent
-
-                    #for left side
                     childSmallestX = c.x
-
                     newChildWidth = newChildGreatestX - childSmallestX
                     c.width = newChildWidth
 
                     childGreatestY = c.y + c.height
                     bottomDistanceChildParent = oldHeight - childGreatestY
-
                     newChildGreatestY = self.height - bottomDistanceChildParent
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
                 # BOTTOM LEFT
+                # analog top,left only that window is anchored to bottom instead of top
                 elif c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.left:
-                    print("BOTTOM LEFT")
                     childGreatestY = c.y + c.height
-
-
                     bottomDistanceChildParent = oldHeight - childGreatestY
                     newChildGreatestY = self.height - bottomDistanceChildParent
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
                 # BOTTTOM RIGHT
+                # analog top,left only that window is anchored to bottom instead of top
                 elif c.layoutAnchors & LayoutAnchor.bottom and c.layoutAnchors & LayoutAnchor.right:
-                    print("BOTTTOM RIGHT")
                     childGreatestX = c.x + c.width
                     rightDistanceChildParent = oldWidth - childGreatestX
 
@@ -365,12 +336,12 @@ class Window:
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
 
-                # BOTTOM
+                # BOTTOM (analog to top)
+                # allows a window to slide horizontally with respect to the width of the parent window
+                # while being anchorred to top
                 elif c.layoutAnchors & LayoutAnchor.bottom:
-                    print("BOTTTOM")
                     childGreatestY = c.y + c.height
                     bottomDistanceChildParent = oldHeight - childGreatestY
-
                     newChildGreatestY = self.height - bottomDistanceChildParent
                     childSmallestY = newChildGreatestY - c.height
                     c.y = childSmallestY
@@ -382,62 +353,71 @@ class Window:
                     convertedX, convertedY = self.convertPositionToScreen(newX, localY)
                     c.x = convertedX
 
-
+    # checks if a given position lies in the titlebar
+    # helpful for closing, minimizing, repositioning window
     def checkIfInTitleBar(self, x, y):
+        # convert x,y to local coordinates of self for easy titlebar boundary control
         convertedX, convertedY = self.convertPositionFromScreen(x, y)
         windowWidth = self.width
-        windowHeight = self.height
 
-        # (X1, Y1) of title bar
+        # Starting (X1, Y1) of title bar
         titleBarX1 = 1
         titleBarY1 = 1
 
-        # (X2, Y2) of title bar
+        # Ending (X2, Y2) of title bar
         titleBarX2 = windowWidth
         titleBarY2 = 30
 
+        # check that converted x,y lie within boundaries of titlebar
         if titleBarX1 <= convertedX <= titleBarX2 and titleBarY1 <= convertedY <= titleBarY2:
             return True
         else:
             return False
 
+    # checks if a given position lies in the
+    # close button area of a window's title bar
+    # analog to checkIfInTitleBar()
     def checkIfInCloseButton(self, x, y):
         if self.checkIfInTitleBar(x, y):
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
 
-            # defining regions for close and minimizing
-            # (X1, Y1) of close button
+            # Starting (X1, Y1) of close button
             closeX1 = self.width - 29
             closeY1 = 0
 
-            # (X2, Y2) of close button
+            # Ending (X2, Y2) of close button
             closeX2 = self.width
             closeY2 = 30
 
-            # closing
             if closeX1 <= convertedX <= closeX2 and closeY1 <= convertedY <= closeY2:
                 return True
             else:
                 return False
 
+    # checks if a given position lies in the
+    # minimizing button area of a window's title bar
+    # analog to checkIfInCloseButton()
     def checkIfInMinimizeButton(self, x, y):
         if self.checkIfInTitleBar(x, y) and self.identifier != "Start Menu":
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
 
-            # (X1, Y1) of minimize button
+            # Starting (X1, Y1) of minimize button
             minimizeX1 = self.width - 43
             minimizeY1 = 0
 
-            # (X2, Y2) of minimize button
+            # Ending (X2, Y2) of minimize button
             minimizeX2 = self.width - 30
             minimizeY2 = 30
 
-            # minimizing
             if minimizeX1 <= convertedX <= minimizeX2 and minimizeY1 <= convertedY <= minimizeY2:
                 return True
             else:
                 return False
 
+    # check if a given position lies in the
+    # bottom right corner of a window
+    # for window resizing purposes
+    # analog to above
     def checkIfInResizingArea(self, x, y):
         if self.identifier != "Start_menu":
             convertedX, convertedY = self.convertPositionFromScreen(x, y)
@@ -458,10 +438,9 @@ class Screen(Window):
         super().__init__(0, 0, windowSystem.width, windowSystem.height, "SCREEN_1", windowSystem.width, windowSystem.height, 0)
         self.windowSystem = windowSystem
 
-    # Override the draw method of your Screen to call your WindowManager wallpaper implementation
-    # Call your WM’s decorateWindow implementation
+    # calls functions necessary to draw the desktop, taskbar
+    # and all of screens child windows and their decorations
     def draw(self, ctx, drawingWidth, drawingHeight):
-        # super().draw(ctx)
         self.windowSystem.windowManager.drawDesktop(ctx)
         self.windowSystem.windowManager.drawTaskbar(ctx)
         if len(self.childWindows) > 0:
@@ -472,21 +451,15 @@ class Screen(Window):
                     c.draw(ctx, drawingWidth, drawingHeight)
                     if c.depth == 1:
                         self.windowSystem.windowManager.decorateWindow(c, ctx)
-                        # if len(c.childWindows) > 0:
-                        #     for gc in c.childWindows:
-                        #         gc.draw(ctx)
-                        # self.windowSystem.windowManager.decorateWindow(gc, ctx)
 
-    def resize(self, x, y, width, height):
-        if len(self.childWindows) > 0:
-            for c in self.childWindows:
-                c.super().resize(x, y, width, height)
-
+    # checks if a given position is in the
+    # taskbar area of screen
+    # for taskbar event purposes
+    # analog to check function in Window
     def checkIfInTaskbar(self, x, y):
         # (X1, Y1) of taskbar
         taskBarX1 = 0
         taskBarY1 = self.height - 50
-
         # (X2, Y2) of taskbar
         taskBarX2 = self.width
         taskBarY2 = self.height
@@ -496,42 +469,38 @@ class Screen(Window):
         else:
             return False
 
-    def checkIfInTaskBarArea(self, x, y):
-        startX = 0
-        startY = self.height - 50
-
-        endX = 40
-        endY = self.height
-
-
-        if startX <= x <= endX and startY <= y <= endY:
-            return True
-
-        else:
-            return False
-
-
+    # for task event purposes
+    # assigns Windows minimizing event to buttons
+    # in taskbar
     def clickedTaskbarEvent(self, x, y):
-
+        # Starting (X1,X2)
         startX = 4
         startY = self.height - 40
-
+        # Ending (X1,X2)
         endX = 114
         endY = self.height
 
+        # goes through all toplevel windows in screen
         for child in self.windowSystem.windowManager.openedTopLevelWindows:
-
+            # checks if x,y lie inside assigned button of window in taskbar
             if startX <= x <= endX and startY <= y <= endY:
+                # if window is minimized (not visible)
+                # its hidden flag is flipped and screen is repainted
+                # to make the window visible again
                 if child.isHidden:
                     child.isHidden = False
                     self.windowSystem.bringWindowToFront(child)
                     self.windowSystem.requestRepaint()
-
+                # otherwise hidden flag is flipped
+                # and screen is repainted to make
+                # window disappear
                 else:
                     child.isHidden = True
                     self.windowSystem.requestRepaint()
-
                 break
             else:
+                # increments
                 startX += 114
                 endX += 114
+
+
